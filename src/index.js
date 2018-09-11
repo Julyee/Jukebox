@@ -1,7 +1,9 @@
 import './style/main.scss';
+import {Frontend} from './frontend/Frontend';
 
 async function main() {
-    console.log('Hello World!'); // eslint-disable-line
+    const frontend = new Frontend(document.body);
+    frontend.toString();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
