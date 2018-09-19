@@ -26,17 +26,17 @@ export class Header extends IBindable {
         const pathName = parsedUrl.pathname.split('/');
         return m('div', {style: {position: 'relative'}}, [
             m(Toolbar, {
-                    fullbleed: true,
-                    border: true,
-                },
-                [
-                    toolbarButton(m.trust(iconMenuSVG)),
-                    m(ToolbarTitle, { text: pathName[1], center: true, indent: true }),
-                    m('.toolbar-search-bar', [
-                        m(SearchBar),
-                    ]),
-                ]
-            ),
+                fullbleed: true,
+                border: true,
+                compact: true,
+            },
+            [
+                toolbarButton(m.trust(iconMenuSVG)),
+                m(ToolbarTitle, { text: pathName[1], center: true, indent: true }),
+                m('.toolbar-search-bar', [
+                    m(SearchBar),
+                ]),
+            ]),
         ]);
     }
 }

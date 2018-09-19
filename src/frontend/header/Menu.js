@@ -85,7 +85,7 @@ export class Menu extends IBindable {
                         href: '#!/NowPlaying',
                     },
                 ]),
-                fixed: true, // global drawer on top of everything
+                fixed: false, // global drawer on top of everything
                 backdrop: true,
                 show: state.show,
                 didHide: () => {

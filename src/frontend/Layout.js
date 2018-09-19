@@ -11,9 +11,15 @@ export class Layout extends IBindable {
 
     view() {
         return [
-            m(Menu),
-            m(Header),
-            this.content(),
+            m('.main-container', [
+                m(Header),
+                m('.main-content', [
+                    m('.menu-container', [
+                        m(Menu),
+                    ]),
+                    this.content(),
+                ]),
+            ]),
         ];
     }
 

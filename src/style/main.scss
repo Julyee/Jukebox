@@ -2,19 +2,45 @@ html {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    -webkit-text-size-adjust: none
 }
 
 body {
     margin: 0;
     padding: 0;
     width: 100vw;
-    height: 100vh;
+    //height: 100vh;
+    height: 100%;
     overflow: hidden;
+    position: fixed;
+    background-color: white;
+    /* iOS 11 constants */
+    padding-top: env(safe-area-inset-top);
+    padding-top: const(safe-area-inset-top);
 }
 
 .toolbar-search-bar {
-    width: 100%;
+    width: 100vw;
     max-width: 400px;
     min-width: 200px;
     border-bottom: solid #a0a0a0 1px;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100%;
+}
+
+.main-content {
+    flex-grow: 1;
+    position: relative;
+    padding: 4px;
+}
+
+.menu-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
 }
