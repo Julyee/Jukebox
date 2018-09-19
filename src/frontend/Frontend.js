@@ -1,7 +1,6 @@
 import IObject from '../core/IObject';
 
-import { Search } from './routes/Search';
-import { Home } from './routes/Home';
+import { Home, Import, Library, NowPlaying, Search } from './routes/Routes';
 import m from 'mithril';
 
 import { addTypography } from 'polythene-css';
@@ -14,6 +13,9 @@ export class Frontend extends IObject {
         // m.mount(this.mRoot, Search);
         m.route(this.mRoot, '/Home', {
             '/Home': Home,
+            '/Library': Library,
+            '/Import': Import,
+            '/NowPlaying': NowPlaying,
             '/Search': Search,
         });
     }

@@ -5,44 +5,35 @@ import { IBindable } from '../../core/IBindable';
 // import stream from 'mithril/stream';
 import m from 'mithril';
 
-const navigationList = navItemClick =>
-    m(List, {
-        tiles: [
+const navigationList = (navItemClick, buttons) => {
+    const tiles = [
+        m(ListTile, {
+            title: 'Jukebox ID',
+            hoverable: false,
+            navigation: false,
+        }),
+    ];
+
+    buttons.forEach(button => {
+        tiles.push(
             m(ListTile, {
-                title: 'Menu item 1',
+                title: button.title,
                 hoverable: true,
                 navigation: true,
                 events: {
                     onclick: () => {
-                        window.location.href = '#!/Home';
+                        window.location.href = button.href;
                         navItemClick();
                     },
                 },
             }),
-            m(ListTile, {
-                title: 'Menu item 2',
-                hoverable: true,
-                navigation: true,
-                events: {
-                    onclick: () => {
-                        window.location.href = '#!/Home';
-                        navItemClick();
-                    },
-                },
-            }),
-            m(ListTile, {
-                title: 'Menu item 3',
-                hoverable: true,
-                navigation: true,
-                events: {
-                    onclick: () => {
-                        window.location.href = '#!/Home';
-                        navItemClick();
-                    },
-                },
-            }),
-        ],
+        );
     });
+
+    return m(List, {
+        tiles,
+    });
+};
 
 export class Menu extends IBindable {
     constructor(/* vnode */) {
@@ -76,7 +67,24 @@ export class Menu extends IBindable {
 
         return [
             m(Drawer, {
-                content: navigationList(navItemClick),
+                content: navigationList(navItemClick, [
+                    {
+                        title: 'Home',
+                        href: '#!/Home',
+                    },
+                    {
+                        title: 'Library',
+                        href: '#!/Library',
+                    },
+                    {
+                        title: 'Import',
+                        href: '#!/Import',
+                    },
+                    {
+                        title: 'Now Playing',
+                        href: '#!/NowPlaying',
+                    },
+                ]),
                 fixed: true, // global drawer on top of everything
                 backdrop: true,
                 show: state.show,
