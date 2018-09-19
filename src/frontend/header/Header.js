@@ -1,8 +1,19 @@
-import { Toolbar, ToolbarTitle, Shadow } from 'polythene-mithril';
+import { Toolbar, ToolbarTitle, Shadow, IconButton } from 'polythene-mithril';
+import { EventCenter } from '../../core/EventCenter';
 import { IBindable } from '../../core/IBindable';
 import { SearchBar } from './SearchBar';
-import { Menu } from './Menu';
+import { Events, Buttons } from '../Events';
 import m from 'mithril';
+
+const iconMenuSVG = '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>';
+const toolbarButton = (svg, state) => m(IconButton, {
+    icon: { svg },
+    events: {
+        onclick: () => {
+            EventCenter.emit(Events.BUTTON_PRESS, Buttons.DRAWER_BUTTON);
+        },
+    },
+});
 
 export class Header extends IBindable {
     constructor(/* vnode */) {
@@ -16,7 +27,7 @@ export class Header extends IBindable {
         return m('div', {style: {position: 'relative'}}, [
             m(Toolbar,
                 [
-                    m(Menu),
+                    toolbarButton(m.trust(iconMenuSVG)),
                     m(ToolbarTitle, { text: pathName[1], center: true, indent: true }),
                     m('.toolbar-search-bar', [
                         m(SearchBar),

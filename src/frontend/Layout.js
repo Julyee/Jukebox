@@ -1,5 +1,6 @@
 import { IBindable } from '../core/IBindable';
 import { Header } from './header/Header';
+import { Menu } from './header/Menu';
 import m from 'mithril';
 
 export class Layout extends IBindable {
@@ -10,6 +11,7 @@ export class Layout extends IBindable {
 
     view() {
         return [
+            m(Menu),
             m(Header),
             this.content(),
         ];

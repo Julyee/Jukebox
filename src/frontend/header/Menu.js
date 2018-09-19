@@ -1,17 +1,9 @@
-import { List, Drawer, IconButton, ListTile } from 'polythene-mithril';
+import { List, Drawer, ListTile } from 'polythene-mithril';
+import { Events, Buttons } from '../Events';
+import { EventCenter } from '../../core/EventCenter';
 import { IBindable } from '../../core/IBindable';
 // import stream from 'mithril/stream';
 import m from 'mithril';
-
-const iconMenuSVG = '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>';
-const toolbarButton = (svg, state) => m(IconButton, {
-    icon: { svg },
-    events: {
-        onclick: () => {
-            state.show = true;
-        },
-    },
-});
 
 const navigationList = navItemClick =>
     m(List, {
@@ -62,13 +54,27 @@ export class Menu extends IBindable {
         vnode.state.show = false;
     }
 
+    oncreate(vnode) {
+        vnode.state.showEvent = EventCenter.on(Events.BUTTON_PRESS, type => {
+            if (type === Buttons.DRAWER_BUTTON) {
+                vnode.state.show = !vnode.state.show;
+            }
+        });
+    }
+
+    onremove(vnode) {
+        if (vnode.state.showEvent) {
+            EventCenter.off(Events.BUTTON_PRESS, vnode.state.showEvent);
+            delete vnode.state.showEvent;
+        }
+    }
+
     view({ state }) {
         const navItemClick = () => {
             state.show = false;
         };
 
         return [
-            toolbarButton(m.trust(iconMenuSVG), state),
             m(Drawer, {
                 content: navigationList(navItemClick),
                 fixed: true, // global drawer on top of everything
