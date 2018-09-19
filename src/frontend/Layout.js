@@ -1,6 +1,7 @@
 import { IBindable } from '../core/IBindable';
 import { Header } from './header/Header';
 import { Menu } from './header/Menu';
+import { Player } from './player/Player';
 import m from 'mithril';
 
 export class Layout extends IBindable {
@@ -19,6 +20,7 @@ export class Layout extends IBindable {
                     ]),
                     this.content(),
                 ]),
+                m(Player),
             ]),
         ];
     }
