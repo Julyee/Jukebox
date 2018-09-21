@@ -1,3 +1,4 @@
+import { Dialog } from 'polythene-mithril';
 import { IBindable } from '../core/IBindable';
 import { Header } from './header/Header';
 import { Menu } from './header/Menu';
@@ -22,6 +23,7 @@ export class Layout extends IBindable {
                 ]),
                 m(Player),
             ]),
+            m(Dialog),
         ];
     }
 
