@@ -1,3 +1,6 @@
 node_modules
 .idea
 dist
+
+www/devtoken\.jwt
+keys/*.p8
