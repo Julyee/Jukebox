@@ -1,4 +1,6 @@
-import {Icon, List, ListTile, Button, Dialog} from 'polythene-mithril';
+/* global MusicKit */
+
+import {Icon, List, ListTile, Button, Dialog, IOSSpinner} from 'polythene-mithril';
 import { IBindable } from '../../core/IBindable';
 import m from 'mithril';
 
@@ -34,6 +36,31 @@ const comingSoonDialog = {
     backdrop: true,
 };
 
+const loadingDialog = text => ({
+    body: [
+        m('.splash-loading-icon', [
+            m(IOSSpinner, {
+                permanent: true,
+                show: true,
+                raised: false,
+                singleColor: true,
+            }),
+        ]),
+        m('.splash-loading-text', text),
+    ],
+    backdrop: true,
+    modal: true,
+});
+
+function loadScript(url) {
+    const s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = url;
+    const x = document.getElementsByTagName('head')[0];
+    x.appendChild(s);
+}
+
 
 export class Splash extends IBindable {
     constructor(/* vnode */) {
@@ -58,8 +85,8 @@ export class Splash extends IBindable {
                                 subtitle: 'Use your Apple Music Account',
                                 hoverable: true,
                                 navigation: true,
-                                url: {
-                                    href: '#!/Home',
+                                events: {
+                                    onclick: () => this.loginWithAppleMusic(),
                                 },
                                 front: m(Icon, {
                                     svg: iconApple,
@@ -91,8 +118,11 @@ export class Splash extends IBindable {
                                 size: 'regular',
                                 style: {color: '#a0a0a0'},
                             }),
-                            'Donate',
+                            m.trust('&nbsp;Donate'),
                         ],
+                        style: {
+                            padding: '5px',
+                        },
                     })),
                     m('.splash-donations-right', m(Button, {
                         raised: false,
@@ -102,12 +132,44 @@ export class Splash extends IBindable {
                                 size: 'regular',
                                 style: {color: '#a0a0a0'},
                             }),
-                            'Sponsor',
+                            m.trust('&nbsp;Sponsor'),
                         ],
+                        style: {
+                            padding: '5px',
+                        },
                     })),
                 ]),
             ]),
             m(Dialog),
         ];
+    }
+
+    loginWithAppleMusic() {
+        Dialog.show(loadingDialog('Loading Module...'));
+        // let appleMusicPromise;
+        //
+        // if (!window.MusicKit) {
+        //     Dialog.show(loadingDialog('Loading Module...'));
+        //     loadScript('https://js-cdn.music.apple.com/musickit/v1/musickit.js');
+        //     appleMusicPromise = new Promise(resolve => {
+        //         document.addEventListener('musickitloaded', () => {
+        //             Dialog.hide();
+        //             resolve(true);
+        //         });
+        //     });
+        // } else {
+        //     appleMusicPromise = Promise.resolve(true);
+        // }
+        //
+        // appleMusicPromise.then(() => {
+        //     Dialog.show(loadingDialog('Waiting for Apple Music...'));
+        //     MusicKit.configure({
+        //         developerToken: this.mDevToken,
+        //         app: {
+        //             name: name,
+        //             build: build,
+        //         },
+        //     });
+        // });
     }
 }
