@@ -4,7 +4,6 @@ html {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    -webkit-text-size-adjust: none;
 }
 
 body {
@@ -14,7 +13,7 @@ body {
     height: 100%;
     overflow: hidden;
     position: fixed;
-    background: #ffe4ef linear-gradient(8deg, #ffe4e4, #ffffff);
+    background: rgb(253,252,252) linear-gradient(-14deg, rgb(217,229,235), rgb(234,229,239), rgb(253,252,252));
     /* iOS 11 constants */
     padding-top: env(safe-area-inset-top);
     padding-top: const(safe-area-inset-top);
@@ -110,7 +109,7 @@ body {
 .splash-subtitle {
     text-align: right;
     padding: 2px;
-    margin-top: -10px;
+    margin-top: -20px;
     color: #7f7f7f;
 }
 
@@ -139,4 +138,15 @@ body {
     right: 10px;
     flex-grow: 0.5;
     text-align: right;
+}
+
+.splash-loading-icon {
+    display: inline-block;
+    transform: translate(-50%, 0);
+    margin-left: 50%;
+}
+
+.splash-loading-text {
+    text-align: center;
+    padding-top: 10px;
 }
