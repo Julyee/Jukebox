@@ -3,8 +3,8 @@ import IObject from '../core/IObject';
 import { Home, Import, Library, NowPlaying, Search, Splash } from './routes/Routes';
 import m from 'mithril';
 
-import { ApplyFontStyle } from './FontStyler';
-ApplyFontStyle();
+import { applyFontStyle } from './FontStyler';
+applyFontStyle();
 
 export class Frontend extends IObject {
     constructor(root) {

@@ -1,7 +1,7 @@
 import { styler } from 'polythene-core-css';
 import { vars } from 'polythene-style';
 
-export function ApplyFontStyle() {
+export function applyFontStyle() {
     const reset = function () {
         return [{
             // apply a natural box layout model to all elements, but allow elements to change

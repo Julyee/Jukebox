@@ -34,23 +34,21 @@ const iconStepForward = m.trust(`<svg width="280" height="280" viewBox="-70 -40 
 const iconMore = m.trust(`<svg width="280" height="280" viewBox="-70 -40 600 600"><path d="${morePathData}"/></svg>`);
 const iconHeadphones = m.trust(`<svg width="280" height="280" viewBox="-40 -40 600 600"><path d="${headphonesPathData}"/></svg>`);
 
-const makeButton = (svg, className) => {
-    return {
-        view: () =>
-            m('.player-controls-button', [
-                m(IconButton, {
-                    inactive: false,
-                    className: 'player-button',
-                }, [
-                    m(Icon, {
-                        svg: svg,
-                        size: 'large',
-                        className: className,
-                    }),
-                ]),
+const makeButton = (svg, className) => ({
+    view: () =>
+        m('.player-controls-button', [
+            m(IconButton, {
+                inactive: false,
+                className: 'player-button',
+            }, [
+                m(Icon, {
+                    svg: svg,
+                    size: 'large',
+                    className: className,
+                }),
             ]),
-    };
-};
+        ]),
+});
 
 const StepBackButton = makeButton(iconStepBack, 'player-step-icon');
 const PlayButton = makeButton(iconPlay, 'player-play-icon');
