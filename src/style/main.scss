@@ -1,15 +1,16 @@
+@import url('./font_work_sans.scss');
+
 html {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    -webkit-text-size-adjust: none
+    -webkit-text-size-adjust: none;
 }
 
 body {
     margin: 0;
     padding: 0;
     width: 100vw;
-    //height: 100vh;
     height: 100%;
     overflow: hidden;
     position: fixed;
@@ -96,7 +97,7 @@ body {
 .splash-title-container {
     padding-top: 10px;
     margin-left: 40px;
-    width: 200px;
+    width: 210px;
 }
 
 .splash-title {
@@ -108,7 +109,7 @@ body {
 .splash-subtitle {
     text-align: right;
     padding: 2px;
-    margin-top: -22px;
+    margin-top: -10px;
     color: #7f7f7f;
 }
 

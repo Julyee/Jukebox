@@ -3,15 +3,13 @@ import IObject from '../core/IObject';
 import { Home, Import, Library, NowPlaying, Search, Splash } from './routes/Routes';
 import m from 'mithril';
 
-import { addTypography, addLayoutStyles } from 'polythene-css';
-addTypography();
-addLayoutStyles();
+import { ApplyFontStyle } from './FontStyler';
+ApplyFontStyle();
 
 export class Frontend extends IObject {
     constructor(root) {
         super();
         this.mRoot = root;
-        // m.mount(this.mRoot, Search);
         m.route(this.mRoot, '/Splash', {
             '/Splash': Splash,
             '/Home': Home,
