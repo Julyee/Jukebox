@@ -17,8 +17,6 @@ body {
     /* iOS 11 constants */
     padding-top: env(safe-area-inset-top);
     padding-top: const(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-bottom: const(safe-area-inset-bottom);
 }
 
 .toolbar-search-bar {
@@ -51,7 +49,9 @@ body {
 .player-container {
     position: relative;
     border-top: 1px solid rgb(227,227,227);
-    height: 65px;
+    height: calc(65px + env(safe-area-inset-bottom));
+    background-color: white;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .player-progress-container {
