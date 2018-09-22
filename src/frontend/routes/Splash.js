@@ -93,6 +93,7 @@ export class Splash extends IBindable {
                         border: true,
                         indentedBorder: false,
                         compact: false,
+                        padding: 'none',
                         tiles: [
                             m(ListTile, {
                                 title: 'Apple Music',
