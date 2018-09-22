@@ -7,6 +7,7 @@ export class AppleService extends Service {
     constructor() {
         super();
         this.mAPI = null;
+        this.mSearchHintCache = {};
     }
 
     get authorized() {
@@ -43,7 +44,11 @@ export class AppleService extends Service {
     }
 
     async searchHints(term) {
-        await this.authorize();
-        return await this.mAPI.api.searchHints(term);
+        if (!this.mSearchHintCache.hasOwnProperty(term)) {
+            await this.authorize();
+            this.mSearchHintCache[term] = await this.mAPI.api.searchHints(term);
+        }
+
+        return this.mSearchHintCache[term];
     }
 }
