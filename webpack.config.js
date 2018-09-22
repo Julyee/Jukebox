@@ -53,6 +53,10 @@ let config = {
                     }
                 ]
             },
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                loader: 'file-loader',
+            },
         ],
     },
     externals: [

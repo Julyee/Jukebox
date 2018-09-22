@@ -33,7 +33,12 @@ export class Header extends IBindable {
             },
             [
                 toolbarButton(m.trust(iconMenuSVG)),
-                m(ToolbarTitle, { text: pathName[1], center: true, indent: false }),
+                m(ToolbarTitle, {
+                    text: pathName[1],
+                    center: true,
+                    indent: false,
+                    className: 'toolbar-title',
+                }),
                 m('.toolbar-search-bar', [
                     m(SearchBar),
                 ]),
