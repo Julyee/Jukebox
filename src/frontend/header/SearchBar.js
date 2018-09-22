@@ -1,5 +1,6 @@
 import { IBindable } from '../../core/IBindable';
-import { Search, IconButton } from 'polythene-mithril';
+import { Service } from '../../service/Service';
+import { Search, IconButton, List, ListTile } from 'polythene-mithril';
 import { svgPathData as searchPathData } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { svgPathData as clearPathData } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
 import stream from 'mithril/stream';
@@ -53,55 +54,96 @@ export class SearchBar extends IBindable {
     oninit(vnode) {
         const value = stream('');
         const setInputState = stream();
-
-        const clear = () => setInputState()({ value: '', focus: true });
-
+        const matches = stream([]);
+        const clear = () => { setInputState()({ value: '', focus: true }); matches([]); };
         const leave = () => value('');
+        const handleKeyUp = e => {
+            if (e.keyCode === 13) {
+                if (value) {
+                    window.location.href = `#!/Search?q=${encodeURI(value())}`;
+                    clear();
+                }
+            } else if (value()) {
+                Service.activeService().searchHints(value()).then(result => {
+                    matches(result.terms);
+                    m.redraw();
+                });
+            } else {
+                matches([]);
+            }
+        };
 
         vnode.state = {
             value,
             setInputState,
             clear,
             leave,
+            matches,
+            handleKeyUp,
+            focus: false,
         };
     }
 
     view({ state }) {
         const currentValue = state.value();
-        return m(Search, {
-            textfield: {
-                label: 'search...',
-                onChange: ({ value, setInputState }) => { state.value(value); state.setInputState(setInputState); },
-                currentValue,
-            },
-            events: {
-                onkeyup: e => {
-                    if (e.keyCode === 13) {
-                        const value = state.value();
-                        if (value) {
-                            window.location.href = `#!/Search?q=${encodeURI(state.value())}`;
-                        }
-                    }
+        const matches = state.matches();
+        return m('.toolbar-search-container', [
+            m(Search, {
+                textfield: {
+                    label: 'search...',
+                    onChange: ({value, setInputState}) => {
+                        state.value(value);
+                        state.setInputState(setInputState);
+                    },
+                    events: {
+                        onfocus: () => { state.focus = true; },
+                        onblur: () => { state.focus = false; },
+                    },
+                    currentValue,
                 },
-            },
-            buttons: {
-                none: {
-                    before: m(SearchIcon),
+                events: {
+                    onkeyup: state.handleKeyUp,
                 },
-                focus: {
-                    before: m(SearchIcon),
+                buttons: {
+                    none: {
+                        before: m(SearchIcon),
+                    },
+                    focus: {
+                        before: m(SearchIcon),
+                    },
+                    'focus_dirty': {
+                        before: m(SearchIcon),
+                        after: m(ClearButton, {clear: state.clear}),
+                    },
+                    dirty: {
+                        before: m(SearchIcon),
+                        after: m(ClearButton, {clear: state.clear}),
+                    },
                 },
-                'focus_dirty': {
-                    before: m(SearchIcon),
-                    after: m(ClearButton, { clear: state.clear }),
-                },
-                dirty: {
-                    before: m(SearchIcon),
-                    after: m(ClearButton, { clear: state.clear }),
-                },
-            },
-            // fullWidth: true,
-            className: 'jukebox-search',
-        });
+                // fullWidth: true,
+                className: 'jukebox-search',
+            }),
+            state.focus && matches.length && state.value() ?
+                m('.toolbar-search-hints', [
+                    m(List, {
+                        border: true,
+                        indentedBorder: false,
+                        compact: false,
+                        padding: 'none',
+                        tiles: matches.map(match => m(ListTile, {
+                            title: match,
+                            hoverable: true,
+                            navigation: true,
+                            compact: true,
+                            events: {
+                                onmousedown: () => {
+                                    state.clear();
+                                    window.location.href = `#!/Search?q=${encodeURI(match)}`;
+                                },
+                            },
+                        })),
+                    }),
+                ]) : null,
+        ]);
     }
 }
