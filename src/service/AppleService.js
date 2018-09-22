@@ -41,4 +41,9 @@ export class AppleService extends Service {
         }
         return true;
     }
+
+    async searchHints(term) {
+        await this.authorize();
+        return await this.mAPI.api.searchHints(term);
+    }
 }

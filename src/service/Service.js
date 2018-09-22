@@ -38,6 +38,10 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
+    async searchHints() {
+        throw 'Not implemented';
+    }
+
     async findSong() {
         throw 'Not implemented';
     }
