@@ -53,14 +53,16 @@ export class Search extends Layout {
         const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
         const searchTerm = parsedUrl.searchParams.get('q');
         if (searchTerm !== this.mSearchTerm) {
-            const service = Service.activeService();
             this.mSearchTerm = searchTerm;
-            this.mSearchResults = null;
-            service.search(searchTerm, 20).then(result => {
-                console.log(result); // eslint-disable-line
-                this.mSearchResults = result;
-                m.redraw();
-            });
+            if (this.mSearchTerm) {
+                const service = Service.activeService();
+                this.mSearchResults = null;
+                service.search(searchTerm, 20).then(result => {
+                    console.log(result); // eslint-disable-line
+                    this.mSearchResults = result;
+                    m.redraw();
+                });
+            }
         }
     }
 
