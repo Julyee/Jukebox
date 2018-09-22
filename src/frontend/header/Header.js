@@ -25,7 +25,7 @@ export class Header extends IBindable {
     view() {
         const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
         const pathName = parsedUrl.pathname.split('/');
-        return m('div', {style: {position: 'relative'}}, [
+        return m('.toolbar-container', [
             m(Toolbar, {
                 fullbleed: true,
                 border: true,

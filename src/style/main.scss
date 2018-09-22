@@ -19,6 +19,10 @@ body {
     padding-top: const(safe-area-inset-top);
 }
 
+.toolbar-container {
+    position: relative;
+}
+
 .toolbar-search-bar {
     width: 100vw;
     max-width: 400px;
