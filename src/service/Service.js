@@ -11,7 +11,10 @@ export class Service extends IBindable {
         return instanceMap[this.name];
     }
 
-    static activeService() {
+    static activeService(service) {
+        if (arguments.length === 1) {
+            activeService = service;
+        }
         return activeService;
     }
 

@@ -3,12 +3,19 @@ import { IBindable } from '../core/IBindable';
 import { Header } from './header/Header';
 import { Menu } from './header/Menu';
 import { Player } from './player/Player';
+import { Service } from '../service/Service';
 import m from 'mithril';
 
 export class Layout extends IBindable {
     constructor(/* vnode */) {
         super();
         // init
+    }
+
+    oncreate() {
+        if (!(Service.activeService() instanceof Service)) {
+            window.location.href = '#!/Splash';
+        }
     }
 
     view() {

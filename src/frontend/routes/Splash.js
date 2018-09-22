@@ -37,26 +37,6 @@ const warningDialog = {
     backdrop: true,
 };
 
-const errorDialog = (title, message) => ({
-    title: [
-        m(Icon, {
-            svg: errorJukebox,
-            size: 'large',
-        }),
-        `  ${title}`,
-    ],
-    body: m.trust(message),
-    footerButtons: [
-        m(Button, {
-            label: 'OK',
-            events: {
-                onclick: () => Dialog.hide(),
-            },
-        }),
-    ],
-    // backdrop: true,
-});
-
 const loadingDialog = text => ({
     body: [
         m('.splash-loading-icon', [
@@ -111,7 +91,8 @@ export class Splash extends IBindable {
                 m('.splash-container', [
                     m(List, {
                         border: true,
-                        indentedBorder: true,
+                        indentedBorder: false,
+                        compact: false,
                         tiles: [
                             m(ListTile, {
                                 title: 'Apple Music',
@@ -183,6 +164,7 @@ export class Splash extends IBindable {
         service.authorize().then(() => {
             Dialog.hide();
             if (service.authorized) {
+                AppleService.activeService(service);
                 setTimeout(() => {
                     window.location.href = '#!/Home';
                 }, 500);
