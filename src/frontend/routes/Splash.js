@@ -1,6 +1,5 @@
-/* global MusicKit */
-
 import {Icon, List, ListTile, Button, Dialog, IOSSpinner} from 'polythene-mithril';
+import {AppleService} from '../../service/AppleService';
 import { IBindable } from '../../core/IBindable';
 import m from 'mithril';
 
@@ -8,15 +7,17 @@ import {svgPathData as applePathData} from '@fortawesome/free-brands-svg-icons/f
 import {svgPathData as paypalPathData} from '@fortawesome/free-brands-svg-icons/faPaypal';
 import {svgPathData as patreonPathData} from '@fortawesome/free-brands-svg-icons/faPatreon';
 import {svgPathData as jukeboxPathData} from '@fortawesome/free-solid-svg-icons/faPlayCircle';
-import {svgPathData as warningPathData} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import {svgPathData as warningPathData} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import {svgPathData as errorPathData} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 const iconApple = m.trust(`<svg width="280" height="280" viewBox="-110 -40 600 600"><path d="${applePathData}"/></svg>`);
 const iconPayPal = m.trust(`<svg width="280" height="280" viewBox="-110 -40 600 600"><path d="${paypalPathData}"/></svg>`);
 const iconPatreon = m.trust(`<svg width="280" height="280" viewBox="-30 -40 600 600"><path d="${patreonPathData}"/></svg>`);
 const iconJukebox = m.trust(`<svg width="280" height="280" viewBox="-40 -40 600 600"><path d="${jukeboxPathData}"/></svg>`);
 const warningJukebox = m.trust(`<svg width="280" height="280" viewBox="-10 -40 600 600"><path d="${warningPathData}"/></svg>`);
+const errorJukebox = m.trust(`<svg width="280" height="280" viewBox="-10 -40 600 600"><path d="${errorPathData}"/></svg>`);
 
-const comingSoonDialog = {
+const warningDialog = {
     title: [
         m(Icon, {
             svg: warningJukebox,
@@ -35,6 +36,26 @@ const comingSoonDialog = {
     ],
     backdrop: true,
 };
+
+const errorDialog = (title, message) => ({
+    title: [
+        m(Icon, {
+            svg: errorJukebox,
+            size: 'large',
+        }),
+        `  ${title}`,
+    ],
+    body: m.trust(message),
+    footerButtons: [
+        m(Button, {
+            label: 'OK',
+            events: {
+                onclick: () => Dialog.hide(),
+            },
+        }),
+    ],
+    // backdrop: true,
+});
 
 const loadingDialog = text => ({
     body: [
@@ -68,6 +89,18 @@ export class Splash extends IBindable {
         // init
     }
 
+    oncreate() {
+        if (!window.MusicKit) {
+            Dialog.show(loadingDialog('Loading Modules...'));
+            loadScript('https://js-cdn.music.apple.com/musickit/v1/musickit.js');
+            document.addEventListener('musickitloaded', () => {
+                AppleService.instance().init('devtoken.jwt', 'Jukebox by Julyee', '1.0.0').then(() => {
+                    Dialog.hide();
+                });
+            });
+        }
+    }
+
     view() {
         return [
             m('.splash-background', [
@@ -99,7 +132,7 @@ export class Splash extends IBindable {
                                 hoverable: true,
                                 navigation: true,
                                 events: {
-                                    onclick: () => Dialog.show(comingSoonDialog),
+                                    onclick: () => Dialog.show(warningDialog),
                                 },
                                 front: m(Icon, {
                                     svg: iconJukebox,
@@ -145,31 +178,15 @@ export class Splash extends IBindable {
     }
 
     loginWithAppleMusic() {
-        Dialog.show(loadingDialog('Loading Module...'));
-        // let appleMusicPromise;
-        //
-        // if (!window.MusicKit) {
-        //     Dialog.show(loadingDialog('Loading Module...'));
-        //     loadScript('https://js-cdn.music.apple.com/musickit/v1/musickit.js');
-        //     appleMusicPromise = new Promise(resolve => {
-        //         document.addEventListener('musickitloaded', () => {
-        //             Dialog.hide();
-        //             resolve(true);
-        //         });
-        //     });
-        // } else {
-        //     appleMusicPromise = Promise.resolve(true);
-        // }
-        //
-        // appleMusicPromise.then(() => {
-        //     Dialog.show(loadingDialog('Waiting for Apple Music...'));
-        //     MusicKit.configure({
-        //         developerToken: this.mDevToken,
-        //         app: {
-        //             name: name,
-        //             build: build,
-        //         },
-        //     });
-        // });
+        Dialog.show(loadingDialog('Waiting for login...'));
+        const service = AppleService.instance();
+        service.authorize().then(() => {
+            Dialog.hide();
+            if (service.authorized) {
+                setTimeout(() => {
+                    window.location.href = '#!/Home';
+                }, 500);
+            }
+        });
     }
 }
