@@ -1,0 +1,61 @@
+import { IBindable } from '../core/IBindable';
+
+const instanceMap = {};
+let activeService = null;
+
+export class Service extends IBindable {
+    static instance() {
+        if (!instanceMap[this.name]) {
+            instanceMap[this.name] = new this();
+        }
+        return instanceMap[this.name];
+    }
+
+    static activeService() {
+        return activeService;
+    }
+
+    get authorized() {
+        throw 'Not implemented';
+    }
+
+    async init() {
+        throw 'Not implemented';
+    }
+
+    async authorize() {
+        throw 'Not implemented';
+    }
+
+    async unauthorize() {
+        throw 'Not implemented';
+    }
+
+    async search() {
+        throw 'Not implemented';
+    }
+
+    async findSong() {
+        throw 'Not implemented';
+    }
+
+    async queueSong() {
+        throw 'Not implemented';
+    }
+
+    async play() {
+        throw 'Not implemented';
+    }
+
+    async stop() {
+        throw 'Not implemented';
+    }
+
+    async next() {
+        throw 'Not implemented';
+    }
+
+    async previous() {
+        throw 'Not implemented';
+    }
+}
