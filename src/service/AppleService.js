@@ -43,6 +43,13 @@ export class AppleService extends Service {
         return true;
     }
 
+    async search(term, resultCount = 5) {
+        await this.authorize();
+        return await this.mAPI.api.search(term, {
+            limit: resultCount,
+        });
+    }
+
     async searchHints(term) {
         if (!this.mSearchHintCache.hasOwnProperty(term)) {
             await this.authorize();
