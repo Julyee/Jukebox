@@ -1,8 +1,12 @@
 import { Service } from '../../service/Service';
 import { Layout } from '../Layout';
-import {IOSSpinner, Card} from 'polythene-mithril';
-import { CardCSS } from "polythene-css"
+import {IOSSpinner, Card, List, ListTile, Icon} from 'polythene-mithril';
+import { IconCSS } from 'polythene-css';
 import m from 'mithril';
+
+IconCSS.addStyle('.song-icon', {
+    size_large: 48,
+});
 
 export class Search extends Layout {
     constructor() {
@@ -45,6 +49,7 @@ export class Search extends Layout {
 
         return [
             m('.search-result-header', `Results for "${this.mSearchTerm}"`),
+            this._getSongsRow(this.mSearchResults),
             this._getAlbumRow(this.mSearchResults),
         ];
     }
@@ -57,7 +62,7 @@ export class Search extends Layout {
             if (this.mSearchTerm) {
                 const service = Service.activeService();
                 this.mSearchResults = null;
-                service.search(searchTerm, 20).then(result => {
+                service.search(searchTerm, 21).then(result => {
                     console.log(result); // eslint-disable-line
                     this.mSearchResults = result;
                     m.redraw();
@@ -121,6 +126,68 @@ export class Search extends Layout {
                     ],
                 }));
             })),
+        ]);
+    }
+
+    _makeSongColumn(tiles) {
+        return m('.search-result-song-column', m(List, {
+            border: true,
+            indentedBorder: false,
+            compact: false,
+            padding: 'none',
+            tiles: tiles,
+        }));
+    }
+
+    _getSongsRow(results) {
+        if (!results.hasOwnProperty('songs')) {
+            return null;
+        }
+
+        const cols = [];
+        let col = [];
+
+        results.songs.data.forEach(song => {
+            const info = song.attributes;
+            const artworkSize = (52 * window.devicePixelRatio).toString();
+            const artworkURL = info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
+            if (col.length >= 3) {
+                cols.push(this._makeSongColumn(col));
+                col = [];
+            }
+
+            col.push(m(ListTile, {
+                // title: info.name,
+                // highSubtitle: info.artistName,
+                subContent: [
+                    m('.search-result-song-name', info.name),
+                    info.contentRating === 'explicit' ? m('.search-result-song-explicit', '🅴') : null,
+                    m('.search-result-song-artist', info.artistName),
+                    m('.search-result-song-album', info.albumName),
+                ],
+                hoverable: true,
+                navigation: false,
+                compact: true,
+                ink: true,
+                events: {
+                    // onclick: () => this.loginWithAppleMusic(),
+                },
+                front: m('.search-result-song-icon', {
+                    style: {
+                        'background-image': `url(${artworkURL})`,
+                    },
+                }),
+            }));
+
+        });
+
+        if (col.length) {
+            cols.push(this._makeSongColumn(col));
+        }
+
+        return m('.search-result-container', [
+            m('.search-result-title', 'Songs'),
+            m('.search-result-row', cols),
         ]);
     }
 }
