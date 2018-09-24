@@ -55,13 +55,13 @@ export class SearchBar extends IBindable {
         const value = stream('');
         const setInputState = stream();
         const matches = stream([]);
-        const clear = () => { setInputState()({ value: '', focus: true }); matches([]); };
+        const clear = (focus = true) => { setInputState()({ value: '', focus: focus }); matches([]); };
         const leave = () => value('');
         const handleKeyUp = e => {
             if (e.keyCode === 13) {
                 if (value) {
                     window.location.href = `#!/Search?q=${encodeURI(value())}`;
-                    clear();
+                    clear(false);
                 }
             } else if (value()) {
                 Service.activeService().searchHints(value()).then(result => {
@@ -137,7 +137,7 @@ export class SearchBar extends IBindable {
                             compact: true,
                             events: {
                                 onmousedown: () => {
-                                    state.clear();
+                                    state.clear(false);
                                     window.location.href = `#!/Search?q=${encodeURI(match)}`;
                                 },
                             },
