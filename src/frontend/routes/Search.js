@@ -4,8 +4,11 @@ import {IOSSpinner, Card, List, ListTile, Icon} from 'polythene-mithril';
 import { IconCSS } from 'polythene-css';
 import m from 'mithril';
 
-IconCSS.addStyle('.song-icon', {
-    size_large: 48,
+import {svgPathData as profilePathData} from '@fortawesome/free-solid-svg-icons/faUserCircle';
+const iconProfile = m.trust(`<svg width="280" height="280" viewBox="-25 -25 550 550"><path d="${profilePathData}"/></svg>`);
+
+IconCSS.addStyle('.artist-icon', {
+    'size_large': 40,
 });
 
 export class Search extends Layout {
@@ -51,6 +54,9 @@ export class Search extends Layout {
             m('.search-result-header', `Results for "${this.mSearchTerm}"`),
             this._getSongsRow(this.mSearchResults),
             this._getAlbumRow(this.mSearchResults),
+            this._getPlaylistsRow(this.mSearchResults),
+            this._getVideosRow(this.mSearchResults),
+            this._getArtistsRow(this.mSearchResults),
         ];
     }
 
@@ -71,26 +77,31 @@ export class Search extends Layout {
         }
     }
 
-    /**
-     {songs: {…}, albums: {…}, playlists: {…}, music-videos: {…}, artists: {…}}
-     albums
-     :
-     {href: "/v1/catalog/ca/search?term=hello&types=albums", next: "/v1/catalog/ca/search?offset=5&term=hello&types=albums", data: Array(5)}
-     artists
-     :
-     {href: "/v1/catalog/ca/search?term=hello&types=artists", next: "/v1/catalog/ca/search?offset=5&term=hello&types=artists", data: Array(5)}
-     music-videos
-     :
-     {href: "/v1/catalog/ca/search?term=hello&types=music-videos", next: "/v1/catalog/ca/search?offset=5&term=hello&types=music-videos", data: Array(5)}
-     playlists
-     :
-     {href: "/v1/catalog/ca/search?term=hello&types=playlists", next: "/v1/catalog/ca/search?offset=5&term=hello&types=playlists", data: Array(5)}
-     songs
-     :
-     {href: "/v1/catalog/ca/search?term=hello&types=songs", next: "/v1/catalog/ca/search?offset=5&term=hello&types=songs", data: Array(5)}
-     __proto__
-     :
-     */
+    _makeLargeThumbnailCard(title, subtitle, artworkURL, isExplicit) {
+        return m('.search-result-album-container', m(Card, {
+            shadowDepth: 0,
+            content: [
+                {
+                    media: {
+                        ratio: 'square',
+                        size: 'small',
+                        content: m('img', {
+                            src: artworkURL,
+                        }),
+                    },
+                },
+                {
+                    any: {
+                        content: [
+                            m('.search-result-album-name', title),
+                            isExplicit ? m('.search-result-album-explicit', '🅴') : null,
+                            m('.search-result-album-artist', subtitle),
+                        ],
+                    },
+                },
+            ],
+        }));
+    }
 
     _getAlbumRow(results) {
         if (!results.hasOwnProperty('albums')) {
@@ -101,30 +112,25 @@ export class Search extends Layout {
             m('.search-result-title', 'Albums'),
             m('.search-result-row', results.albums.data.map(album => {
                 const info = album.attributes;
-                const albumSize = (180 * window.devicePixelRatio).toString();
-                const artworkURL = info.artwork.url.replace('{w}', albumSize).replace('{h}', albumSize);
-                return m('.search-result-album-container', m(Card, {
-                    shadowDepth: 0,
-                    content: [
-                        {
-                            media: {
-                                ratio: 'square',
-                                size: 'small',
-                                content: m("img", {
-                                    src: artworkURL,
-                                }),
-                            },
-                        },
-                        {
-                            any: {
-                                content: [
-                                    m('.search-result-album-name', info.name),
-                                    m('.search-result-album-artist', info.artistName),
-                                ],
-                            },
-                        },
-                    ],
-                }));
+                const artworkSize = (180 * window.devicePixelRatio).toString();
+                const artworkURL = info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
+                return this._makeLargeThumbnailCard(info.name, info.artistName, artworkURL, info.contentRating === 'explicit');
+            })),
+        ]);
+    }
+
+    _getPlaylistsRow(results) {
+        if (!results.hasOwnProperty('playlists')) {
+            return null;
+        }
+
+        return m('.search-result-container', [
+            m('.search-result-title', 'Playlists'),
+            m('.search-result-row', results.playlists.data.map(playlist => {
+                const info = playlist.attributes;
+                const artworkSize = (180 * window.devicePixelRatio).toString();
+                const artworkURL = info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
+                return this._makeLargeThumbnailCard(info.name, info.curatorName, artworkURL, info.contentRating === 'explicit');
             })),
         ]);
     }
@@ -178,7 +184,6 @@ export class Search extends Layout {
                     },
                 }),
             }));
-
         });
 
         if (col.length) {
@@ -188,6 +193,106 @@ export class Search extends Layout {
         return m('.search-result-container', [
             m('.search-result-title', 'Songs'),
             m('.search-result-row', cols),
+        ]);
+    }
+
+    _getVideosRow(results) {
+        if (!results.hasOwnProperty('music-videos')) {
+            return null;
+        }
+
+        return m('.search-result-container', [
+            m('.search-result-title', 'Music Videos'),
+            m('.search-result-row', results['music-videos'].data.map(video => {
+                const info = video.attributes;
+
+                const artworkWidth = (360 * window.devicePixelRatio).toString();
+                const artworkHeight = Math.floor((info.artwork.height / info.artwork.width) * 360 * window.devicePixelRatio);
+                const artworkURL = info.artwork.url.replace('{w}', artworkWidth).replace('{h}', artworkHeight);
+                // return this._makeLargeThumbnailCard(info.name, info.artistName, artworkURL, info.contentRating === 'explicit');
+                return m('.search-result-video-container', m(Card, {
+                    shadowDepth: 0,
+                    content: [
+                        {
+                            media: {
+                                // ratio: 'square',
+                                size: 'small',
+                                content: m('img', {
+                                    src: artworkURL,
+                                }),
+                            },
+                        },
+                        {
+                            overlay: {
+                                shadowDepth: 0,
+                                content: [
+                                    {
+                                        any: {
+                                            content: [
+                                                m('.search-result-video-info-container', [
+                                                    m('.search-result-video-info-background', {
+                                                        style: {
+                                                            'background-image': `url(${artworkURL})`,
+                                                        },
+                                                    }),
+                                                    m('.search-result-video-name', info.name),
+                                                    info.contentRating === 'explicit' ? m('.search-result-video-explicit', '🅴') : null,
+                                                    m('.search-result-video-artist', info.artistName),
+                                                ]),
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                }));
+            })),
+        ]);
+    }
+
+    _getArtistsRow(results) {
+        if (!results.hasOwnProperty('artists')) {
+            return null;
+        }
+
+        return m('.search-result-container', [
+            m('.search-result-title', 'Artists'),
+            m('.search-result-row', results.artists.data.map(artist => {
+                const info = artist.attributes;
+                const genres = info.genreNames.length ? info.genreNames.join(', ') : 'N/A';
+                let albums;
+                if (artist.relationships.albums && artist.relationships.albums.data.length) {
+                    albums = artist.relationships.albums.data.length;
+                    if (artist.relationships.albums.next) {
+                        albums += '+';
+                    }
+                    albums += ` ${artist.relationships.albums.data.length === 1 ? 'Album' : 'Albums'}`;
+                } else {
+                    albums = 'No Albums';
+                }
+                return m('.search-result-artist-container', m(Card, {
+                    shadowDepth: 0,
+                    content: [
+                        {
+                            any: {
+                                content: [
+                                    m('.search-result-artist-icon', m(Icon, {
+                                        svg: iconProfile,
+                                        size: 'large',
+                                        className: 'artist-icon',
+                                    })),
+                                    m('.search-result-artist-info', [
+                                        m('.search-result-artist-name', info.name),
+                                        m('.search-result-artist-genre', genres),
+                                        m('.search-result-artist-genre', albums),
+                                    ]),
+                                ],
+                            },
+                        },
+                    ],
+                }));
+            })),
         ]);
     }
 }

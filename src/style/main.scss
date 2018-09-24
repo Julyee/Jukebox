@@ -214,8 +214,8 @@ body {
 
 .search-result-container {
     border-top: solid 1px rgba(200,200,200,0.5);
-    padding-top: 15px;
-    padding-bottom: 30px;
+    padding-top: 12px;
+    padding-bottom: 20px;
 }
 
 .search-result-title {
@@ -240,24 +240,37 @@ body {
 }
 
 .search-result-album-name {
-    padding-top: 6px;
+    padding-top: 10px;
     padding-left: 6px;
     padding-right: 6px;
     font-size: 14px;
-    font-weight: 300;
+    line-height: 14px;
+    font-weight: 400;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: 14px;
+    display: inline-block;
+    width: 141px;
+}
+
+.search-result-album-explicit {
+    color: rgb(114,114,117);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -8px);
 }
 
 .search-result-album-artist {
     color: rgb(114,114,117);
-    font-weight: 200;
+    font-weight: 300;
     font-size: 12px;
+    line-height: 12px;
     padding-left: 6px;
     padding-right: 6px;
-    padding-bottom: 3px;
+    padding-bottom: 6px;
+    margin-top: -1px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -267,6 +280,7 @@ body {
     width: 350px;
     display: inline-block;
     margin-right: 25px;
+    vertical-align: top;
 }
 
 .search-result-song-icon {
@@ -290,8 +304,8 @@ body {
 }
 
 .search-result-song-explicit {
-    color: rgb(154,154,157);
-    font-size: 11px;
+    color: rgb(114,114,117);
+    font-size: 10px;
     display: inline-block;
     padding-left: 4px;
     line-height: 1px;
@@ -320,4 +334,137 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 250px;
+}
+
+.search-result-video-container {
+    padding: 10px;
+    display: inline-block;
+    width: 360px;
+}
+
+.search-result-video-info-background {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(110%);
+    width: 380px;
+    height: 231px;
+    bottom: -20px;
+    left: -20px;
+}
+
+.search-result-video-info-background::before {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-image: inherit;
+    width: 340px;
+    height: 191px;
+    top: 20px;
+    left: 20px;
+    content: '';
+    display: inline-block;
+}
+
+.search-result-video-info-background::after {
+    position: relative;
+    background-color: rgba(255,255,255,0.5);
+    width: 100%;
+    height: 100%;
+    content: '';
+    display: inline-block;
+}
+
+.search-result-video-info-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.search-result-video-name {
+    padding-top: 10px;
+    padding-left: 12px;
+    padding-right: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    width: 315px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-result-video-explicit {
+    color: rgb(34,34,37);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -8px);
+    position:relative;
+    z-index: 10;
+}
+
+.search-result-video-artist {
+    color: rgb(34,34,37);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 12px;
+    padding-left: 12px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    margin-top: -3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 360px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-result-artist-container {
+    padding: 10px 10px;
+    width: 180px;
+    float: left;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.search-result-artist-icon {
+    position: relative;
+    padding-top: 10px;
+    color: rgb(163,168,180);
+    text-align: center;
+}
+
+.search-result-artist-info {
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    width: auto;
+}
+
+.search-result-artist-name {
+    padding: 10px 6px 2px;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-result-artist-genre {
+    color: rgb(114,114,117);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 12px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
