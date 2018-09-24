@@ -7,15 +7,13 @@ import {svgPathData as applePathData} from '@fortawesome/free-brands-svg-icons/f
 import {svgPathData as paypalPathData} from '@fortawesome/free-brands-svg-icons/faPaypal';
 import {svgPathData as patreonPathData} from '@fortawesome/free-brands-svg-icons/faPatreon';
 import {svgPathData as jukeboxPathData} from '@fortawesome/free-solid-svg-icons/faPlayCircle';
-import {svgPathData as warningPathData} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
-import {svgPathData as errorPathData} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import {svgPathData as warningPathData} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 const iconApple = m.trust(`<svg width="280" height="280" viewBox="-110 -40 600 600"><path d="${applePathData}"/></svg>`);
 const iconPayPal = m.trust(`<svg width="280" height="280" viewBox="-110 -40 600 600"><path d="${paypalPathData}"/></svg>`);
 const iconPatreon = m.trust(`<svg width="280" height="280" viewBox="-30 -40 600 600"><path d="${patreonPathData}"/></svg>`);
 const iconJukebox = m.trust(`<svg width="280" height="280" viewBox="-40 -40 600 600"><path d="${jukeboxPathData}"/></svg>`);
 const warningJukebox = m.trust(`<svg width="280" height="280" viewBox="-10 -40 600 600"><path d="${warningPathData}"/></svg>`);
-const errorJukebox = m.trust(`<svg width="280" height="280" viewBox="-10 -40 600 600"><path d="${errorPathData}"/></svg>`);
 
 const warningDialog = {
     title: [
