@@ -1,0 +1,291 @@
+.search-full-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    box-shadow: silver 2px 2px 5px;
+    padding: 20px 50px 15px 50px;
+    max-width: 80vw;
+    max-height: 60vh;
+    overflow: hidden;
+}
+
+.search-loading-icon {
+    display: inline-block;
+    transform: translate(-50%, 0);
+    margin-left: 50%;
+}
+
+.search-loading-text {
+    text-align: center;
+    padding-top: 5px;
+    color: #7f7f7f;
+    font-weight: 100;
+}
+
+.search-result-header {
+    font-size: 24px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 10px;
+}
+
+.search-result-container {
+    border-top: solid 1px rgba(200,200,200,0.5);
+    padding-top: 12px;
+    padding-bottom: 20px;
+}
+
+.search-result-title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.search-result-row {
+    white-space: nowrap;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: hidden;
+    background-color: rgba(255,255,255,0.3);
+    border-bottom: solid 1px rgba(200,200,200,0.3);
+    border-top: solid 1px rgba(200,200,200,0.3);
+}
+
+.search-result-album-container {
+    padding: 10px;
+    display: inline-block;
+    width: 180px;
+}
+
+.search-result-album-name {
+    padding-top: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    width: 141px;
+}
+
+.search-result-album-explicit {
+    color: rgb(114,114,117);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -8px);
+}
+
+.search-result-album-artist {
+    color: rgb(114,114,117);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 12px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    margin-top: -1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-result-song-column {
+    width: 350px;
+    display: inline-block;
+    margin-right: 25px;
+    vertical-align: top;
+}
+
+.search-result-song-icon {
+    border-radius: 3px;
+    width: 52px;
+    height: 52px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.search-result-song-name {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
+    display: inline-block;
+}
+
+.search-result-song-explicit {
+    color: rgb(114,114,117);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -4px);
+}
+
+.search-result-song-artist {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 12px;
+    line-height: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 0;
+    padding-bottom: 2px;
+    max-width: 250px;
+}
+
+.search-result-song-album {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 10px;
+    line-height: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
+}
+
+.search-result-video-container {
+    padding: 10px;
+    display: inline-block;
+    width: 360px;
+}
+
+.search-result-video-info-background {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(110%);
+    width: 380px;
+    height: 231px;
+    bottom: -20px;
+    left: -20px;
+}
+
+.search-result-video-info-background::before {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-image: inherit;
+    width: 340px;
+    height: 191px;
+    top: 20px;
+    left: 20px;
+    content: '';
+    display: inline-block;
+}
+
+.search-result-video-info-background::after {
+    position: relative;
+    background-color: rgba(255,255,255,0.5);
+    width: 100%;
+    height: 100%;
+    content: '';
+    display: inline-block;
+}
+
+.search-result-video-info-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.search-result-video-name {
+    padding-top: 10px;
+    padding-left: 12px;
+    padding-right: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    width: 315px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-result-video-explicit {
+    color: rgb(34,34,37);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -8px);
+    position:relative;
+    z-index: 10;
+}
+
+.search-result-video-artist {
+    color: rgb(34,34,37);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 12px;
+    padding-left: 12px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    margin-top: -3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 360px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-result-artist-container {
+    padding: 10px 10px;
+    width: 180px;
+    float: left;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.search-result-artist-icon {
+    position: relative;
+    padding-top: 10px;
+    color: rgb(163,168,180);
+    text-align: center;
+}
+
+.search-result-artist-info {
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    width: auto;
+}
+
+.search-result-artist-name {
+    padding: 10px 6px 2px;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-result-artist-genre {
+    color: rgb(114,114,117);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 12px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -1,0 +1,28 @@
+.toolbar-container {
+    position: relative;
+}
+
+.toolbar-search-container {
+    position: relative;
+}
+
+.toolbar-search-bar {
+    width: 100vw;
+    max-width: 400px;
+    min-width: 200px;
+    border-bottom: solid #a0a0a0 1px;
+}
+
+.toolbar-search-hints {
+    position: absolute;
+    width: 100%;
+    max-height: 65vh;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    background-color: white;
+    box-shadow: silver 2px 2px 5px;
+}
+
+.toolbar-title {
+    font-weight: 800;
+}
