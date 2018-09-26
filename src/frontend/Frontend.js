@@ -1,6 +1,6 @@
 import IObject from '../core/IObject';
 
-import { Home, Import, Library, NowPlaying, Search, Splash } from './routes/Routes';
+import { Home, Import, Library, NowPlaying, Search, Splash } from './routes';
 import m from 'mithril';
 
 import { applyFontStyle } from './FontStyler';
