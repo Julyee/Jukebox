@@ -1,7 +1,9 @@
-import { Service } from '../../service/Service';
-import { Layout } from '../Layout';
+import {Service} from '../../service/Service';
+import {Layout} from '../Layout';
 import {IOSSpinner, Card, List, ListTile, Icon} from 'polythene-mithril';
-import { IconCSS } from 'polythene-css';
+import {IconCSS} from 'polythene-css';
+import {EventCenter} from '../../core/EventCenter';
+import {Events, Buttons} from '../Events';
 import m from 'mithril';
 
 import {svgPathData as profilePathData} from '@fortawesome/free-solid-svg-icons/faUserCircle';
@@ -104,32 +106,32 @@ export class Search extends Layout {
     }
 
     _getAlbumRow(results) {
-        if (!results.hasOwnProperty('albums')) {
+        if (!results.albums) {
             return null;
         }
 
         return m('.search-result-container', [
             m('.search-result-title', 'Albums'),
-            m('.search-result-row', results.albums.data.map(album => {
+            m('.search-result-row', results.albums.map(album => {
                 const info = album.attributes;
                 const artworkSize = (180 * window.devicePixelRatio).toString();
-                const artworkURL = info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
+                const artworkURL = info.artwork && info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
                 return this._makeLargeThumbnailCard(info.name, info.artistName, artworkURL, info.contentRating === 'explicit');
             })),
         ]);
     }
 
     _getPlaylistsRow(results) {
-        if (!results.hasOwnProperty('playlists')) {
+        if (!results.playlists) {
             return null;
         }
 
         return m('.search-result-container', [
             m('.search-result-title', 'Playlists'),
-            m('.search-result-row', results.playlists.data.map(playlist => {
+            m('.search-result-row', results.playlists.map(playlist => {
                 const info = playlist.attributes;
                 const artworkSize = (180 * window.devicePixelRatio).toString();
-                const artworkURL = info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
+                const artworkURL = info.artwork && info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
                 return this._makeLargeThumbnailCard(info.name, info.curatorName, artworkURL, info.contentRating === 'explicit');
             })),
         ]);
@@ -146,37 +148,34 @@ export class Search extends Layout {
     }
 
     _getSongsRow(results) {
-        if (!results.hasOwnProperty('songs')) {
+        if (!results.songs) {
             return null;
         }
 
         const cols = [];
         let col = [];
 
-        results.songs.data.forEach(song => {
-            const info = song.attributes;
-            const artworkSize = (52 * window.devicePixelRatio).toString();
-            const artworkURL = info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
+        results.songs.forEach(song => {
+            const artworkURL = song.formatArtworkURL(52, 52);
+
             if (col.length >= 3) {
                 cols.push(this._makeSongColumn(col));
                 col = [];
             }
 
             col.push(m(ListTile, {
-                // title: info.name,
-                // highSubtitle: info.artistName,
                 subContent: [
-                    m('.search-result-song-name', info.name),
-                    info.contentRating === 'explicit' ? m('.search-result-song-explicit', '🅴') : null,
-                    m('.search-result-song-artist', info.artistName),
-                    m('.search-result-song-album', info.albumName),
+                    m('.search-result-song-name', song.name),
+                    song.rating === 'explicit' ? m('.search-result-song-explicit', '🅴') : null,
+                    m('.search-result-song-artist', song.artist),
+                    m('.search-result-song-album', song.album),
                 ],
                 hoverable: true,
                 navigation: false,
                 compact: true,
                 ink: true,
                 events: {
-                    // onclick: () => this.loginWithAppleMusic(),
+                    onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.PLAY_SONG_BUTTON, song),
                 },
                 front: m('.search-result-song-icon', {
                     style: {
@@ -197,21 +196,24 @@ export class Search extends Layout {
     }
 
     _getVideosRow(results) {
-        if (!results.hasOwnProperty('music-videos')) {
+        if (!results['music-videos']) {
             return null;
         }
 
         return m('.search-result-container', [
             m('.search-result-title', 'Music Videos'),
-            m('.search-result-row', results['music-videos'].data.map(video => {
+            m('.search-result-row', results['music-videos'].map(video => {
                 const info = video.attributes;
 
                 const artworkWidth = (360 * window.devicePixelRatio).toString();
                 const artworkHeight = Math.floor((info.artwork.height / info.artwork.width) * 360 * window.devicePixelRatio);
-                const artworkURL = info.artwork.url.replace('{w}', artworkWidth).replace('{h}', artworkHeight);
+                const artworkURL = info.artwork && info.artwork.url.replace('{w}', artworkWidth).replace('{h}', artworkHeight);
                 // return this._makeLargeThumbnailCard(info.name, info.artistName, artworkURL, info.contentRating === 'explicit');
                 return m('.search-result-video-container', m(Card, {
                     shadowDepth: 0,
+                    events: {
+                        onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.PLAY_SONG_BUTTON, video),
+                    },
                     content: [
                         {
                             media: {
@@ -252,13 +254,13 @@ export class Search extends Layout {
     }
 
     _getArtistsRow(results) {
-        if (!results.hasOwnProperty('artists')) {
+        if (!results.artists) {
             return null;
         }
 
         return m('.search-result-container', [
             m('.search-result-title', 'Artists'),
-            m('.search-result-row', results.artists.data.map(artist => {
+            m('.search-result-row', results.artists.map(artist => {
                 const info = artist.attributes;
                 const genres = info.genreNames.length ? info.genreNames.join(', ') : 'N/A';
                 let albums;
