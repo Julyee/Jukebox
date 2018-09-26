@@ -7,6 +7,9 @@ import {svgPathData as stepBackPathData} from '@fortawesome/free-solid-svg-icons
 import {svgPathData as morePathData} from '@fortawesome/free-solid-svg-icons/faEllipsisH';
 import {svgPathData as headphonesPathData} from '@fortawesome/free-solid-svg-icons/faHeadphones';
 import {IconCSS, IconButtonCSS} from 'polythene-css';
+import {EventCenter} from '../../core/EventCenter';
+import {Events} from '../Events';
+import {Service} from '../../service/Service';
 
 IconButtonCSS.addStyle('.player-button', {
     padding: 2,
@@ -59,14 +62,49 @@ const MoreButton = makeButton(iconMore, 'player-more-icon');
 export class Player extends IBindable {
     constructor(/* vnode */) {
         super();
-        // init
     }
 
-    view() {
+    oninit(vnode) {
+        const service = Service.activeService();
+        vnode.state.loadingProgress = service ? service.bufferingProgress : 0;
+        vnode.state.timeProgress = service ? service.playbackProgress : 0;
+    }
+
+    oncreate(vnode) {
+        vnode.state.bufferEvent = EventCenter.on(Events.PLAYER_BUFFER_CHANGE, progress => {
+            if (progress !== vnode.state.loadingProgress) {
+                vnode.state.loadingProgress = progress;
+                m.redraw();
+            }
+        });
+
+        vnode.state.playbackTimeEvent = EventCenter.on(Events.PLAYER_TIME_CHANGE, (total, current) => {
+            const progress = (current / total) * 100;
+            if (progress !== vnode.state.timeProgress) {
+                vnode.state.timeProgress = progress;
+                m.redraw();
+            }
+        });
+    }
+
+    onremove(vnode) {
+        if (vnode.state.bufferEvent) {
+            EventCenter.off(Events.PLAYER_BUFFER_CHANGE, vnode.state.bufferEvent);
+            delete vnode.state.bufferEvent;
+        }
+
+        if (vnode.state.playbackTimeEvent) {
+            EventCenter.off(Events.PLAYER_TIME_CHANGE, vnode.state.playbackTimeEvent);
+            delete vnode.state.playbackTimeEvent;
+        }
+    }
+
+    view({ state }) {
         return m('.player-container',
             [
                 m('.player-progress-container', [
-                    m('.player-progress'),
+                    m('.player-loading', { style: { width: `${state.loadingProgress}%`} }),
+                    m('.player-progress', { style: { width: `${state.timeProgress}%`} }),
                 ]),
                 m('.player-controls-container', [
                     m(Card, {

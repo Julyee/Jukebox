@@ -9,6 +9,7 @@ export const Events = {
     SONG_COMPLETE: 'PLR::SongComplete',
 
     PLAYER_TIME_CHANGE: 'PLR::TimeChange',
+    PLAYER_BUFFER_CHANGE: 'PLR::BufferChange',
 };
 
 export const Buttons = {

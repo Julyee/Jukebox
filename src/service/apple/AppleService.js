@@ -30,6 +30,14 @@ export class AppleService extends Service {
         return this.mAPI.isAuthorized;
     }
 
+    get bufferingProgress() {
+        return this.mAPI.player.currentBufferedProgress;
+    }
+
+    get playbackProgress() {
+        return this.mAPI.player.currentPlaybackProgress;
+    }
+
     async init(devTokenPath, appName, build) {
         const devToken = await m.request({
             method: 'GET',
@@ -129,6 +137,7 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.bufferedProgressDidChange:
+                EventCenter.emit(Events.PLAYER_BUFFER_CHANGE, info.progress);
                 break;
 
             case MKEvents.eligibleForSubscribeView:
@@ -165,6 +174,7 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.playbackProgressDidChange:
+                // EventCenter.emit(Events.PLAYER_TIME_CHANGE, info.progress);
                 break;
 
             case MKEvents.playbackStateDidChange: {
@@ -182,6 +192,7 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.playbackTimeDidChange:
+                EventCenter.emit(Events.PLAYER_TIME_CHANGE, info.currentPlaybackDuration, info.currentPlaybackTime);
                 break;
 
             case MKEvents.playbackVolumeDidChange:

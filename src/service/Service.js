@@ -28,6 +28,14 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
+    get bufferingProgress() {
+        throw 'Not implemented';
+    }
+
+    get playbackProgress() {
+        throw 'Not implemented';
+    }
+
     async init() {
         throw 'Not implemented';
     }

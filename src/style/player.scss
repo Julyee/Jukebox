@@ -11,7 +11,7 @@
     height: 4px;
     width: 100%;
     overflow: hidden;
-    background: #f0f0f0 linear-gradient(141deg, #c0c0c0 0%, #f0f0f0 100%);;
+    background: #f0f0f0 linear-gradient(141deg, #d8d8d8 0%, #f0f0f0 100%);;
 }
 
 .player-progress {
@@ -19,6 +19,8 @@
     height: inherit;
     width: 0;
     background-color: rgba(31,200,219,0.5);
+    transition-property: width;
+    transition-duration: 2s;
 }
 
 .player-loading {
@@ -26,6 +28,8 @@
     height: inherit;
     width: 0;
     background-color: rgba(0,0,0,0.1);
+    transition-property: width;
+    transition-duration: 0.5s;
 }
 
 .player-controls-container {
