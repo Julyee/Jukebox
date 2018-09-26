@@ -1,5 +1,5 @@
 import {Icon, List, ListTile, Button, Dialog, IOSSpinner} from 'polythene-mithril';
-import {AppleService} from '../../service/AppleService';
+import {AppleService} from '../../service/apple/AppleService';
 import { IBindable } from '../../core/IBindable';
 import m from 'mithril';
 
