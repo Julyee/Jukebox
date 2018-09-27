@@ -35,7 +35,10 @@ export class AppleService extends Service {
     }
 
     get playbackProgress() {
-        return this.mAPI.player.currentPlaybackProgress;
+        if (!isNaN(this.mAPI.player.currentPlaybackDuration) && this.mAPI.player.currentPlaybackDuration > 0) {
+            return (this.mAPI.player.audio.currentTime / this.mAPI.player.currentPlaybackDuration) * 100;
+        }
+        return 0;
     }
 
     async init(devTokenPath, appName, build) {
@@ -222,6 +225,6 @@ export class AppleService extends Service {
             default:
                 break;
         }
-        console.log([event, info]); // eslint-disable-line
+        // console.log([event, info]); // eslint-disable-line
     }
 }

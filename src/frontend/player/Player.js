@@ -71,18 +71,24 @@ export class Player extends IBindable {
     }
 
     oncreate(vnode) {
+        const progressCanvas = vnode.dom.getElementsByClassName('player-progress')[0];
+        progressCanvas.width = progressCanvas.offsetWidth * window.devicePixelRatio;
+        progressCanvas.height = progressCanvas.offsetHeight * window.devicePixelRatio;
+        vnode.state.progressContext = progressCanvas.getContext('2d');
+        this._renderProgress(vnode.state.progressContext, 0, 0);
+
         vnode.state.bufferEvent = EventCenter.on(Events.PLAYER_BUFFER_CHANGE, progress => {
             if (progress !== vnode.state.loadingProgress) {
                 vnode.state.loadingProgress = progress;
-                m.redraw();
+                this._renderProgress(vnode.state.progressContext, progress, vnode.state.timeProgress);
             }
         });
 
-        vnode.state.playbackTimeEvent = EventCenter.on(Events.PLAYER_TIME_CHANGE, (total, current) => {
-            const progress = (current / total) * 100;
+        vnode.state.playbackTimeEvent = EventCenter.on(Events.PLAYER_TIME_CHANGE, () => {
+            const progress = Service.activeService().playbackProgress;
             if (progress !== vnode.state.timeProgress) {
                 vnode.state.timeProgress = progress;
-                m.redraw();
+                this._renderProgress(vnode.state.progressContext, vnode.state.loadingProgress, progress);
             }
         });
     }
@@ -103,8 +109,8 @@ export class Player extends IBindable {
         return m('.player-container',
             [
                 m('.player-progress-container', [
-                    m('.player-loading', { style: { width: `${state.loadingProgress}%`} }),
-                    m('.player-progress', { style: { width: `${state.timeProgress}%`} }),
+                    // m('.player-loading', { style: { width: `${state.loadingProgress}%`} }),
+                    m('canvas', { class: 'player-progress' }),
                 ]),
                 m('.player-controls-container', [
                     m(Card, {
@@ -120,12 +126,6 @@ export class Player extends IBindable {
                                     },
                                 },
                             },
-                            // {
-                            //     primary: {
-                            //         title: 'Song Name',
-                            //         subtitle: 'Artist Name',
-                            //     },
-                            // },
                         ],
                         style: {
                             'flex-grow': 0.91,
@@ -139,5 +139,18 @@ export class Player extends IBindable {
                 ]),
             ],
         );
+    }
+
+    _renderProgress(ctx, bufferProgress, playbackProgress) {
+        const width = ctx.canvas.width;
+        const height = ctx.canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        ctx.fillRect(0, 0, width * bufferProgress * 0.01, height);
+
+        ctx.fillStyle = 'rgba(31,200,219,0.5)';
+        ctx.fillRect(0, 0, width * playbackProgress * 0.01, height);
     }
 }
