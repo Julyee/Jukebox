@@ -36,6 +36,22 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
+    get isPlaying() {
+        throw 'Not implemented';
+    }
+
+    get currentSong() {
+        throw 'Not implemented';
+    }
+
+    get audioContext() {
+        throw 'Not implemented';
+    }
+
+    get audioContextSource() {
+        throw 'Not implemented';
+    }
+
     async init() {
         throw 'Not implemented';
     }

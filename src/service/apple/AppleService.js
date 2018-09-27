@@ -23,6 +23,8 @@ export class AppleService extends Service {
     constructor() {
         super();
         this.mAPI = null;
+        this.mAudioContext = null;
+        this.mAudioContextSource = null;
         this.mSearchHintCache = {};
     }
 
@@ -41,6 +43,25 @@ export class AppleService extends Service {
         return 0;
     }
 
+    get isPlaying() {
+        return this.mAPI.player.isPlaying;
+    }
+
+    get currentSong() {
+        if (this.isPlaying) {
+            return new AppleSong(this.mAPI.player.nowPlayingItem);
+        }
+        return null;
+    }
+
+    get audioContext() {
+        return this.mAudioContext;
+    }
+
+    get audioContextSource() {
+        return this.mAudioContextSource;
+    }
+
     async init(devTokenPath, appName, build) {
         const devToken = await m.request({
             method: 'GET',
@@ -56,6 +77,10 @@ export class AppleService extends Service {
         });
 
         Object.keys(MusicKit.Events).forEach(key => this._registerPlayerEvent(MusicKit.Events[key]));
+
+        this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.mAudioContextSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
+        this.mAudioContextSource.connect(this.mAudioContext.destination);
     }
 
     async authorize() {
@@ -98,7 +123,7 @@ export class AppleService extends Service {
 
     async play(song = null) {
         await this.authorize();
-        if (this.mAPI.player.isPlaying) {
+        if (this.isPlaying) {
             await this.stop();
         }
 
