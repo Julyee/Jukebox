@@ -2,8 +2,9 @@
     position: relative;
     border-top: 1px solid rgb(227,227,227);
     background-color: white;
+    height: 70px;
     /* iOS 11 constants */
-    height: calc(65px + env(safe-area-inset-bottom));
+    height: 70px + env(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -15,21 +16,116 @@
 }
 
 .player-progress {
-    position: absolute;
     height: inherit;
     width: inherit;
+    position: absolute;
     background: linear-gradient(141deg, #d8d8d8 0%, #f0f0f0 100%);
 }
 
-.player-controls-container {
+.player-view-container {
+    height: 65px;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
+}
+
+.player-icon-container {
+    height: inherit;
+    flex: 0 0 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.player-icon {
+    width: 40px;
+    height: 40px;
+    margin-left: 2px;
+    border-radius: 3px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.player-info-container {
+    height: inherit;
+    flex: 1 1 1px;
+    padding-left: 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.player-info {
+    padding: 0;
+    margin: 0;
+}
+
+.player-song-name {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 14px);
+    display: inline-block;
+}
+
+.player-song-explicit {
+    color: rgb(114,114,117);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -4px);
+}
+
+.player-song-artist {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 12px;
+    line-height: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 0;
+    padding-bottom: 2px;
+}
+
+.player-song-album {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 10px;
+    line-height: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player-controls-container {
+    position: relative;
+    height: inherit;
+    flex: 0 0 220px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.player-controls {
+    width: 220px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .player-controls-button {
-    flex-grow: 0.03;
     align-self: center;
     text-align: center;
+    display: inline-block;
+    width: 45px;
+    vertical-align: middle;
 }

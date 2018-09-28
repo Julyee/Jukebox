@@ -1,14 +1,15 @@
 import { IBindable } from '../../core/IBindable';
-import { IconButton, Icon, Card } from 'polythene-mithril';
+import { IconButton, Icon } from 'polythene-mithril';
 import m from 'mithril';
-import {svgPathData as playPathData} from '@fortawesome/free-solid-svg-icons/faPlay';
-import {svgPathData as stepForwardPathData} from '@fortawesome/free-solid-svg-icons/faStepForward';
-import {svgPathData as stepBackPathData} from '@fortawesome/free-solid-svg-icons/faStepBackward';
-import {svgPathData as morePathData} from '@fortawesome/free-solid-svg-icons/faEllipsisH';
-import {svgPathData as headphonesPathData} from '@fortawesome/free-solid-svg-icons/faHeadphones';
+import * as playSVG from '@fortawesome/free-solid-svg-icons/faPlay';
+import * as pauseSVG from '@fortawesome/free-solid-svg-icons/faPause';
+import * as stepForwardSVG from '@fortawesome/free-solid-svg-icons/faStepForward';
+import * as stepBackSVG from '@fortawesome/free-solid-svg-icons/faStepBackward';
+import * as moreSVG from '@fortawesome/free-solid-svg-icons/faEllipsisH';
+import * as headphonesSVG from '@fortawesome/free-solid-svg-icons/faHeadphones';
 import {IconCSS, IconButtonCSS} from 'polythene-css';
 import {EventCenter} from '../../core/EventCenter';
-import {Events} from '../Events';
+import {Buttons, Events, PlaybackStateEvents} from '../Events';
 import {Service} from '../../service/Service';
 
 IconButtonCSS.addStyle('.player-button', {
@@ -27,22 +28,24 @@ IconCSS.addStyle('.player-more-icon', {
     'size_large': 25,
 });
 
-IconCSS.addStyle('.player-headphones-icon', {
-    'size_large': 45,
-});
+const makeSVG = (iconDesc, width, height) => m.trust(`<svg width="${width}" height="${height}" viewBox="0 0 ${iconDesc.width} ${iconDesc.height}"><path d="${iconDesc.svgPathData}"/></svg>`);
 
-const iconStepBack = m.trust(`<svg width="280" height="280" viewBox="-70 -40 600 600"><path d="${stepBackPathData}"/></svg>`);
-const iconPlay = m.trust(`<svg width="280" height="280" viewBox="-120 -40 600 600"><path d="${playPathData}"/></svg>`);
-const iconStepForward = m.trust(`<svg width="280" height="280" viewBox="-70 -40 600 600"><path d="${stepForwardPathData}"/></svg>`);
-const iconMore = m.trust(`<svg width="280" height="280" viewBox="-70 -40 600 600"><path d="${morePathData}"/></svg>`);
-const iconHeadphones = m.trust(`<svg width="280" height="280" viewBox="-40 -40 600 600"><path d="${headphonesPathData}"/></svg>`);
+const iconStepBack = makeSVG(stepBackSVG, 35, 35);
+const iconPlay = makeSVG(playSVG, 45, 45);
+const iconPuase = makeSVG(pauseSVG, 45, 45);
+const iconStepForward = makeSVG(stepForwardSVG, 35, 35);
+const iconMore = makeSVG(moreSVG, 35, 35);
+const iconHeadphones = makeSVG(headphonesSVG);
 
-const makeButton = (svg, className) => ({
+const makeButton = (svg, className, kind) => ({
     view: () =>
         m('.player-controls-button', [
             m(IconButton, {
                 inactive: false,
                 className: 'player-button',
+                events: {
+                    onclick: () => EventCenter.emit(Events.BUTTON_PRESS, kind),
+                },
             }, [
                 m(Icon, {
                     svg: svg,
@@ -53,11 +56,11 @@ const makeButton = (svg, className) => ({
         ]),
 });
 
-const StepBackButton = makeButton(iconStepBack, 'player-step-icon');
-const PlayButton = makeButton(iconPlay, 'player-play-icon');
-const StepForwardButton = makeButton(iconStepForward, 'player-step-icon');
-const MoreButton = makeButton(iconMore, 'player-more-icon');
-
+const StepBackButton = makeButton(iconStepBack, 'player-step-icon', Buttons.PLAYER_PREVIOUS_BUTTON);
+const PlayButton = makeButton(iconPlay, 'player-play-icon', Buttons.PLAYER_PLAY_BUTTON);
+const PauseButton = makeButton(iconPuase, 'player-play-icon', Buttons.PLAYER_PAUSE_BUTTON);
+const StepForwardButton = makeButton(iconStepForward, 'player-step-icon', Buttons.PLAYER_NEXT_BUTTON);
+const MoreButton = makeButton(iconMore, 'player-more-icon', Buttons.PLAYER_MORE_BUTTON);
 
 export class Player extends IBindable {
     constructor(/* vnode */) {
@@ -91,6 +94,8 @@ export class Player extends IBindable {
                 this._renderProgress(vnode.state.progressContext, vnode.state.loadingProgress, progress);
             }
         });
+
+        vnode.state.playStateChangeEvent = EventCenter.on(Object.values(PlaybackStateEvents), () => m.redraw());
     }
 
     onremove(vnode) {
@@ -103,40 +108,97 @@ export class Player extends IBindable {
             EventCenter.off(Events.PLAYER_TIME_CHANGE, vnode.state.playbackTimeEvent);
             delete vnode.state.playbackTimeEvent;
         }
+
+        if (vnode.state.playStateChangeEvent) {
+            EventCenter.off(Object.values(PlaybackStateEvents), vnode.state.playStateChangeEvent);
+            delete vnode.state.playStateChangeEvent;
+        }
     }
 
-    view({ state }) {
+    view() {
+        const service = Service.activeService();
+        const song = service ? service.currentSong : null;
+        const artworkURL = song ? song.formatArtworkURL(40, 40) : null;
         return m('.player-container',
             [
                 m('.player-progress-container', [
-                    // m('.player-loading', { style: { width: `${state.loadingProgress}%`} }),
                     m('canvas', { class: 'player-progress' }),
                 ]),
-                m('.player-controls-container', [
-                    m(Card, {
-                        content: [
-                            {
-                                header: {
-                                    title: 'Song Name',
-                                    subtitle: 'Artist Name',
-                                    icon: {
-                                        svg: iconHeadphones,
-                                        size: 'large',
-                                        className: 'player-headphones-icon',
-                                    },
-                                },
+                m('.player-view-container', [
+                    m('.player-icon-container', [
+                        m('.player-icon', song ? {
+                            style: {
+                                'background-image': `url(${artworkURL})`,
                             },
-                        ],
-                        style: {
-                            'flex-grow': 0.91,
-                        },
-                        shadowDepth: 0,
-                    }),
-                    m(StepBackButton),
-                    m(PlayButton),
-                    m(StepForwardButton),
-                    m(MoreButton),
+                        } : {}, [
+                            !song ? makeSVG(headphonesSVG, 40, 40) : null,
+                        ]),
+                    ]),
+                    m('.player-info-container', [
+                        m('.player-info', [
+                            m('.player-song-name', song ? song.name : 'Not Playing'),
+                            song && song.rating === 'explicit' ? m('.player-song-explicit', '🅴') : null,
+                            song ? m('.search-result-song-artist', song.artist) : null,
+                            song ? m('.search-result-song-album', song.album) : null,
+                        ]),
+                    ]),
+                    m('.player-controls-container', [
+                        m('.player-controls', [
+                            m(StepBackButton),
+                            m(service && service.isPlaying ? PauseButton : PlayButton),
+                            m(StepForwardButton),
+                            m(MoreButton),
+                        ]),
+                    ]),
                 ]),
+                // m('.player-controls-container', [
+                //     // m(Card, {
+                //     //     content: [
+                //     //         {
+                //     //             header: {
+                //     //                 title: song ? song.name : 'Not Playing',
+                //     //                 subtitle: song ? song.artist : '',
+                //     //                 icon: song ? {
+                //     //                     src: song.formatArtworkURL(45, 45),
+                //     //                     size: 'large',
+                //     //                     className: 'player-headphones-icon',
+                //     //                 } : {
+                //     //                     svg: iconHeadphones,
+                //     //                     size: 'large',
+                //     //                     className: 'player-headphones-icon',
+                //     //                 },
+                //     //             },
+                //     //         },
+                //     //     ],
+                //     //     style: {
+                //     //         'flex-grow': 0.91,
+                //     //     },
+                //     //     shadowDepth: 0,
+                //     // }),
+                //     m('.player-info-container', [
+                //         song ? m('.player-song-icon', {
+                //             style: {
+                //                 'background-image': `url(${song.formatArtworkURL(45, 45)})`,
+                //             },
+                //         }) : m(Icon, {
+                //             svg: iconHeadphones,
+                //             size: 'large',
+                //             className: 'player-headphones-icon',
+                //         }),
+                //         m('.player-info-text-container', [
+                //             m('.player-song-name', song ? song.name : 'Not Playing cachondo music'),
+                //             song && song.rating === 'explicit' ? m('.search-result-song-explicit', '🅴') : null,
+                //             m('.search-result-song-artist', song ? song.artist : ''),
+                //             m('.search-result-song-album', song ? song.album : ''),
+                //         ]),
+                //     ]),
+                //     m('.player-buttons-container', [
+                //         m(StepBackButton),
+                //         m(service && service.isPlaying ? PauseButton : PlayButton),
+                //         m(StepForwardButton),
+                //         m(MoreButton),
+                //     ]),
+                // ]),
             ],
         );
     }

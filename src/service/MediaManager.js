@@ -28,8 +28,24 @@ export class MediaManager extends IBindable {
     }
 
     _handleButtonPress(type, ...varArgs) {
-        if (type === Buttons.PLAY_SONG_BUTTON) {
-            Service.activeService().play(varArgs[0]);
+        const service = Service.activeService();
+        if (service) {
+            switch (type) {
+                case Buttons.PLAY_SONG_BUTTON:
+                    service.play(varArgs[0]);
+                    break;
+
+                case Buttons.PLAYER_PLAY_BUTTON:
+                    service.play();
+                    break;
+
+                case Buttons.PLAYER_PAUSE_BUTTON:
+                    service.pause();
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }
