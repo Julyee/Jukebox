@@ -107,7 +107,7 @@
 .player-controls-container {
     position: relative;
     height: inherit;
-    flex: 0 0 220px;
+    flex: 0 0 180px;
     flex-grow: 0;
     flex-shrink: 0;
     display: flex;
@@ -116,7 +116,6 @@
 }
 
 .player-controls {
-    width: 220px;
     display: flex;
     flex-direction: row;
     justify-content: center;
