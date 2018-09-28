@@ -17,15 +17,15 @@ IconButtonCSS.addStyle('.player-button', {
 });
 
 IconCSS.addStyle('.player-play-icon', {
-    'size_large': 45,
-});
-
-IconCSS.addStyle('.player-step-icon', {
     'size_large': 35,
 });
 
-IconCSS.addStyle('.player-more-icon', {
+IconCSS.addStyle('.player-step-icon', {
     'size_large': 25,
+});
+
+IconCSS.addStyle('.player-more-icon', {
+    'size_large': 15,
 });
 
 const makeSVG = (iconDesc, width, height) => m.trust(`<svg width="${width}" height="${height}" viewBox="0 0 ${iconDesc.width} ${iconDesc.height}"><path d="${iconDesc.svgPathData}"/></svg>`);
