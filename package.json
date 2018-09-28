@@ -11,8 +11,7 @@
     "build:dev:browser": "cross-env TARGET='browser' webpack",
     "build:prod": "cross-env NODE_ENV='production' webpack -p",
     "build:prod:browser": "cross-env NODE_ENV='production' TARGET='browser' webpack -p",
-    "start": "cross-env TARGET='browser' webpack-dev-server --host 0.0.0.0 --port 8081 --content-base ./www --hot --disableHostCheck",
-    "getDevToken": "node ./keys/music-token-encoder.js"
+    "start": "cross-env TARGET='browser' webpack-dev-server --host 0.0.0.0 --port 8081 --content-base ./www --hot --disableHostCheck"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
