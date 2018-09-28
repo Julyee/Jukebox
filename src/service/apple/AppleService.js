@@ -7,7 +7,7 @@ import {EventCenter} from '../../core/EventCenter';
 import {AppleSong} from './media/AppleSong';
 
 const kPlaybackStateMap = {
-    none: null,
+    none: Events.SONG_IDLE,
     loading: Events.SONG_LOADING,
     playing: Events.SONG_PLAY,
     paused: Events.SONG_PAUSE,
@@ -124,6 +124,9 @@ export class AppleService extends Service {
     async play(song = null) {
         await this.authorize();
         if (this.isPlaying) {
+            if (!song) {
+                return true;
+            }
             await this.stop();
         }
 
@@ -134,8 +137,18 @@ export class AppleService extends Service {
         return await this.mAPI.play();
     }
 
+    async pause() {
+        if (this.isPlaying) {
+            return await this.mAPI.pause();
+        }
+        return false;
+    }
+
     async stop() {
-        return await this.mAPI.stop();
+        if (this.isPlaying) {
+            return await this.mAPI.stop();
+        }
+        return false;
     }
 
     async queueSong(song, overwriteQueue) {

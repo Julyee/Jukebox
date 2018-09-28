@@ -84,6 +84,10 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
+    async pause() {
+        throw 'Not implemented';
+    }
+
     async stop() {
         throw 'Not implemented';
     }
