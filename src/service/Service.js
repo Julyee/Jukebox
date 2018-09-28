@@ -1,27 +1,27 @@
 import {IBindable} from '../core/IBindable';
 import {MediaManager} from './MediaManager';
 
-const instanceMap = {};
-let activeService = null;
+const kInstanceMap = {};
+let kActiveService = null;
 
 export class Service extends IBindable {
     static instance() {
-        if (!instanceMap[this.name]) {
-            instanceMap[this.name] = new this();
+        if (!kInstanceMap[this.name]) {
+            kInstanceMap[this.name] = new this();
         }
-        return instanceMap[this.name];
+        return kInstanceMap[this.name];
     }
 
     static activeService(service) {
         if (arguments.length === 1) {
-            activeService = service;
+            kActiveService = service;
         }
-        return activeService;
+        return kActiveService;
     }
 
     constructor() {
         super();
-        this.mMediaManager = new MediaManager();
+        MediaManager.instance();
     }
 
     get authorized() {

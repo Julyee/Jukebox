@@ -3,7 +3,16 @@ import {Service} from './Service';
 import {EventCenter} from '../core/EventCenter';
 import {Events, Buttons} from '../frontend/Events';
 
+let kSharedInstance = null;
+
 export class MediaManager extends IBindable {
+    static instance() {
+        if (!kSharedInstance) {
+            kSharedInstance = new MediaManager();
+        }
+        return kSharedInstance;
+    }
+
     constructor() {
         super();
         this.mBoundEvents = {};
