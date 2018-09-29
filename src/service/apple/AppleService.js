@@ -50,6 +50,12 @@ export class AppleService extends Service {
     get currentSong() {
         if (this.isPlaying) {
             return new AppleSong(this.mAPI.player.nowPlayingItem);
+        } else if (
+            !this.mAPI.player.queue.isEmpty &&
+            (this.mAPI.player.playbackState === MusicKit.PlaybackStates.paused ||
+            this.mAPI.player.playbackState === MusicKit.PlaybackStates.waiting)) {
+            const queue = this.mAPI.player.queue;
+            return new AppleSong(queue.items[queue.position]);
         }
         return null;
     }
