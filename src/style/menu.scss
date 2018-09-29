@@ -3,4 +3,10 @@
     top: -4px;
     height: calc(100% + 4px);
     width: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.menu-input {
+    pointer-events: auto;
 }

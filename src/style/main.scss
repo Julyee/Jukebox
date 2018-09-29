@@ -32,10 +32,15 @@ body {
     height: 100%;
 }
 
-.main-content {
-    flex-grow: 1;
+.main-area {
+    flex: 1 1 0;
     position: relative;
     padding: 4px;
+    min-height: 0;
+}
+
+.main-content {
+    height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;

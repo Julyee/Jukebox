@@ -91,6 +91,7 @@ export class Menu extends IBindable {
                 didHide: () => {
                     state.show = false;
                 },
+                class: 'menu-input',
             }),
         ];
     }

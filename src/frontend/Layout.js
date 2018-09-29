@@ -22,11 +22,13 @@ export class Layout extends IBindable {
         return [
             m('.main-container', [
                 m(Header),
-                m('.main-content', [
+                m('.main-area', [
                     m('.menu-container', [
                         m(Menu),
                     ]),
-                    this.content(),
+                    m('.main-content', [
+                        this.content(),
+                    ]),
                 ]),
                 m(Player),
             ]),
