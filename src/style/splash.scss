@@ -31,6 +31,14 @@
     color: #7f7f7f;
 }
 
+.splash-service-status {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 15px;
+}
+
 .splash-donations-container {
     width: 100%;
     position: absolute;
