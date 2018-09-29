@@ -144,6 +144,7 @@ export class AppleService extends Service {
     }
 
     async pause() {
+        await this.authorize();
         if (this.isPlaying) {
             return await this.mAPI.pause();
         }
@@ -151,6 +152,7 @@ export class AppleService extends Service {
     }
 
     async stop() {
+        await this.authorize();
         if (this.isPlaying) {
             return await this.mAPI.stop();
         }
