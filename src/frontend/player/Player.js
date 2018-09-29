@@ -35,7 +35,6 @@ const iconPlay = makeSVG(playSVG, 45, 45);
 const iconPuase = makeSVG(pauseSVG, 45, 45);
 const iconStepForward = makeSVG(stepForwardSVG, 35, 35);
 const iconMore = makeSVG(moreSVG, 35, 35);
-const iconHeadphones = makeSVG(headphonesSVG);
 
 const makeButton = (svg, className, kind) => ({
     view: () =>
