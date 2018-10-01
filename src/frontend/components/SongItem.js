@@ -5,7 +5,6 @@ import {Buttons, Events} from '../Events';
 
 export class SongItem {
     view(vnode) {
-        console.log(vnode); // eslint-disable-line
         return this._getContent(vnode.attrs.song, vnode.attrs.size);
     }
 
