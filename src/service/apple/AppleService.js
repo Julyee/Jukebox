@@ -49,13 +49,13 @@ export class AppleService extends Service {
 
     get currentSong() {
         if (this.isPlaying) {
-            return new AppleSong(this.mAPI.player.nowPlayingItem);
+            return new AppleSong(this.mAPI.player.nowPlayingItem, this);
         } else if (
             !this.mAPI.player.queue.isEmpty &&
             (this.mAPI.player.playbackState === MusicKit.PlaybackStates.paused ||
             this.mAPI.player.playbackState === MusicKit.PlaybackStates.waiting)) {
             const queue = this.mAPI.player.queue;
-            return new AppleSong(queue.items[queue.position]);
+            return new AppleSong(queue.items[queue.position], this);
         }
         return null;
     }
@@ -114,7 +114,7 @@ export class AppleService extends Service {
             artists: result.artists ? result.artists.data : null,
             'music-videos': result['music-videos'] ? result['music-videos'].data : null,
             playlists: result.playlists ? result.playlists.data : null,
-            songs: result.songs ? result.songs.data.map(song => new AppleSong(song)) : null,
+            songs: result.songs ? result.songs.data.map(song => new AppleSong(song, this)) : null,
         });
     }
 

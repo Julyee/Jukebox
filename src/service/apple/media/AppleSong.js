@@ -27,6 +27,11 @@ export class AppleSong extends Song {
         Object.freeze(this);
     }
 
+    equals(otherSong) {
+        return this._service === otherSong._service &&
+            this._descriptor.id === otherSong._descriptor.id;
+    }
+
     formatArtworkURL(width, height) {
         const artworkInfo = {
             url: this.mArtworkURL,

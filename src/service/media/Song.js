@@ -1,6 +1,6 @@
 
 export class Song {
-    constructor(songDesc) {
+    constructor(songDesc, service) {
         this.mName = null;
         this.mAlbum = null;
         this.mArtist = null;
@@ -13,6 +13,7 @@ export class Song {
         this.mReleaseDate = null;
         this.mGenres = null;
         this._mDescriptor = songDesc;
+        this._mService = service;
     }
 
     get name() {
@@ -63,7 +64,19 @@ export class Song {
         return this._mDescriptor;
     }
 
+    get _service() {
+        return this._mService;
+    }
+
+    equals(otherSong) {
+        return this === otherSong;
+    }
+
     formatArtworkURL(/* width, height */) {
         return this.mArtworkURL;
+    }
+
+    async play() {
+        this._mService.play(this);
     }
 }
