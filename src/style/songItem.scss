@@ -1,0 +1,52 @@
+.song-item-song-icon {
+    border-radius: 3px;
+    width: 52px;
+    height: 52px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.song-item-song-name {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
+    display: inline-block;
+}
+
+.song-item-song-explicit {
+    color: rgb(114,114,117);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -4px);
+}
+
+.song-item-song-artist {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 12px;
+    line-height: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 0;
+    padding-bottom: 2px;
+    max-width: 250px;
+}
+
+.song-item-song-album {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 10px;
+    line-height: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
+}

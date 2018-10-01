@@ -1,0 +1,87 @@
+.video-card-container {
+    padding: 10px;
+    display: inline-block;
+    width: 360px;
+}
+
+.video-card-info-background {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(110%);
+    width: 380px;
+    height: 231px;
+    bottom: -20px;
+    left: -20px;
+}
+
+.video-card-info-background::before {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-image: inherit;
+    width: 340px;
+    height: 191px;
+    top: 20px;
+    left: 20px;
+    content: '';
+    display: inline-block;
+}
+
+.video-card-info-background::after {
+    position: relative;
+    background-color: rgba(255,255,255,0.5);
+    width: 100%;
+    height: 100%;
+    content: '';
+    display: inline-block;
+}
+
+.video-card-info-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.video-card-name {
+    padding-top: 10px;
+    padding-left: 12px;
+    padding-right: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    width: 315px;
+    position: relative;
+    z-index: 10;
+}
+
+.video-card-explicit {
+    color: rgb(34,34,37);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -8px);
+    position:relative;
+    z-index: 10;
+}
+
+.video-card-artist {
+    color: rgb(34,34,37);
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 12px;
+    padding-left: 12px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    margin-top: -3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 360px;
+    position: relative;
+    z-index: 10;
+}

@@ -4,6 +4,10 @@
 @import url('./search.scss');
 @import url('./splash.scss');
 @import url('./toolbar.scss');
+@import url('./songItem.scss');
+@import url('./videoCard.scss');
+@import url('./largeThumbnailCard.scss');
+@import url('./artistCard.scss');
 
 html {
     width: 100vw;
@@ -35,11 +39,11 @@ body {
 .main-area {
     flex: 1 1 0;
     position: relative;
-    padding: 4px;
     min-height: 0;
 }
 
 .main-content {
+    padding: 4px;
     height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
