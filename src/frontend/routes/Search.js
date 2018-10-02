@@ -44,7 +44,12 @@ export class Search extends Layout {
             ]);
         }
 
-        if (!Object.keys(this.mSearchResults).length) {
+        let hasContent = false;
+        Object.keys(this.mSearchResults).forEach(key => {
+            hasContent = this.mSearchResults[key] || hasContent;
+        });
+
+        if (!hasContent) {
             return m('.search-result-header', `No results found for "${this.mSearchTerm}".`);
         }
 
