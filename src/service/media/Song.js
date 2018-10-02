@@ -7,7 +7,7 @@ export class Song {
         this.mArtworkURL = null;
         this.mArtworkSize = null;
         this.mComposer = null;
-        this.mRating = null;
+        this.mIsExplicit = false;
         this.mDuration = null;
         this.mFormattedDuration = null;
         this.mReleaseDate = null;
@@ -38,6 +38,10 @@ export class Song {
 
     get composer() {
         return this.mComposer;
+    }
+
+    get isExplicit() {
+        return this.mIsExplicit;
     }
 
     get rating() {

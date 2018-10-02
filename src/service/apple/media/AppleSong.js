@@ -15,7 +15,7 @@ export class AppleSong extends Song {
         this.mArtworkURL = artworkInfo.url;
         this.mArtworkSize = Object.freeze({ width: artworkInfo.width, height: artworkInfo.height });
         this.mComposer = info.composerName;
-        this.mRating = info.contentRating;
+        this.mIsExplicit = info.contentRating === 'explicit';
         this.mDuration = info.durationInMillis;
         this.mFormattedDuration = MusicKit.formattedMilliseconds(info.durationInMillis);
         this.mReleaseDate = info.releaseDate;

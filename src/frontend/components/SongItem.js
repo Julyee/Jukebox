@@ -13,7 +13,7 @@ export class SongItem {
         return m(ListTile, {
             subContent: [
                 m('.song-item-song-name', song.name),
-                song.rating === 'explicit' ? m('.song-item-song-explicit', '🅴') : null,
+                song.isExplicit ? m('.song-item-song-explicit', '🅴') : null,
                 m('.song-item-song-artist', song.artist),
                 m('.song-item-song-album', song.album),
             ],

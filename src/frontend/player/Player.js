@@ -136,7 +136,7 @@ export class Player extends IBindable {
                     m('.player-info-container', [
                         m('.player-info', [
                             m('.player-song-name', song ? song.name : 'Not Playing'),
-                            song && song.rating === 'explicit' ? m('.player-song-explicit', '🅴') : null,
+                            song && song.isExplicit ? m('.player-song-explicit', '🅴') : null,
                             song ? m('.search-result-song-artist', song.artist) : null,
                             song ? m('.search-result-song-album', song.album) : null,
                         ]),
@@ -150,54 +150,6 @@ export class Player extends IBindable {
                         ]),
                     ]),
                 ]),
-                // m('.player-controls-container', [
-                //     // m(Card, {
-                //     //     content: [
-                //     //         {
-                //     //             header: {
-                //     //                 title: song ? song.name : 'Not Playing',
-                //     //                 subtitle: song ? song.artist : '',
-                //     //                 icon: song ? {
-                //     //                     src: song.formatArtworkURL(45, 45),
-                //     //                     size: 'large',
-                //     //                     className: 'player-headphones-icon',
-                //     //                 } : {
-                //     //                     svg: iconHeadphones,
-                //     //                     size: 'large',
-                //     //                     className: 'player-headphones-icon',
-                //     //                 },
-                //     //             },
-                //     //         },
-                //     //     ],
-                //     //     style: {
-                //     //         'flex-grow': 0.91,
-                //     //     },
-                //     //     shadowDepth: 0,
-                //     // }),
-                //     m('.player-info-container', [
-                //         song ? m('.player-song-icon', {
-                //             style: {
-                //                 'background-image': `url(${song.formatArtworkURL(45, 45)})`,
-                //             },
-                //         }) : m(Icon, {
-                //             svg: iconHeadphones,
-                //             size: 'large',
-                //             className: 'player-headphones-icon',
-                //         }),
-                //         m('.player-info-text-container', [
-                //             m('.player-song-name', song ? song.name : 'Not Playing cachondo music'),
-                //             song && song.rating === 'explicit' ? m('.search-result-song-explicit', '🅴') : null,
-                //             m('.search-result-song-artist', song ? song.artist : ''),
-                //             m('.search-result-song-album', song ? song.album : ''),
-                //         ]),
-                //     ]),
-                //     m('.player-buttons-container', [
-                //         m(StepBackButton),
-                //         m(service && service.isPlaying ? PauseButton : PlayButton),
-                //         m(StepForwardButton),
-                //         m(MoreButton),
-                //     ]),
-                // ]),
             ],
         );
     }
