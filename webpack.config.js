@@ -24,11 +24,6 @@ let config = {
                 exclude: /node_modules/,
                 loader: 'eslint-loader',
             },
-            {
-                test: /\.hbs/,
-                exclude: /node_modules/,
-                loader: "handlebars-loader",
-            },
             // {
             //     test: /\.js$/,
             //     loader: 'babel-loader',
