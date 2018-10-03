@@ -1,15 +1,15 @@
-import {Button, ButtonGroup} from 'polythene-mithril';
+import {Button} from 'polythene-mithril';
 import {ButtonCSS} from 'polythene-css';
 import m from 'mithril';
 import {EventCenter} from '../../core/EventCenter';
 import {Buttons, Events} from '../Events';
 
 ButtonCSS.addStyle('.song-header-button', {
-    label_padding_v: 3,
-    border_radius: 10,
-    outer_padding_v: 0,
+    'label_padding_v': 3,
+    'border_radius': 10,
+    'outer_padding_v': 0,
     // text_transform: 'none',
-    color_light_background: 'rgb(21,150,199)',
+    'color_light_background': 'rgb(21,150,199)',
 });
 
 export class SongHeader {
