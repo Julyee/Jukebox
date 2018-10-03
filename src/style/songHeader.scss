@@ -1,0 +1,95 @@
+.song-header-container {
+    height: 124px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-bottom: #f0f0f0 solid 1px;
+}
+
+.song-header-icon-container {
+    height: inherit;
+    flex: 0 0 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 5px;
+}
+
+.song-header-icon {
+    width: 100px;
+    height: 100px;
+    margin-left: 2px;
+    border-radius: 3px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.song-header-info-container {
+    height: inherit;
+    flex: 1 1 1px;
+    padding-left: 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.song-header-info {
+    padding: 0;
+    margin: 0;
+}
+
+.song-header-song-name {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 14px);
+    display: inline-block;
+}
+
+.song-header-explicit {
+    color: rgb(114,114,117);
+    font-size: 10px;
+    display: inline-block;
+    padding-left: 4px;
+    line-height: 1px;
+    transform: translate(0, -6px);
+}
+
+.song-header-artist {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 14px;
+    line-height: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 0;
+    padding-bottom: 2px;
+}
+
+.song-header-album {
+    color: rgb(114,114,117);
+    font-weight: 200;
+    font-size: 12px;
+    line-height: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.song-header-buttons {
+    margin-top: 18px;
+    text-align: right;
+}
+
+.song-header-buttons > * {
+    margin-left: 2px;
+    margin-right: 2px;
+}

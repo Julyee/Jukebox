@@ -1,7 +1,9 @@
-import {IBindable} from '../core/IBindable';
 import {Service} from './Service';
+import {Dialog} from 'polythene-mithril';
+import {IBindable} from '../core/IBindable';
 import {EventCenter} from '../core/EventCenter';
 import {Events, Buttons} from '../frontend/Events';
+import {SongMoreDialog} from '../frontend/dialogs/SongMoreDialog';
 
 let kSharedInstance = null;
 
@@ -40,8 +42,12 @@ export class MediaManager extends IBindable {
         const service = Service.activeService();
         if (service) {
             switch (type) {
-                case Buttons.PLAY_SONG_BUTTON:
+                case Buttons.SONG_PLAY_NOW:
                     service.play(varArgs[0]);
+                    break;
+
+                case Buttons.SONG_MORE:
+                    Dialog.show(SongMoreDialog.get(varArgs[0]));
                     break;
 
                 case Buttons.PLAYER_PLAY_BUTTON:

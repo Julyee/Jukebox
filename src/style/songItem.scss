@@ -7,6 +7,10 @@
     background-size: contain;
 }
 
+.song-item-details {
+    width: 230px;
+}
+
 .song-item-song-name {
     font-weight: 400;
     font-size: 14px;
@@ -14,7 +18,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 250px;
+    max-width: 215px;
     display: inline-block;
 }
 
@@ -37,7 +41,7 @@
     white-space: nowrap;
     padding-top: 0;
     padding-bottom: 2px;
-    max-width: 250px;
+    max-width: 230px;
 }
 
 .song-item-song-album {
@@ -48,5 +52,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 250px;
+    max-width: 230px;
+}
+
+.song-item-more-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 25px;
+    position: relative;
+    fill: rgb(21,150,199);
+    align-items: center;
+    padding-bottom: 5px;
 }

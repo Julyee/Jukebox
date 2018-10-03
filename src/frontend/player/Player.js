@@ -137,8 +137,8 @@ export class Player extends IBindable {
                         m('.player-info', [
                             m('.player-song-name', song ? song.name : 'Not Playing'),
                             song && song.isExplicit ? m('.player-song-explicit', '🅴') : null,
-                            song ? m('.search-result-song-artist', song.artist) : null,
-                            song ? m('.search-result-song-album', song.album) : null,
+                            song ? m('.player-song-artist', song.artist) : null,
+                            song ? m('.player-song-album', song.album) : null,
                         ]),
                     ]),
                     m('.player-controls-container', [

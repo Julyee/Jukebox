@@ -2,6 +2,9 @@ import m from 'mithril';
 import {ListTile} from 'polythene-mithril';
 import {EventCenter} from '../../core/EventCenter';
 import {Buttons, Events} from '../Events';
+import * as moreSVG from '@fortawesome/free-solid-svg-icons/faEllipsisH';
+
+const iconMore = m.trust(`<svg width="15" height="15" viewBox="0 0 ${moreSVG.width} ${moreSVG.height}"><path d="${moreSVG.svgPathData}"/></svg>`);
 
 export class SongItem {
     view(vnode) {
@@ -11,12 +14,12 @@ export class SongItem {
     _getContent(song, size = 52) {
         const artworkURL = song.formatArtworkURL(size, size);
         return m(ListTile, {
-            subContent: [
+            subContent: m('.song-item-details', [
                 m('.song-item-song-name', song.name),
                 song.isExplicit ? m('.song-item-song-explicit', '🅴') : null,
                 m('.song-item-song-artist', song.artist),
                 m('.song-item-song-album', song.album),
-            ],
+            ]),
             hoverable: true,
             navigation: false,
             compact: true,
@@ -29,7 +32,9 @@ export class SongItem {
                     'background-image': `url(${artworkURL})`,
                 },
             }),
-            // after: m('div', 'hello!'),
+            after: m('.song-item-more-container', {
+                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_MORE, song),
+            }, iconMore),
         });
     }
 }
