@@ -186,7 +186,7 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.bufferedProgressDidChange:
-                EventCenter.emit(Events.PLAYER_BUFFER_CHANGE, info.progress);
+                EventCenter.emit(Events.PLAYBACK_EVENT, Events.PLAYER_BUFFER_CHANGE, info.progress);
                 break;
 
             case MKEvents.eligibleForSubscribeView:
@@ -229,7 +229,7 @@ export class AppleService extends Service {
             case MKEvents.playbackStateDidChange: {
                 const States = MusicKit.PlaybackStates;
                 if (States.hasOwnProperty(info.state) && kPlaybackStateMap[States[info.state]]) {
-                    EventCenter.emit(kPlaybackStateMap[States[info.state]]);
+                    EventCenter.emit(Events.PLAYBACK_EVENT, kPlaybackStateMap[States[info.state]]);
                 }
                 break;
             }
@@ -241,7 +241,7 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.playbackTimeDidChange:
-                EventCenter.emit(Events.PLAYER_TIME_CHANGE, info.currentPlaybackDuration, info.currentPlaybackTime);
+                EventCenter.emit(Events.PLAYBACK_EVENT, Events.PLAYER_TIME_CHANGE, info.currentPlaybackDuration, info.currentPlaybackTime);
                 break;
 
             case MKEvents.playbackVolumeDidChange:

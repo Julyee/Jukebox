@@ -79,18 +79,18 @@ export class Player extends IBindable {
         vnode.state.progressContext = progressCanvas.getContext('2d');
         this._renderProgress(vnode.state.progressContext, 0, 0);
 
-        vnode.state.bufferEvent = EventCenter.on(Events.PLAYER_BUFFER_CHANGE, progress => {
-            if (progress !== vnode.state.loadingProgress) {
-                vnode.state.loadingProgress = progress;
-                this._renderProgress(vnode.state.progressContext, progress, vnode.state.timeProgress);
-            }
-        });
-
-        vnode.state.playbackTimeEvent = EventCenter.on(Events.PLAYER_TIME_CHANGE, () => {
-            const progress = Service.activeService().playbackProgress;
-            if (progress !== vnode.state.timeProgress) {
-                vnode.state.timeProgress = progress;
-                this._renderProgress(vnode.state.progressContext, vnode.state.loadingProgress, progress);
+        vnode.state.bufferEvent = EventCenter.on(Events.PLAYBACK_EVENT, (type, ...varArgs) => {
+            if (type === Events.PLAYER_BUFFER_CHANGE) {
+                if (varArgs[0] !== vnode.state.loadingProgress) {
+                    vnode.state.loadingProgress = varArgs[0];
+                    this._renderProgress(vnode.state.progressContext, varArgs[0], vnode.state.timeProgress);
+                }
+            } else if (type === Events.PLAYER_TIME_CHANGE) {
+                const progress = Service.activeService().playbackProgress;
+                if (progress !== vnode.state.timeProgress) {
+                    vnode.state.timeProgress = progress;
+                    this._renderProgress(vnode.state.progressContext, vnode.state.loadingProgress, progress);
+                }
             }
         });
 

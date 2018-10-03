@@ -31,8 +31,9 @@ export const Buttons = {
     ARTIST_OPEN_VIEW: 'BTN::ARTIST::OpenView',
 };
 
-export const ButtonEvents = {
+export const GeneralEvents = {
     BUTTON_PRESS: 'GUI::ButtonPress',
+    PLAYBACK_EVENT: 'PLR::Event',
 };
 
 export const PlaybackEvents = {
@@ -50,4 +51,4 @@ export const PlaybackStateEvents = {
     SONG_COMPLETE: 'PLR::SongComplete',
 };
 
-export const Events = Object.assign({}, ButtonEvents, PlaybackEvents, PlaybackStateEvents);
+export const Events = Object.assign({}, GeneralEvents, PlaybackEvents, PlaybackStateEvents);
