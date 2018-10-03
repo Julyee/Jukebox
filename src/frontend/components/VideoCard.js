@@ -18,7 +18,7 @@ export class VideoCard {
         return m('.video-card-container', m(Card, {
             shadowDepth: 0,
             events: {
-                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.PLAY_SONG_BUTTON, video),
+                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_PLAY_NOW, video),
             },
             content: [
                 {

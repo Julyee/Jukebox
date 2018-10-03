@@ -22,7 +22,7 @@ export class SongItem {
             compact: true,
             ink: true,
             events: {
-                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.PLAY_SONG_BUTTON, song),
+                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_PLAY_NOW, song),
             },
             front: m('.song-item-song-icon', {
                 style: {
