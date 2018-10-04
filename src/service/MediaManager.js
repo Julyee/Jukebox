@@ -63,17 +63,23 @@ export class MediaManagerImp extends IBindable {
                     // break; // fall through
 
                 case Buttons.SONG_PLAY_KEEP_QUEUE:
-                    this.mCurrentSong = varArgs[0];
-                    this.mCurrentSong.play();
-                    this.mQueue.history.push(this.mCurrentSong);
+                    this._playSong(varArgs[0]);
                     break;
 
                 case Buttons.SONG_PLAY_NEXT:
-                    this.mQueue.unshiftSong(varArgs[0]);
+                    if (this.mCurrentSong) {
+                        this.mQueue.unshiftSong(varArgs[0]);
+                    } else {
+                        this._playSong(varArgs[0]);
+                    }
                     break;
 
                 case Buttons.SONG_PLAY_LATER:
-                    this.mQueue.enqueueSong(varArgs[0]);
+                    if (this.mCurrentSong) {
+                        this.mQueue.enqueueSong(varArgs[0]);
+                    } else {
+                        this._playSong(varArgs[0]);
+                    }
                     break;
 
                 case Buttons.SONG_MORE:
@@ -83,6 +89,8 @@ export class MediaManagerImp extends IBindable {
                 case Buttons.PLAYER_PLAY_BUTTON:
                     if (this.mCurrentSong) {
                         this.mCurrentSong.service.play();
+                    } else if (this.mQueue.historySize) {
+                        this._playSong(this.mQueue.history.pop());
                     }
                     break;
 
@@ -94,22 +102,21 @@ export class MediaManagerImp extends IBindable {
 
                 case Buttons.PLAYER_NEXT_BUTTON:
                     if (this.mQueue.queueSize) {
-                        this.mCurrentSong = this.mQueue.dequeueSong();
-                        this.mCurrentSong.play();
+                        this._playSong(this.mQueue.dequeueSong());
                     }
                     break;
 
                 case Buttons.PLAYER_PREVIOUS_BUTTON:
                     if (this.mCurrentSong) {
-                        if (this.mCurrentSong.service.playbackProgress > 2 || this.mQueue.historySize <= 1) { // 2%
+                        if (this.mCurrentSong.service.playbackProgress * this.mCurrentSong.duration * 0.01 > 2000 || // 2 seconds
+                            this.mQueue.historySize <= 1) {
                             this.mCurrentSong.service.seekTo(0);
                         } else if (this.mQueue.historySize > 1) {
                             this.mQueue.unshiftSong(this.mQueue.history.pop());
-                            this.mCurrentSong = this.mQueue.history[this.mQueue.historySize - 1];
-                            this.mCurrentSong.play();
+                            this._playSong(this.mQueue.history.pop());
                         }
                     } else if (this.mQueue.historySize) {
-                        this.mCurrentSong = this.mQueue.history[this.mQueue.historySize - 1];
+                        this._playSong(this.mQueue.history.pop());
                         this.mCurrentSong.play();
                     }
                     break;
@@ -130,6 +137,12 @@ export class MediaManagerImp extends IBindable {
                 }
             }
         }
+    }
+
+    _playSong(song) {
+        this.mCurrentSong = song;
+        this.mCurrentSong.play();
+        this.mQueue.history.push(this.mCurrentSong);
     }
 }
 
