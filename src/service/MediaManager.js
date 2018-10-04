@@ -131,18 +131,17 @@ export class MediaManagerImp extends IBindable {
         const service = Service.activeService();
         if (service) {
             if (type === Events.SONG_COMPLETE) {
-                this.mCurrentSong = this.mQueue.dequeueSong();
-                if (this.mCurrentSong) {
-                    this.mCurrentSong.play();
-                }
+                this._playSong(this.mQueue.dequeueSong());
             }
         }
     }
 
     _playSong(song) {
         this.mCurrentSong = song;
-        this.mCurrentSong.play();
-        this.mQueue.history.push(this.mCurrentSong);
+        if (this.mCurrentSong) {
+            this.mCurrentSong.play();
+            this.mQueue.history.push(this.mCurrentSong);
+        }
     }
 }
 
