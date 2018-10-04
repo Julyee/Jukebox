@@ -10,7 +10,6 @@ import * as headphonesSVG from '@fortawesome/free-solid-svg-icons/faHeadphones';
 import {IconCSS, IconButtonCSS} from 'polythene-css';
 import {EventCenter} from '../../core/EventCenter';
 import {Buttons, Events, PlaybackStateEvents} from '../Events';
-import {Service} from '../../service/Service';
 import {MediaManager} from '../../service/MediaManager';
 
 IconButtonCSS.addStyle('.player-button', {
@@ -72,8 +71,7 @@ export class Player extends IBindable {
             const service = MediaManager.currentSong.service;
             vnode.state.loadingProgress = service.bufferingProgress;
             vnode.state.timeProgress = service.playbackProgress;
-        }
-        else {
+        } else {
             vnode.state.loadingProgress = 0;
             vnode.state.timeProgress = 0;
         }
@@ -122,8 +120,8 @@ export class Player extends IBindable {
     }
 
     view() {
-        const service = MediaManager.currentSong ? MediaManager.currentSong.service : null;
-        const song = service ? service.currentSong : null;
+        const song = MediaManager.currentSong;
+        const service = song ? song.service : null;
         const artworkURL = song ? song.formatArtworkURL(40, 40) : null;
         return m('.player-container',
             [
