@@ -3,8 +3,8 @@
 import {Song} from '../../media';
 
 export class AppleSong extends Song {
-    constructor(songDesc) {
-        super(songDesc);
+    constructor(songDesc, service) {
+        super(songDesc, service);
 
         const info = songDesc.attributes;
         const artworkInfo = this._makeGeneralArtworkInfo(info.artwork);
@@ -28,7 +28,7 @@ export class AppleSong extends Song {
     }
 
     equals(otherSong) {
-        return this._service === otherSong._service &&
+        return this.service === otherSong.service &&
             this._descriptor.id === otherSong._descriptor.id;
     }
 

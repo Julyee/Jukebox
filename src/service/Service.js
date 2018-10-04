@@ -1,5 +1,4 @@
 import {IBindable} from '../core/IBindable';
-import {MediaManager} from './MediaManager';
 
 const kInstanceMap = {};
 let kActiveService = null;
@@ -21,7 +20,6 @@ export class Service extends IBindable {
 
     constructor() {
         super();
-        MediaManager.instance();
     }
 
     get authorized() {

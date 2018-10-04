@@ -68,7 +68,7 @@ export class Song {
         return this._mDescriptor;
     }
 
-    get _service() {
+    get service() {
         return this._mService;
     }
 

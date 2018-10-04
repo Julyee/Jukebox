@@ -229,7 +229,7 @@ export class AppleService extends Service {
             case MKEvents.playbackStateDidChange: {
                 const States = MusicKit.PlaybackStates;
                 if (States.hasOwnProperty(info.state) && kPlaybackStateMap[States[info.state]]) {
-                    EventCenter.emit(Events.PLAYBACK_EVENT, kPlaybackStateMap[States[info.state]]);
+                    EventCenter.emit(Events.PLAYBACK_EVENT, kPlaybackStateMap[States[info.state]], info);
                 }
                 break;
             }

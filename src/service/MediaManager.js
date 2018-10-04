@@ -4,13 +4,14 @@ import {IBindable} from '../core/IBindable';
 import {EventCenter} from '../core/EventCenter';
 import {Events, Buttons} from '../frontend/Events';
 import {SongMoreDialog} from '../frontend/dialogs/SongMoreDialog';
+import {MusicQueue} from './MusicQueue';
 
 let kSharedInstance = null;
 
-export class MediaManager extends IBindable {
+export class MediaManagerImp extends IBindable {
     static instance() {
         if (!kSharedInstance) {
-            kSharedInstance = new MediaManager();
+            kSharedInstance = new MediaManagerImp();
         }
         return kSharedInstance;
     }
@@ -18,7 +19,11 @@ export class MediaManager extends IBindable {
     constructor() {
         super();
         this.mBoundEvents = {};
+        this.mCurrentSong = null;
+        this.mQueue = new MusicQueue();
+
         this._registerEvent(Events.BUTTON_PRESS, (...varArgs) => this._handleButtonPress(...varArgs));
+        this._registerEvent(Events.PLAYBACK_EVENT, (...varArgs) => this._handlePlaybackEvent(...varArgs));
     }
 
     destroy() {
@@ -28,7 +33,18 @@ export class MediaManager extends IBindable {
                 EventCenter.off(key, handler);
             });
         });
+
+        this.mQueue.release();
+
+        delete this.mBoundEvents;
+        delete this.mCurrentSong;
+        delete this.mQueue;
+
         super.destroy();
+    }
+
+    get currentSong() {
+        return this.mCurrentSong;
     }
 
     _registerEvent(event, handler) {
@@ -43,7 +59,8 @@ export class MediaManager extends IBindable {
         if (service) {
             switch (type) {
                 case Buttons.SONG_PLAY_NOW:
-                    service.play(varArgs[0]);
+                    this.mCurrentSong = varArgs[0];
+                    this.mCurrentSong.play();
                     break;
 
                 case Buttons.SONG_MORE:
@@ -51,11 +68,15 @@ export class MediaManager extends IBindable {
                     break;
 
                 case Buttons.PLAYER_PLAY_BUTTON:
-                    service.play();
+                    if (this.mCurrentSong) {
+                        this.mCurrentSong.service.play();
+                    }
                     break;
 
                 case Buttons.PLAYER_PAUSE_BUTTON:
-                    service.pause();
+                    if (this.mCurrentSong) {
+                        this.mCurrentSong.service.pause();
+                    }
                     break;
 
                 default:
@@ -63,4 +84,18 @@ export class MediaManager extends IBindable {
             }
         }
     }
+
+    _handlePlaybackEvent(type, ...varArgs) { // eslint-disable-line
+        const service = Service.activeService();
+        if (service) {
+            if (type === Events.SONG_COMPLETE) {
+                this.mCurrentSong = this.mQueue.dequeueSong();
+                if (this.mCurrentSong) {
+                    this.mCurrentSong.play();
+                }
+            }
+        }
+    }
 }
+
+export const MediaManager = MediaManagerImp.instance();

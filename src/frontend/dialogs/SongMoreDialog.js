@@ -1,7 +1,7 @@
 import m from 'mithril';
 import {SongHeader} from '../components/SongHeader';
 import {Dialog, List, ListTile} from 'polythene-mithril';
-import {ButtonEvents, Buttons} from '../Events';
+import {GeneralEvents, Buttons} from '../Events';
 import {EventCenter} from '../../core/EventCenter';
 
 const kMenuItems = [
@@ -20,7 +20,7 @@ function _getMenuItems(items, song) {
         compact: true,
         events: {
             onclick: () => {
-                EventCenter.emit(ButtonEvents.BUTTON_PRESS, item.event, song);
+                EventCenter.emit(GeneralEvents.BUTTON_PRESS, item.event, song);
                 Dialog.hide();
             },
         },

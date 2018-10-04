@@ -11,6 +11,7 @@ import {IconCSS, IconButtonCSS} from 'polythene-css';
 import {EventCenter} from '../../core/EventCenter';
 import {Buttons, Events, PlaybackStateEvents} from '../Events';
 import {Service} from '../../service/Service';
+import {MediaManager} from '../../service/MediaManager';
 
 IconButtonCSS.addStyle('.player-button', {
     padding: 2,
@@ -67,9 +68,15 @@ export class Player extends IBindable {
     }
 
     oninit(vnode) {
-        const service = Service.activeService();
-        vnode.state.loadingProgress = service ? service.bufferingProgress : 0;
-        vnode.state.timeProgress = service ? service.playbackProgress : 0;
+        if (MediaManager.currentSong) {
+            const service = MediaManager.currentSong.service;
+            vnode.state.loadingProgress = service.bufferingProgress;
+            vnode.state.timeProgress = service.playbackProgress;
+        }
+        else {
+            vnode.state.loadingProgress = 0;
+            vnode.state.timeProgress = 0;
+        }
     }
 
     oncreate(vnode) {
@@ -86,15 +93,15 @@ export class Player extends IBindable {
                     this._renderProgress(vnode.state.progressContext, varArgs[0], vnode.state.timeProgress);
                 }
             } else if (type === Events.PLAYER_TIME_CHANGE) {
-                const progress = Service.activeService().playbackProgress;
+                const progress = MediaManager.currentSong ? MediaManager.currentSong.service.playbackProgress : 0;
                 if (progress !== vnode.state.timeProgress) {
                     vnode.state.timeProgress = progress;
                     this._renderProgress(vnode.state.progressContext, vnode.state.loadingProgress, progress);
                 }
+            } else if (Object.values(PlaybackStateEvents).indexOf(type) !== -1) {
+                m.redraw();
             }
         });
-
-        vnode.state.playStateChangeEvent = EventCenter.on(Object.values(PlaybackStateEvents), () => m.redraw());
     }
 
     onremove(vnode) {
@@ -115,7 +122,7 @@ export class Player extends IBindable {
     }
 
     view() {
-        const service = Service.activeService();
+        const service = MediaManager.currentSong ? MediaManager.currentSong.service : null;
         const song = service ? service.currentSong : null;
         const artworkURL = song ? song.formatArtworkURL(40, 40) : null;
         return m('.player-container',
