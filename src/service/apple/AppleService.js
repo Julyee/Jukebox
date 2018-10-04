@@ -172,6 +172,10 @@ export class AppleService extends Service {
         ]);
     }
 
+    async seekTo(time) {
+        return await this.mAPI.seekToTime(time);
+    }
+
     _registerPlayerEvent(event) {
         this.mAPI.player.addEventListener(event, (...varArgs) => this._handlePlayerEvent(event, ...varArgs));
     }

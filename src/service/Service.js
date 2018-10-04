@@ -97,4 +97,8 @@ export class Service extends IBindable {
     async previous() {
         throw 'Not implemented';
     }
+
+    async seekTo() {
+        throw 'Not implemented';
+    }
 }
