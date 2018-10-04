@@ -59,8 +59,21 @@ export class MediaManagerImp extends IBindable {
         if (service) {
             switch (type) {
                 case Buttons.SONG_PLAY_NOW:
+                    this.mQueue.clearQueue();
+                    // break; // fall through
+
+                case Buttons.SONG_PLAY_KEEP_QUEUE:
                     this.mCurrentSong = varArgs[0];
                     this.mCurrentSong.play();
+                    this.mQueue.history.push(this.mCurrentSong);
+                    break;
+
+                case Buttons.SONG_PLAY_NEXT:
+                    this.mQueue.unshiftSong(varArgs[0]);
+                    break;
+
+                case Buttons.SONG_PLAY_LATER:
+                    this.mQueue.enqueueSong(varArgs[0]);
                     break;
 
                 case Buttons.SONG_MORE:
@@ -76,6 +89,28 @@ export class MediaManagerImp extends IBindable {
                 case Buttons.PLAYER_PAUSE_BUTTON:
                     if (this.mCurrentSong) {
                         this.mCurrentSong.service.pause();
+                    }
+                    break;
+
+                case Buttons.PLAYER_NEXT_BUTTON:
+                    if (this.mQueue.queueSize) {
+                        this.mCurrentSong = this.mQueue.dequeueSong();
+                        this.mCurrentSong.play();
+                    }
+                    break;
+
+                case Buttons.PLAYER_PREVIOUS_BUTTON:
+                    if (this.mCurrentSong) {
+                        if (this.mCurrentSong.service.playbackProgress > 2 || this.mQueue.historySize <= 1) { // 2%
+                            this.mCurrentSong.service.seekTo(0);
+                        } else if (this.mQueue.historySize > 1) {
+                            this.mQueue.unshiftSong(this.mQueue.history.pop());
+                            this.mCurrentSong = this.mQueue.history[this.mQueue.historySize - 1];
+                            this.mCurrentSong.play();
+                        }
+                    } else if (this.mQueue.historySize) {
+                        this.mCurrentSong = this.mQueue.history[this.mQueue.historySize - 1];
+                        this.mCurrentSong.play();
                     }
                     break;
 
