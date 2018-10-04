@@ -43,9 +43,7 @@ export class MusicQueue extends IBindable {
 
     dequeueSong() {
         if (this.queueSize) {
-            const ret = this.mQueue.shift();
-            this.mHistory.push(ret);
-            return ret;
+            return this.mQueue.shift();
         }
         return null;
     }
