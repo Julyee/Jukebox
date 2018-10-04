@@ -173,6 +173,7 @@ export class AppleService extends Service {
     }
 
     async seekTo(time) {
+        await this.authorize();
         return await this.mAPI.seekToTime(time);
     }
 
