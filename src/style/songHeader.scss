@@ -84,8 +84,19 @@
     white-space: nowrap;
 }
 
+.song-header-time {
+    color: rgb(114,114,117);
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 8px;
+}
+
 .song-header-buttons {
-    margin-top: 18px;
+    margin-top: 10px;
     text-align: right;
 }
 

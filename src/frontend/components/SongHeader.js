@@ -31,6 +31,7 @@ export class SongHeader {
                     song.isExplicit ? m('.song-header-explicit', '🅴') : null,
                     m('.song-header-artist', song.artist),
                     m('.song-header-album', song.album),
+                    m('.song-header-time', song.formattedDuration),
                     m('.song-header-buttons', [
                         m(Button, {
                             label: 'Album',

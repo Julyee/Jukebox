@@ -17,8 +17,10 @@ export class AppleSong extends Song {
         this.mComposer = info.composerName;
         this.mIsExplicit = info.contentRating === 'explicit';
         this.mDuration = info.durationInMillis;
-        this.mFormattedDuration = MusicKit.formattedMilliseconds(info.durationInMillis);
+        this.mFormattedDuration = this._formatMilliseconds(info.durationInMillis);
         this.mReleaseDate = info.releaseDate;
+
+        console.log(this.mFormattedDuration); // eslint-disable-line
 
         const genres = [];
         genres.push(...info.genreNames);
@@ -93,5 +95,14 @@ export class AppleSong extends Song {
         }
 
         return ret;
+    }
+
+    _formatMilliseconds(millis) {
+        // hours:Math.floor(e/3600),minutes:Math.floor(e%3600/60)
+        const totalSeconds = Math.floor(millis / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor(totalSeconds % 3600 / 60);
+        const seconds = totalSeconds - hours * 3600 - minutes * 60;
+        return `${hours ? hours + ':' : ''}${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
     }
 }
