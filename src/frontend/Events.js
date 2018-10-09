@@ -39,6 +39,7 @@ export const GeneralEvents = {
 export const PlaybackEvents = {
     PLAYER_TIME_CHANGE: 'PLR::TimeChange',
     PLAYER_BUFFER_CHANGE: 'PLR::BufferChange',
+    PLAYER_SEEK_TO: 'PLR::SeekTo',
 };
 
 export const PlaybackStateEvents = {

@@ -9,7 +9,7 @@ import * as moreSVG from '@fortawesome/free-solid-svg-icons/faEllipsisH';
 import * as headphonesSVG from '@fortawesome/free-solid-svg-icons/faHeadphones';
 import {IconCSS, IconButtonCSS} from 'polythene-css';
 import {EventCenter} from '../../core/EventCenter';
-import {Buttons, Events, PlaybackStateEvents} from '../Events';
+import {GeneralEvents, Buttons, PlaybackStateEvents, PlaybackEvents} from '../Events';
 import {MediaManager} from '../../service/MediaManager';
 
 IconButtonCSS.addStyle('.player-button', {
@@ -43,7 +43,7 @@ const makeButton = (svg, className, kind) => ({
                 inactive: false,
                 className: 'player-button',
                 events: {
-                    onclick: () => EventCenter.emit(Events.BUTTON_PRESS, kind),
+                    onclick: () => EventCenter.emit(GeneralEvents.BUTTON_PRESS, kind),
                 },
             }, [
                 m(Icon, {
@@ -84,13 +84,16 @@ export class Player extends IBindable {
         vnode.state.progressContext = progressCanvas.getContext('2d');
         this._renderProgress(vnode.state.progressContext, 0, 0);
 
-        vnode.state.bufferEvent = EventCenter.on(Events.PLAYBACK_EVENT, (type, ...varArgs) => {
-            if (type === Events.PLAYER_BUFFER_CHANGE) {
+        vnode.state.canvasClickHandler = e => this._handleCanvasClick(e, progressCanvas);
+        progressCanvas.addEventListener('click', vnode.state.canvasClickHandler);
+
+        vnode.state.playbackEvent = EventCenter.on(GeneralEvents.PLAYBACK_EVENT, (type, ...varArgs) => {
+            if (type === PlaybackEvents.PLAYER_BUFFER_CHANGE) {
                 if (varArgs[0] !== vnode.state.loadingProgress) {
                     vnode.state.loadingProgress = varArgs[0];
                     this._renderProgress(vnode.state.progressContext, varArgs[0], vnode.state.timeProgress);
                 }
-            } else if (type === Events.PLAYER_TIME_CHANGE) {
+            } else if (type === PlaybackEvents.PLAYER_TIME_CHANGE) {
                 const progress = MediaManager.currentSong ? MediaManager.currentSong.service.playbackProgress : 0;
                 if (progress !== vnode.state.timeProgress) {
                     vnode.state.timeProgress = progress;
@@ -103,19 +106,13 @@ export class Player extends IBindable {
     }
 
     onremove(vnode) {
-        if (vnode.state.bufferEvent) {
-            EventCenter.off(Events.PLAYER_BUFFER_CHANGE, vnode.state.bufferEvent);
-            delete vnode.state.bufferEvent;
+        if (vnode.state.playbackEvent) {
+            EventCenter.off(GeneralEvents.PLAYBACK_EVENT, vnode.state.playbackEvent);
+            delete vnode.state.playbackEvent;
         }
 
-        if (vnode.state.playbackTimeEvent) {
-            EventCenter.off(Events.PLAYER_TIME_CHANGE, vnode.state.playbackTimeEvent);
-            delete vnode.state.playbackTimeEvent;
-        }
-
-        if (vnode.state.playStateChangeEvent) {
-            EventCenter.off(Object.values(PlaybackStateEvents), vnode.state.playStateChangeEvent);
-            delete vnode.state.playStateChangeEvent;
+        if (vnode.state.canvasClickHandler) {
+            vnode.state.progressContext.canvas.removeEventListener('click', vnode.state.canvasClickHandler);
         }
     }
 
@@ -170,5 +167,15 @@ export class Player extends IBindable {
 
         ctx.fillStyle = 'rgba(31,200,219,0.5)';
         ctx.fillRect(0, 0, width * playbackProgress * 0.01, height);
+    }
+
+    _handleCanvasClick(event, canvas) {
+        if (MediaManager.currentSong) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percent = x / rect.width;
+            EventCenter.emit(GeneralEvents.PLAYBACK_EVENT, PlaybackEvents.PLAYER_SEEK_TO, MediaManager.currentSong.duration * percent * 0.001);
+            console.log('Percent:' + percent); // eslint-disable-line
+        }
     }
 }

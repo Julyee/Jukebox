@@ -132,6 +132,10 @@ export class MediaManagerImp extends IBindable {
         if (service) {
             if (type === Events.SONG_COMPLETE) {
                 this._playSong(this.mQueue.dequeueSong());
+            } else if (type === Events.PLAYER_SEEK_TO) {
+                if (this.mCurrentSong) {
+                    this.mCurrentSong.service.seekTo(varArgs[0]);
+                }
             }
         }
     }
