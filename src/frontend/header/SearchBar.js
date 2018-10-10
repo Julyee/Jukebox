@@ -1,4 +1,3 @@
-import { IBindable } from '../../core/IBindable';
 import { Service } from '../../service/Service';
 import { Search, IconButton, List, ListTile } from 'polythene-mithril';
 import { svgPathData as searchPathData } from '@fortawesome/free-solid-svg-icons/faSearch';
@@ -45,9 +44,8 @@ const ClearButton = {
         }),
 };
 
-export class SearchBar extends IBindable {
+export class SearchBar {
     constructor(/* vnode */) {
-        super();
         // init
     }
 

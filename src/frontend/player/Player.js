@@ -1,4 +1,3 @@
-import { IBindable } from '../../core/IBindable';
 import { IconButton, Icon } from 'polythene-mithril';
 import m from 'mithril';
 import * as playSVG from '@fortawesome/free-solid-svg-icons/faPlay';
@@ -61,9 +60,9 @@ const PauseButton = makeButton(iconPuase, 'player-play-icon', Buttons.PLAYER_PAU
 const StepForwardButton = makeButton(iconStepForward, 'player-step-icon', Buttons.PLAYER_NEXT_BUTTON);
 const MoreButton = makeButton(iconMore, 'player-more-icon', Buttons.PLAYER_MORE_BUTTON);
 
-export class Player extends IBindable {
+export class Player {
     constructor(/* vnode */) {
-        super();
+
     }
 
     oninit(vnode) {

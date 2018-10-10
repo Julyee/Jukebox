@@ -1,14 +1,12 @@
 import { Dialog } from 'polythene-mithril';
-import { IBindable } from '../core/IBindable';
 import { Header } from './header/Header';
 import { Menu } from './header/Menu';
 import { Player } from './player/Player';
 import { Service } from '../service/Service';
 import m from 'mithril';
 
-export class Layout extends IBindable {
+export class Layout {
     constructor(/* vnode */) {
-        super();
         // init
     }
 

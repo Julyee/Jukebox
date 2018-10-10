@@ -1,6 +1,5 @@
 import { Toolbar, ToolbarTitle, IconButton } from 'polythene-mithril';
 import { EventCenter } from '../../core/EventCenter';
-import { IBindable } from '../../core/IBindable';
 import { SearchBar } from './SearchBar';
 import { Events, Buttons } from '../Events';
 import { svgPathData as menuPathData } from '@fortawesome/free-solid-svg-icons/faBars';
@@ -16,9 +15,8 @@ const toolbarButton = svg => m(IconButton, {
     },
 });
 
-export class Header extends IBindable {
+export class Header {
     constructor(/* vnode */) {
-        super();
         // init
     }
 

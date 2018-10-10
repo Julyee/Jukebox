@@ -1,7 +1,6 @@
 import { List, Drawer, ListTile } from 'polythene-mithril';
 import { Events, Buttons } from '../Events';
 import { EventCenter } from '../../core/EventCenter';
-import { IBindable } from '../../core/IBindable';
 // import stream from 'mithril/stream';
 import m from 'mithril';
 
@@ -35,9 +34,8 @@ const navigationList = (navItemClick, buttons) => {
     });
 };
 
-export class Menu extends IBindable {
+export class Menu {
     constructor(/* vnode */) {
-        super();
         // init
     }
 

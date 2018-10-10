@@ -1,6 +1,5 @@
 import {Icon, List, ListTile, Button, Dialog, IOSSpinner} from 'polythene-mithril';
 import {AppleService} from '../../service/apple/AppleService';
-import {IBindable} from '../../core/IBindable';
 import {IconCSS} from 'polythene-css';
 import m from 'mithril';
 
@@ -71,9 +70,8 @@ function loadScript(url, errorCB = null) {
 }
 
 
-export class Splash extends IBindable {
+export class Splash {
     constructor(/* vnode */) {
-        super();
         // init
     }
 
