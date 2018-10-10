@@ -53,7 +53,7 @@
     // disallow assignment in conditional expressions
     "no-cond-assign": [2, "always"],
     // disallow use of console
-    "no-console": 2,
+    "no-console": 1,
     // disallow use of constant expressions in conditions
     "no-constant-condition": [2, { "checkLoops": false }],
     // disallow control characters in regular expressions

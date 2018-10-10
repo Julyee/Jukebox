@@ -20,8 +20,6 @@ export class AppleSong extends Song {
         this.mFormattedDuration = this._formatMilliseconds(info.durationInMillis);
         this.mReleaseDate = info.releaseDate;
 
-        console.log(this.mFormattedDuration); // eslint-disable-line
-
         const genres = [];
         genres.push(...info.genreNames);
         this.mGenres = Object.freeze(genres);
