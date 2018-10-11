@@ -153,12 +153,12 @@ export class Splash {
                     m('.splash-donations-right', m(Button, {
                         raised: false,
                         content: [
+                            m.trust('Sponsor&nbsp;'),
                             m(Icon, {
                                 svg: iconPatreon,
                                 size: 'regular',
                                 style: {color: '#a0a0a0'},
                             }),
-                            m.trust('&nbsp;Sponsor'),
                         ],
                         style: {
                             padding: '5px',
