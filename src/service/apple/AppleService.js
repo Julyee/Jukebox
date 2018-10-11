@@ -177,6 +177,20 @@ export class AppleService extends Service {
         return await this.mAPI.seekToTime(time);
     }
 
+    async getAlbumInfo(albumID) {
+        await this.authorize();
+        return await this.mAPI.api.album(albumID);
+    }
+
+    async getAlbumForSong(songID) {
+        await this.authorize();
+        const song = await this.mAPI.api.song(songID);
+        if (song) {
+            return await this.mAPI.api.album(song.relationships.albums.data[0].id);
+        }
+        return null;
+    }
+
     _registerPlayerEvent(event) {
         this.mAPI.player.addEventListener(event, (...varArgs) => this._handlePlayerEvent(event, ...varArgs));
     }
