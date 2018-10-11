@@ -124,8 +124,14 @@ export class MediaManagerImp extends IBindable {
                 case Buttons.SONG_GO_TO_ALBUM: {
                     const song = varArgs[0];
                     window.location.href = `#!/Album?s=${encodeURI(song.id)}&x=${encodeURI(song.service.constructor.name)}`;
-                }
                     break;
+                }
+
+                case Buttons.ALBUM_OPEN_VIEW: {
+                    const album = varArgs[0];
+                    window.location.href = `#!/Album?a=${encodeURI(album.id)}&x=${encodeURI(album.service.constructor.name)}`;
+                    break;
+                }
 
                 default:
                     break;
