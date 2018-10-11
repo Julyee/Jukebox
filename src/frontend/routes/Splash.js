@@ -174,13 +174,14 @@ export class Splash {
         Dialog.show(loadingDialog('Waiting for login...'));
         const service = AppleService.instance();
         service.authorize().then(() => {
-            Dialog.hide();
-            if (service.authorized) {
-                AppleService.activeService(service);
-                setTimeout(() => {
-                    window.location.href = '#!/Home';
-                }, 500);
-            }
+            Dialog.hide().then(() => {
+                if (service.authorized) {
+                    AppleService.activeService(service);
+                    setTimeout(() => {
+                        window.location.href = '#!/Home';
+                    }, 500);
+                }
+            });
         });
     }
 
