@@ -5,6 +5,7 @@ import {Service} from '../Service';
 import m from 'mithril';
 import {EventCenter} from '../../core/EventCenter';
 import {AppleSong} from './media/AppleSong';
+import {AppleAlbum} from './media/AppleAlbum';
 
 const kPlaybackStateMap = {
     none: Events.SONG_IDLE,
@@ -110,7 +111,7 @@ export class AppleService extends Service {
         });
 
         return Object.assign({}, {
-            albums: result.albums ? result.albums.data : null,
+            albums: result.albums ? result.albums.data.map(album => new AppleAlbum(album, this)) : null,
             artists: result.artists ? result.artists.data : null,
             'music-videos': result['music-videos'] ? result['music-videos'].data : null,
             playlists: result.playlists ? result.playlists.data : null,
@@ -179,14 +180,21 @@ export class AppleService extends Service {
 
     async getAlbumInfo(albumID) {
         await this.authorize();
-        return await this.mAPI.api.album(albumID);
+        const album = await this.mAPI.api.album(albumID);
+        if (album) {
+            return new AppleAlbum(album, this);
+        }
+        return null;
     }
 
     async getAlbumForSong(songID) {
         await this.authorize();
         const song = await this.mAPI.api.song(songID);
         if (song) {
-            return await this.mAPI.api.album(song.relationships.albums.data[0].id);
+            const album = await this.mAPI.api.album(song.relationships.albums.data[0].id);
+            if (album) {
+                return new AppleAlbum(album, this);
+            }
         }
         return null;
     }
