@@ -4,6 +4,7 @@ import { Home, Import, Library, NowPlaying, Search, Splash } from './routes';
 import m from 'mithril';
 
 import { applyFontStyle } from './FontStyler';
+import {Album} from './routes/Album';
 applyFontStyle();
 
 export class Frontend extends IObject {
@@ -17,6 +18,7 @@ export class Frontend extends IObject {
             '/Import': Import,
             '/NowPlaying': NowPlaying,
             '/Search': Search,
+            '/Album': Album,
         });
     }
 }
