@@ -9,6 +9,7 @@ export class AppleSong extends Song {
         const info = songDesc.attributes;
         const artworkInfo = this._makeGeneralArtworkInfo(info.artwork);
 
+        this.mID = songDesc.id;
         this.mName = info.name;
         this.mAlbum = info.albumName;
         this.mArtist = info.artistName;

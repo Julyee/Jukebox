@@ -1,6 +1,7 @@
 
 export class Song {
     constructor(songDesc, service) {
+        this.mID = null;
         this.mName = null;
         this.mAlbum = null;
         this.mArtist = null;
@@ -14,6 +15,10 @@ export class Song {
         this.mGenres = null;
         this._mDescriptor = songDesc;
         this._mService = service;
+    }
+
+    get id() {
+        return this.mID;
     }
 
     get name() {
