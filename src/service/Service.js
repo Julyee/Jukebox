@@ -4,7 +4,11 @@ const kInstanceMap = {};
 let kActiveService = null;
 
 export class Service extends IBindable {
-    static instance() {
+    static instance(serviceName) {
+        if (arguments.length === 1 && kInstanceMap.hasOwnProperty(serviceName)) {
+            return kInstanceMap[serviceName];
+        }
+
         if (!kInstanceMap[this.name]) {
             kInstanceMap[this.name] = new this();
         }
@@ -13,7 +17,11 @@ export class Service extends IBindable {
 
     static activeService(service) {
         if (arguments.length === 1) {
-            kActiveService = service;
+            if (service instanceof Service) {
+                kActiveService = service;
+            } else if (kInstanceMap.hasOwnProperty(service)) {
+                return kInstanceMap[service];
+            }
         }
         return kActiveService;
     }
