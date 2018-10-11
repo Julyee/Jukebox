@@ -1,4 +1,6 @@
 import {LargeThumbnailCard} from './LargeThumbnailCard';
+import {EventCenter} from '../../core/EventCenter';
+import {Buttons, GeneralEvents} from '../Events';
 
 export class AlbumCard extends LargeThumbnailCard {
     view(vnode) {
@@ -6,9 +8,10 @@ export class AlbumCard extends LargeThumbnailCard {
     }
 
     _getContent(album, size = 180) {
-        const info = album.attributes;
-        const artworkSize = (size * window.devicePixelRatio).toString();
-        const artworkURL = info.artwork && info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
-        return super._getContent(info.name, info.artistName, artworkURL, info.contentRating === 'explicit');
+        const artworkSize = (size * window.devicePixelRatio);
+        const artworkURL = album.formatArtworkURL(artworkSize, artworkSize);
+        return super._getContent(album.name, album.artist, artworkURL, album.isExplicit, () => {
+            EventCenter.emit(GeneralEvents.BUTTON_PRESS, Buttons.ALBUM_OPEN_VIEW, album);
+        });
     }
 }

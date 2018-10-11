@@ -7,9 +7,13 @@ export class LargeThumbnailCard {
         return this._getContent(a.title, a.subtitle, a.artworkURL, a.isExplicit);
     }
 
-    _getContent(title, subtitle, artworkURL, isExplicit) {
+    _getContent(title, subtitle, artworkURL, isExplicit, onclick) {
         return m('.large-thumbnail-card-container', m(Card, {
             shadowDepth: 0,
+            className: 'large-thumbnail-card',
+            events: {
+                onclick: onclick,
+            },
             content: [
                 {
                     media: {
