@@ -1,4 +1,3 @@
-
 export class Song {
     constructor(songDesc, service) {
         this.mID = null;
@@ -47,10 +46,6 @@ export class Song {
 
     get isExplicit() {
         return this.mIsExplicit;
-    }
-
-    get rating() {
-        return this.mRating;
     }
 
     get duration() { // raw
