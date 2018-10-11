@@ -20,8 +20,7 @@ function _getMenuItems(items, song) {
         compact: true,
         events: {
             onclick: () => {
-                EventCenter.emit(GeneralEvents.BUTTON_PRESS, item.event, song);
-                Dialog.hide();
+                Dialog.hide().then(() => EventCenter.emit(GeneralEvents.BUTTON_PRESS, item.event, song));
             },
         },
     }));

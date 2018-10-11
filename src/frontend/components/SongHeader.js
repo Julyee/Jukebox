@@ -1,4 +1,4 @@
-import {Button} from 'polythene-mithril';
+import {Button, Dialog} from 'polythene-mithril';
 import {ButtonCSS} from 'polythene-css';
 import m from 'mithril';
 import {EventCenter} from '../../core/EventCenter';
@@ -41,7 +41,9 @@ export class SongHeader {
                                 'color': '#f9f9ff',
                             },
                             events: {
-                                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_GO_TO_ALBUM, song),
+                                onclick: () => {
+                                    Dialog.hide().then(() => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_GO_TO_ALBUM, song));
+                                },
                             },
                         }),
                         m(Button, {
@@ -52,7 +54,9 @@ export class SongHeader {
                                 'color': '#f9f9ff',
                             },
                             events: {
-                                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_GO_TO_ARTIST, song),
+                                onclick: () => {
+                                    Dialog.hide().then(() => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_GO_TO_ARTIST, song));
+                                },
                             },
                         }),
                     ]),
