@@ -9,6 +9,8 @@ export class Album {
         this.mReleaseDate = null;
         this.mGenres = null;
         this.mLabel = null;
+        this.mShortDescription = null;
+        this.mLongDescription = null;
         this.mSongs = null;
         this.mIsExplicit = false;
         this._mDescriptor = descriptor;
@@ -45,6 +47,14 @@ export class Album {
 
     get label() {
         return this.mLabel;
+    }
+
+    get shortDescription() {
+        return this.mShortDescription;
+    }
+
+    get longDescription() {
+        return this.mLongDescription;
     }
 
     get songs() {

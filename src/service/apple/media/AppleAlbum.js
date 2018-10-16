@@ -16,6 +16,8 @@ export class AppleAlbum extends Album {
         this.mArtworkSize = Object.freeze({ width: artworkInfo.width, height: artworkInfo.height });
         this.mReleaseDate = info.releaseDate;
         this.mLabel = info.recordLabel;
+        this.mShortDescription = info.editorialNotes && info.editorialNotes.short ? info.editorialNotes.short : null;
+        this.mLongDescription = info.editorialNotes && info.editorialNotes.standard ? info.editorialNotes.standard : this.mShortDescription;
         this.mIsExplicit = info.contentRating === 'explicit';
 
         if (descriptor.relationships && descriptor.relationships.tracks && descriptor.relationships.tracks.data.length) {
