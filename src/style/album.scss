@@ -1,0 +1,32 @@
+.album-view-screen-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    box-shadow: silver 2px 2px 5px;
+    border-radius: 5px;
+}
+
+.album-view-error {
+    padding: 10px 15px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.album-view-loading {
+    padding: 10px 15px;
+}
+
+.album-view-loading-icon {
+    display: inline-block;
+    transform: translate(-50%, 0);
+    margin-left: 50%;
+}
+
+.album-view-loading-text {
+    padding-top: 10px;
+    text-align: center;
+    color: #7f7f7f;
+    font-weight: 100;
+}
