@@ -83,7 +83,7 @@ export class MediaManagerImp extends IBindable {
                     break;
 
                 case Buttons.SONG_MORE:
-                    Dialog.show(SongMoreDialog.get(varArgs[0]));
+                    Dialog.show(SongMoreDialog.get(varArgs[0], varArgs[1]));
                     break;
 
                 case Buttons.PLAYER_PLAY_BUTTON:
