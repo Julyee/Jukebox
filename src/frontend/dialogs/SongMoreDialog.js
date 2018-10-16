@@ -27,12 +27,12 @@ function _getMenuItems(items, song) {
 }
 
 export const SongMoreDialog = {
-    get: function getDialog(song, items = kMenuItems) {
+    get: function getDialog(song, moreDialogOptions, items = kMenuItems) {
         return {
             hideDelay: 0.12,
             shadowDepth: 1,
             backdrop: true,
-            header: m(SongHeader, {song}),
+            header: m(SongHeader, {song, moreDialogOptions}),
             menu: m(List, {
                 border: true,
                 indentedBorder: false,
