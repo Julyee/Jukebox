@@ -14,10 +14,9 @@ ButtonCSS.addStyle('.song-header-button', {
 
 export class SongHeader {
     view(vnode) {
-        return this._getContent(vnode.attrs.song);
-    }
-
-    _getContent(song) {
+        const song = vnode.attrs.song;
+        const showAlbumButton = vnode.attrs.moreDialogOptions.hasOwnProperty('showAlbumButton') ? vnode.attrs.showAlbumButton : true;
+        const showArtistButton = vnode.attrs.moreDialogOptions.hasOwnProperty('showArtistButton') ? vnode.attrs.showArtistButton : true;
         const artworkURL = song.formatArtworkURL(100, 100);
         return m('.song-header-container', [
             m('.song-header-icon-container', m('.song-header-icon', {
@@ -33,7 +32,7 @@ export class SongHeader {
                     m('.song-header-album', song.album),
                     m('.song-header-time', song.formattedDuration),
                     m('.song-header-buttons', [
-                        m(Button, {
+                        showAlbumButton ? m(Button, {
                             label: 'Album',
                             className: 'song-header-button',
                             textStyle: {
@@ -45,8 +44,8 @@ export class SongHeader {
                                     Dialog.hide().then(() => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_GO_TO_ALBUM, song));
                                 },
                             },
-                        }),
-                        m(Button, {
+                        }) : null,
+                        showArtistButton ? m(Button, {
                             label: 'Artist',
                             className: 'song-header-button',
                             textStyle: {
@@ -58,7 +57,7 @@ export class SongHeader {
                                     Dialog.hide().then(() => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_GO_TO_ARTIST, song));
                                 },
                             },
-                        }),
+                        }) : null,
                     ]),
                 ]),
             ]),
