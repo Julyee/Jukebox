@@ -8,6 +8,12 @@ export const Buttons = {
     PLAYER_PREVIOUS_BUTTON: 'BTN::PLR::Previous',
     PLAYER_MORE_BUTTON: 'BTN::PLR::More',
 
+    MEDIA_ITEM_PLAY_NOW: 'BTN::MEDIA::PlayNow',
+    MEDIA_ITEM_SHUFFLE: 'BTN::MEDIA::Shuffle',
+    MEDIA_ITEM_PLAY_KEEP_QUEUE: 'BTN::MEDIA::PlayNowKeepQueue',
+    MEDIA_ITEM_PLAY_NEXT: 'BTN::MEDIA::PlayNext',
+    MEDIA_ITEM_PLAY_LAST: 'BTN::MEDIA::PlayLast',
+
     SONG_MORE: 'BTN::SONG::More',
     SONG_PLAY_NOW: 'BTN::SONG::PlayNow',
     SONG_PLAY_KEEP_QUEUE: 'BTN::SONG::PlayNowKeepQueue',
@@ -20,6 +26,8 @@ export const Buttons = {
 
     ALBUM_OPEN_VIEW: 'BTN::ALBUM::OpenView',
     ALBUM_PLAY_NOW: 'BTN::ALBUM::PlayNow',
+    ALBUM_SHUFFLE: 'BTN::ALBUM::Shuffle',
+    ALBUM_PLAY_KEEP_QUEUE: 'BTN::ALBUM::PlayNowKeepQueue',
     ALBUM_PLAY_NEXT: 'BTN::ALBUM::PlayNext',
     ALBUM_PLAY_LATER: 'BTN::ALBUM::PlayLater',
 
