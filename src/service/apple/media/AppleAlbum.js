@@ -24,6 +24,14 @@ export class AppleAlbum extends Album {
             this.mSongs = descriptor.relationships.tracks.data.map(song => new AppleSong(song, service));
         }
 
+        if (this.mSongs) {
+            this.mDuration = 0;
+            this.mSongs.forEach(song => {
+                this.mDuration += song.duration;
+            });
+            this.mFormattedDuration = AppleMediaTools.formatMilliseconds(this.mDuration);
+        }
+
         const genres = [];
         genres.push(...info.genreNames);
         this.mGenres = Object.freeze(genres);

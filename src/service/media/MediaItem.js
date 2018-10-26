@@ -7,6 +7,8 @@ export class MediaItem {
         this.mArtworkURL = null;
         this.mArtworkSize = null;
         this.mIsExplicit = false;
+        this.mDuration = null;
+        this.mFormattedDuration = null;
 
         this._mDescriptor = description;
         this._mService = service;
@@ -38,6 +40,14 @@ export class MediaItem {
 
     get isExplicit() {
         return this.mIsExplicit;
+    }
+
+    get duration() { // raw
+        return this.mDuration;
+    }
+
+    get formattedDuration() {
+        return this.mFormattedDuration;
     }
 
     get _descriptor() {
