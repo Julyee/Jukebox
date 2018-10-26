@@ -1,4 +1,4 @@
-.song-header-container {
+.more-dialog-header-container {
     height: 124px;
     width: 100%;
     display: flex;
@@ -8,7 +8,7 @@
     border-bottom: #f0f0f0 solid 1px;
 }
 
-.song-header-icon-container {
+.more-dialog-header-icon-container {
     height: inherit;
     flex: 0 0 45px;
     display: flex;
@@ -17,7 +17,7 @@
     margin-right: 5px;
 }
 
-.song-header-icon {
+.more-dialog-header-icon {
     width: 100px;
     height: 100px;
     margin-left: 2px;
@@ -27,7 +27,7 @@
     background-size: contain;
 }
 
-.song-header-info-container {
+.more-dialog-header-info-container {
     height: inherit;
     flex: 1 1 1px;
     padding-left: 1px;
@@ -37,12 +37,12 @@
     min-width: 0;
 }
 
-.song-header-info {
+.more-dialog-header-info {
     padding: 0;
     margin: 0;
 }
 
-.song-header-song-name {
+.more-dialog-header-title {
     font-weight: 400;
     font-size: 16px;
     line-height: 16px;
@@ -53,7 +53,7 @@
     display: inline-block;
 }
 
-.song-header-explicit {
+.more-dialog-header-explicit {
     color: rgb(114,114,117);
     font-size: 10px;
     display: inline-block;
@@ -62,7 +62,7 @@
     transform: translate(0, -6px);
 }
 
-.song-header-artist {
+.more-dialog-header-subtitle {
     color: rgb(114,114,117);
     font-weight: 200;
     font-size: 14px;
@@ -74,7 +74,7 @@
     padding-bottom: 2px;
 }
 
-.song-header-album {
+.more-dialog-header-detail {
     color: rgb(114,114,117);
     font-weight: 200;
     font-size: 12px;
@@ -84,7 +84,7 @@
     white-space: nowrap;
 }
 
-.song-header-time {
+.more-dialog-header-time {
     color: rgb(114,114,117);
     font-weight: 400;
     font-size: 10px;
@@ -95,12 +95,12 @@
     margin-top: 8px;
 }
 
-.song-header-buttons {
+.more-dialog-header-buttons {
     margin-top: 10px;
     text-align: right;
 }
 
-.song-header-buttons > * {
+.more-dialog-header-buttons > * {
     margin-left: 2px;
     margin-right: 2px;
 }

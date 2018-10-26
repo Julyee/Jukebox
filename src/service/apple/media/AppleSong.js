@@ -9,9 +9,9 @@ export class AppleSong extends Song {
         const artworkInfo = AppleMediaTools.makeGeneralArtworkInfo(info.artwork);
 
         this.mID = songDesc.id;
-        this.mName = info.name;
-        this.mAlbum = info.albumName;
-        this.mArtist = info.artistName;
+        this.mTitle = info.name;
+        this.mSubtitle = info.artistName;
+        this.mDetail = info.albumName;
         this.mArtworkURL = artworkInfo.url;
         this.mArtworkSize = Object.freeze({ width: artworkInfo.width, height: artworkInfo.height });
         this.mComposer = info.composerName;

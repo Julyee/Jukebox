@@ -3,7 +3,7 @@ import {Dialog} from 'polythene-mithril';
 import {IBindable} from '../core/IBindable';
 import {EventCenter} from '../core/EventCenter';
 import {Events, Buttons} from '../frontend/Events';
-import {SongMoreDialog} from '../frontend/dialogs/SongMoreDialog';
+import {MoreDialog} from '../frontend/dialogs/MoreDialog';
 import {MusicQueue} from './MusicQueue';
 
 let kSharedInstance = null;
@@ -83,7 +83,7 @@ export class MediaManagerImp extends IBindable {
                     break;
 
                 case Buttons.SONG_MORE:
-                    Dialog.show(SongMoreDialog.get(varArgs[0], varArgs[1]));
+                    Dialog.show(MoreDialog.get(varArgs[0], varArgs[1]));
                     break;
 
                 case Buttons.PLAYER_PLAY_BUTTON:

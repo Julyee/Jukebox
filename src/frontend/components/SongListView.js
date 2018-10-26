@@ -28,9 +28,9 @@ export class SongListView {
                 }),
                 m('.song-list-view-info-container', [
                     options.isExplicit ? m('.song-list-view-explicit', '🅴') : null,
-                    m('.song-list-view-name', options.title),
-                    m('.song-list-view-artist', options.subtitle),
-                    m('.song-list-view-date', date.toLocaleDateString("en-US", dateOptions)),
+                    m('.song-list-view-title', options.title),
+                    m('.song-list-view-subtitle', options.subtitle),
+                    m('.song-list-view-date', date.toLocaleDateString('en-US', dateOptions)),
                     m('.song-list-view-genre', options.genres),
                     m('.song-list-view-buttons', buttons.map(button => m(Button, {
                         label: button.label,

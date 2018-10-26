@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {SongHeader} from '../components/SongHeader';
+import {MoreDialogHeader} from '../components/MoreDialogHeader';
 import {Dialog, List, ListTile} from 'polythene-mithril';
 import {GeneralEvents, Buttons} from '../Events';
 import {EventCenter} from '../../core/EventCenter';
@@ -12,7 +12,7 @@ const kMenuItems = [
     { title: 'Play Last', event: Buttons.SONG_PLAY_LATER },
 ];
 
-function _getMenuItems(items, song) {
+function _getMenuItems(items, mediaItem) {
     return items.map(item => m(ListTile, {
         subtitle: item.title,
         ink: true,
@@ -20,25 +20,25 @@ function _getMenuItems(items, song) {
         compact: true,
         events: {
             onclick: () => {
-                Dialog.hide().then(() => EventCenter.emit(GeneralEvents.BUTTON_PRESS, item.event, song));
+                Dialog.hide().then(() => EventCenter.emit(GeneralEvents.BUTTON_PRESS, item.event, mediaItem));
             },
         },
     }));
 }
 
-export const SongMoreDialog = {
-    get: function getDialog(song, moreDialogOptions, items = kMenuItems) {
+export const MoreDialog = {
+    get: function getDialog(mediaItem, moreDialogOptions, items = kMenuItems) {
         return {
             hideDelay: 0.12,
             shadowDepth: 1,
             backdrop: true,
-            header: m(SongHeader, {song, moreDialogOptions}),
+            header: m(MoreDialogHeader, {mediaItem: mediaItem, moreDialogOptions}),
             menu: m(List, {
                 border: true,
                 indentedBorder: false,
                 compact: false,
                 padding: 'none',
-                tiles: _getMenuItems(items, song),
+                tiles: _getMenuItems(items, mediaItem),
             }),
         };
     },

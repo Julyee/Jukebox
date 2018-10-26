@@ -10,8 +10,8 @@ export class AppleAlbum extends Album {
         const artworkInfo = AppleMediaTools.makeGeneralArtworkInfo(info.artwork);
 
         this.mID = descriptor.id;
-        this.mName = info.name;
-        this.mArtist = info.artistName;
+        this.mTitle = info.name;
+        this.mSubtitle = info.artistName;
         this.mArtworkURL = artworkInfo.url;
         this.mArtworkSize = Object.freeze({ width: artworkInfo.width, height: artworkInfo.height });
         this.mReleaseDate = info.releaseDate;
