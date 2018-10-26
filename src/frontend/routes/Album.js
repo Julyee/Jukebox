@@ -49,6 +49,7 @@ export class Album extends Layout {
             title: album.name,
             subtitle: album.artist,
             isExplicit: album.isExplicit,
+            duration: album.formattedDuration,
             date: album.releaseDate,
             genres: album.genres.join(', '),
             description: album.longDescription,

@@ -30,9 +30,9 @@ export class SongListView {
                     options.isExplicit ? m('.song-list-view-explicit', '🅴') : null,
                     options.title ? m('.song-list-view-title', options.title) : null,
                     options.subtitle ? m('.song-list-view-subtitle', options.subtitle) : null,
-                    options.duration ? m('.song-list-view-duration', options.duration) : null,
                     date ? m('.song-list-view-date', date.toLocaleDateString('en-US', dateOptions)) : null,
                     options.genres ? m('.song-list-view-genre', options.genres) : null,
+                    options.duration ? m('.song-list-view-duration', options.duration) : null,
                     m('.song-list-view-buttons', buttons.map(button => m(Button, {
                         label: button.label,
                         className: 'song-list-view-button',
