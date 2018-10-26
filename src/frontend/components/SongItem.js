@@ -27,7 +27,7 @@ export class SongItem {
             compact: true,
             ink: true,
             events: {
-                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.SONG_PLAY_NOW, song),
+                onclick: () => EventCenter.emit(Events.BUTTON_PRESS, Buttons.MEDIA_ITEM_PLAY_NOW, song),
             },
             front: displayThumbnail ? m('.song-item-song-icon', {
                 style: {

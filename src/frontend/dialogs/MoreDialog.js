@@ -5,9 +5,9 @@ import {GeneralEvents, Buttons} from '../Events';
 import {EventCenter} from '../../core/EventCenter';
 
 const kMenuItems = [
-    { title: 'Play Now (keep up next)', event: Buttons.SONG_PLAY_KEEP_QUEUE },
-    { title: 'Play Next', event: Buttons.SONG_PLAY_NEXT },
-    { title: 'Play Last', event: Buttons.SONG_PLAY_LATER },
+    { title: 'Play Now (keep up next)', event: Buttons.MEDIA_ITEM_PLAY_KEEP_QUEUE },
+    { title: 'Play Next', event: Buttons.MEDIA_ITEM_PLAY_NEXT },
+    { title: 'Play Last', event: Buttons.MEDIA_ITEM_PLAY_LAST },
     { title: 'Add to a Playlist...', event: Buttons.SONG_ADD_TO_PLAYLIST },
     { title: 'Create Station', event: Buttons.SONG_CREATE_STATION },
 ];

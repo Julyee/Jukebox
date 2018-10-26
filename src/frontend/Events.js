@@ -15,26 +15,14 @@ export const Buttons = {
     MEDIA_ITEM_PLAY_LAST: 'BTN::MEDIA::PlayLast',
 
     SONG_MORE: 'BTN::SONG::More',
-    SONG_PLAY_NOW: 'BTN::SONG::PlayNow',
-    SONG_PLAY_KEEP_QUEUE: 'BTN::SONG::PlayNowKeepQueue',
-    SONG_PLAY_NEXT: 'BTN::SONG::PlayNext',
-    SONG_PLAY_LATER: 'BTN::SONG::PlayLater',
     SONG_ADD_TO_PLAYLIST: 'BTN::SONG::AddToPlaylist',
     SONG_CREATE_STATION: 'BTN::SONG::CreateStation',
     SONG_GO_TO_ALBUM: 'BTN::SONG::GoToAlbum',
     SONG_GO_TO_ARTIST: 'BTN::SONG::GoToArtist',
 
     ALBUM_OPEN_VIEW: 'BTN::ALBUM::OpenView',
-    ALBUM_PLAY_NOW: 'BTN::ALBUM::PlayNow',
-    ALBUM_SHUFFLE: 'BTN::ALBUM::Shuffle',
-    ALBUM_PLAY_KEEP_QUEUE: 'BTN::ALBUM::PlayNowKeepQueue',
-    ALBUM_PLAY_NEXT: 'BTN::ALBUM::PlayNext',
-    ALBUM_PLAY_LATER: 'BTN::ALBUM::PlayLater',
 
     PLAYLIST_OPEN_VIEW: 'BTN::PLAYLIST::OpenView',
-    PLAYLIST_PLAY_NOW: 'BTN::PLAYLIST::PlayNow',
-    PLAYLIST_PLAY_NEXT: 'BTN::PLAYLIST::PlayNext',
-    PLAYLIST_PLAY_LATER: 'BTN::PLAYLIST::PlayLater',
 
     ARTIST_OPEN_VIEW: 'BTN::ARTIST::OpenView',
 };

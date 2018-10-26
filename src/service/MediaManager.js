@@ -5,6 +5,7 @@ import {EventCenter} from '../core/EventCenter';
 import {Events, Buttons} from '../frontend/Events';
 import {MoreDialog} from '../frontend/dialogs/MoreDialog';
 import {MusicQueue} from './MusicQueue';
+import {Song} from './media';
 
 let kSharedInstance = null;
 
@@ -56,29 +57,56 @@ export class MediaManagerImp extends IBindable {
 
     _handleButtonPress(type, ...varArgs) {
         const service = Service.activeService();
+        let mediaItems = null;
         if (service) {
             switch (type) {
-                case Buttons.SONG_PLAY_NOW:
+                case Buttons.MEDIA_ITEM_PLAY_NOW:
                     this.mQueue.clearQueue();
                     // break; // fall through
 
-                case Buttons.SONG_PLAY_KEEP_QUEUE:
-                    this._playSong(varArgs[0]);
-                    break;
-
-                case Buttons.SONG_PLAY_NEXT:
-                    if (this.mCurrentSong) {
-                        this.mQueue.unshiftSong(varArgs[0]);
-                    } else {
-                        this._playSong(varArgs[0]);
+                case Buttons.MEDIA_ITEM_PLAY_KEEP_QUEUE:
+                    mediaItems = varArgs[0] instanceof Song ? [varArgs[0]] : varArgs[0].songs;
+                    if (mediaItems && mediaItems.length) {
+                        this.mQueue.unshiftSong(mediaItems);
+                        this._playSong(this.mQueue.dequeueSong());
                     }
                     break;
 
-                case Buttons.SONG_PLAY_LATER:
-                    if (this.mCurrentSong) {
-                        this.mQueue.enqueueSong(varArgs[0]);
-                    } else {
-                        this._playSong(varArgs[0]);
+                case Buttons.MEDIA_ITEM_PLAY_NEXT:
+                    mediaItems = varArgs[0] instanceof Song ? [varArgs[0]] : varArgs[0].songs;
+                    if (mediaItems && mediaItems.length) {
+                        this.mQueue.unshiftSong(mediaItems);
+                    }
+
+                    if (!this.mCurrentSong) {
+                        this._playSong(this.mQueue.dequeueSong());
+                    }
+                    break;
+
+                case Buttons.MEDIA_ITEM_PLAY_LAST:
+                    mediaItems = varArgs[0] instanceof Song ? [varArgs[0]] : varArgs[0].songs;
+                    if (mediaItems && mediaItems.length) {
+                        this.mQueue.enqueueSong(mediaItems);
+                    }
+
+                    if (!this.mCurrentSong) {
+                        this._playSong(this.mQueue.dequeueSong());
+                    }
+                    break;
+
+                case Buttons.MEDIA_ITEM_SHUFFLE:
+                    if (varArgs[0].songs && varArgs[0].songs.length) {
+                        mediaItems = varArgs[0].songs.slice();
+                        let j, x, i;
+                        for (i = mediaItems.length - 1; i > 0; i--) {
+                            j = Math.floor(Math.random() * (i + 1));
+                            x = mediaItems[i];
+                            mediaItems[i] = mediaItems[j];
+                            mediaItems[j] = x;
+                        }
+                        this.mQueue.clearQueue();
+                        this.mQueue.enqueueSong(mediaItems);
+                        this._playSong(this.mQueue.dequeueSong());
                     }
                     break;
 

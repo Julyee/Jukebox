@@ -34,11 +34,13 @@ export class MusicQueue extends IBindable {
     }
 
     enqueueSong(song) {
-        this.mQueue.push(song);
+        const toAdd = Array.isArray(song) ? song : [song];
+        this.mQueue.push.apply(this.mQueue, toAdd);
     }
 
     unshiftSong(song) {
-        this.mQueue.unshift(song);
+        const toAdd = Array.isArray(song) ? song : [song];
+        this.mQueue.unshift.apply(this.mQueue, toAdd);
     }
 
     dequeueSong() {
