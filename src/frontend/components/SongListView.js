@@ -17,7 +17,7 @@ export class SongListView {
     view(vnode) {
         const options = vnode.attrs;
         const buttons = options.hasOwnProperty('buttons') ? options.buttons : [];
-        const date = new Date(options.date);
+        const date = options.date ? new Date(options.date) : null;
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         return m('.song-list-view-container', [
             m('.song-list-view-header', [
@@ -28,10 +28,11 @@ export class SongListView {
                 }),
                 m('.song-list-view-info-container', [
                     options.isExplicit ? m('.song-list-view-explicit', '🅴') : null,
-                    m('.song-list-view-title', options.title),
-                    m('.song-list-view-subtitle', options.subtitle),
-                    m('.song-list-view-date', date.toLocaleDateString('en-US', dateOptions)),
-                    m('.song-list-view-genre', options.genres),
+                    options.title ? m('.song-list-view-title', options.title) : null,
+                    options.subtitle ? m('.song-list-view-subtitle', options.subtitle) : null,
+                    options.duration ? m('.song-list-view-duration', options.duration) : null,
+                    date ? m('.song-list-view-date', date.toLocaleDateString('en-US', dateOptions)) : null,
+                    options.genres ? m('.song-list-view-genre', options.genres) : null,
                     m('.song-list-view-buttons', buttons.map(button => m(Button, {
                         label: button.label,
                         className: 'song-list-view-button',
@@ -48,7 +49,7 @@ export class SongListView {
                 ]),
             ]),
             options.description ? m('.song-list-view-description', m.trust(options.description)) : null,
-            m('.song-list-view-songs-container', m(List, {
+            options.songs ? m('.song-list-view-songs-container', m(List, {
                 border: true,
                 indentedBorder: false,
                 compact: false,
@@ -59,7 +60,7 @@ export class SongListView {
                     displayThumbnail: options.displayThumbnail,
                     moreDialogOptions: options.moreDialogOptions,
                 })),
-            })),
+            })) : null,
         ]);
     }
 }
