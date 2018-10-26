@@ -86,7 +86,6 @@ export class Album extends Layout {
                     p = service.getAlbumForSong(songID);
                 }
                 p.then(result => {
-                    console.log(result);
                     if (result) {
                         this.mAlbum = result;
                     } else {
