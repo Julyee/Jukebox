@@ -45,26 +45,27 @@ export class Album extends Layout {
         const artworkURL = album.formatArtworkURL(400, 400);
 
         return m(SongListView, {
+            mediaItem: album,
             artworkURL: artworkURL,
-            title: album.name,
-            subtitle: album.artist,
-            isExplicit: album.isExplicit,
-            duration: album.formattedDuration,
-            date: album.releaseDate,
-            genres: album.genres.join(', '),
-            description: album.longDescription,
-            songs: album.songs,
-            displayThumbnail: false,
             moreDialogOptions: {
                 showAlbumButton: false,
             },
             buttons: [
                 {
-                    label: 'Artist',
-                    event: Buttons.ARTIST_OPEN_VIEW,
-                    eventData: null, // TODO
+                    label: 'Play',
+                    event: Buttons.MEDIA_ITEM_PLAY_NOW,
+                    eventData: album,
+                },
+                {
+                    label: 'Shuffle',
+                    event: Buttons.MEDIA_ITEM_SHUFFLE,
+                    eventData: album,
                 },
             ],
+            songDisplayThumbnail: false,
+            songMoreDialogOptions: {
+                showAlbumButton: false,
+            },
         });
     }
 
