@@ -6,9 +6,7 @@ export class PlaylistCard extends LargeThumbnailCard {
     }
 
     _getContent(playlist, size = 180) {
-        const info = playlist.attributes;
-        const artworkSize = (size * window.devicePixelRatio).toString();
-        const artworkURL = info.artwork && info.artwork.url.replace('{w}', artworkSize).replace('{h}', artworkSize);
-        return super._getContent(info.name, info.curatorName, artworkURL, info.contentRating === 'explicit');
+        const artworkURL = playlist.formatArtworkURL(size, size);
+        return super._getContent(playlist.name, playlist.curator, artworkURL, playlist.isExplicit);
     }
 }

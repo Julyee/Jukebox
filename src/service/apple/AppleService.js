@@ -6,6 +6,7 @@ import m from 'mithril';
 import {EventCenter} from '../../core/EventCenter';
 import {AppleSong} from './media/AppleSong';
 import {AppleAlbum} from './media/AppleAlbum';
+import {ApplePlaylist} from './media/ApplePlaylist';
 
 const kPlaybackStateMap = {
     none: Events.SONG_IDLE,
@@ -114,7 +115,7 @@ export class AppleService extends Service {
             albums: result.albums ? result.albums.data.map(album => new AppleAlbum(album, this)) : null,
             artists: result.artists ? result.artists.data : null,
             'music-videos': result['music-videos'] ? result['music-videos'].data : null,
-            playlists: result.playlists ? result.playlists.data : null,
+            playlists: result.playlists ? result.playlists.data.map(playlist => new ApplePlaylist(playlist, this)) : null,
             songs: result.songs ? result.songs.data.map(song => new AppleSong(song, this)) : null,
         });
     }
