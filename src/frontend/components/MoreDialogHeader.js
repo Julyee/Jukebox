@@ -15,13 +15,13 @@ ButtonCSS.addStyle('.more-dialog-header-button', {
 export class MoreDialogHeader {
     view(vnode) {
         const mediaItem = vnode.attrs.mediaItem;
-        const showAlbumButton = vnode.attrs.moreDialogOptions.hasOwnProperty('showAlbumButton') ? vnode.attrs.showAlbumButton : true;
-        const showArtistButton = vnode.attrs.moreDialogOptions.hasOwnProperty('showArtistButton') ? vnode.attrs.showArtistButton : true;
+        const showAlbumButton = vnode.attrs.moreDialogOptions.hasOwnProperty('showAlbumButton') ? vnode.attrs.moreDialogOptions.showAlbumButton : true;
+        const showArtistButton = vnode.attrs.moreDialogOptions.hasOwnProperty('showArtistButton') ? vnode.attrs.moreDialogOptions.showArtistButton : true;
         const artworkURL = mediaItem.formatArtworkURL(100, 100);
         return m('.more-dialog-header-container', [
             m('.more-dialog-header-icon-container', m('.more-dialog-header-icon', {
                 style: {
-                    'background-image': `url(${artworkURL})`,
+                    'background-image': artworkURL ? `url(${artworkURL})` : 'none',
                 },
             })),
             m('.more-dialog-header-info-container', [

@@ -117,4 +117,8 @@ export class Service extends IBindable {
     async getAlbumForSong() {
         throw 'Not implemented';
     }
+
+    async getPlaylistInfo() {
+        throw 'Not implemented';
+    }
 }

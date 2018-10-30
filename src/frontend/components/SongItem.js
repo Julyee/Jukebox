@@ -31,7 +31,7 @@ export class SongItem {
             },
             front: displayThumbnail ? m('.song-item-song-icon', {
                 style: {
-                    'background-image': `url(${artworkURL})`,
+                    'background-image': artworkURL ? `url(${artworkURL})` : 'none',
                 },
             }) : m('.song-item-play-icon', iconPlay),
             after: m('.song-item-more-container', {

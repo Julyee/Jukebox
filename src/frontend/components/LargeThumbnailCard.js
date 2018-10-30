@@ -20,7 +20,7 @@ export class LargeThumbnailCard {
                         ratio: 'square',
                         size: 'small',
                         content: m('img', {
-                            src: artworkURL,
+                            src: artworkURL ? artworkURL : '',
                         }),
                     },
                 },

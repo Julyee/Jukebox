@@ -97,7 +97,9 @@ export class MediaManagerImp extends IBindable {
                 case Buttons.MEDIA_ITEM_SHUFFLE:
                     if (varArgs[0].songs && varArgs[0].songs.length) {
                         mediaItems = varArgs[0].songs.slice();
-                        let j, x, i;
+                        let j;
+                        let x;
+                        let i;
                         for (i = mediaItems.length - 1; i > 0; i--) {
                             j = Math.floor(Math.random() * (i + 1));
                             x = mediaItems[i];
@@ -158,6 +160,12 @@ export class MediaManagerImp extends IBindable {
                 case Buttons.ALBUM_OPEN_VIEW: {
                     const album = varArgs[0];
                     window.location.href = `#!/Album?a=${encodeURI(album.id)}&x=${encodeURI(album.service.constructor.name)}`;
+                    break;
+                }
+
+                case Buttons.PLAYLIST_OPEN_VIEW: {
+                    const playlist = varArgs[0];
+                    window.location.href = `#!/Playlist?p=${encodeURI(playlist.id)}&x=${encodeURI(playlist.service.constructor.name)}`;
                     break;
                 }
 

@@ -200,6 +200,15 @@ export class AppleService extends Service {
         return null;
     }
 
+    async getPlaylistInfo(playlistID) {
+        await this.authorize();
+        const playlist = await this.mAPI.api.playlist(playlistID);
+        if (playlist) {
+            return new ApplePlaylist(playlist, this);
+        }
+        return null;
+    }
+
     _registerPlayerEvent(event) {
         this.mAPI.player.addEventListener(event, (...varArgs) => this._handlePlayerEvent(event, ...varArgs));
     }

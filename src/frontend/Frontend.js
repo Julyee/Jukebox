@@ -1,10 +1,9 @@
 import IObject from '../core/IObject';
 
-import { Home, Import, Library, NowPlaying, Search, Splash } from './routes';
+import { Home, Import, Library, NowPlaying, Search, Splash, Album, Playlist } from './routes';
 import m from 'mithril';
 
 import { applyFontStyle } from './FontStyler';
-import {Album} from './routes/Album';
 applyFontStyle();
 
 export class Frontend extends IObject {
@@ -19,6 +18,7 @@ export class Frontend extends IObject {
             '/NowPlaying': NowPlaying,
             '/Search': Search,
             '/Album': Album,
+            '/Playlist': Playlist,
         });
     }
 }

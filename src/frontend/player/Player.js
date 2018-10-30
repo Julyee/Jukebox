@@ -128,7 +128,7 @@ export class Player {
                     m('.player-icon-container', [
                         m('.player-icon', song ? {
                             style: {
-                                'background-image': `url(${artworkURL})`,
+                                'background-image': artworkURL ? `url(${artworkURL})` : 'none',
                             },
                         } : {}, [
                             !song ? makeSVG(headphonesSVG, 40, 40) : null,

@@ -5,28 +5,27 @@ import {IOSSpinner} from 'polythene-mithril';
 import {SongListView} from '../components/SongListView';
 import {Buttons} from '../Events';
 
-export class Album extends Layout {
+export class Playlist extends Layout {
     constructor() {
         super();
-        this.mAlbumID = null;
-        this.mSongID = null;
+        this.mPlaylist = null;
+        this.mPlaylistID = null;
         this.mServiceName = null;
-        this.mAlbum = null;
     }
 
     oncreate() {
         super.oncreate();
-        this._updateAlbum();
+        this._updatePlaylist();
     }
 
     onupdate() {
-        this._updateAlbum();
+        this._updatePlaylist();
     }
 
     content() {
-        if (!this.mAlbum && !this.mAlbumID && !this.mSongID) {
-            return m('.song-list-view-screen-center', m('.song-list-view-error', 'ERROR: Could not load album, please try again.'));
-        } else if (!this.mAlbum && (this.mAlbumID || this.mSongID)) {
+        if (!this.mPlaylist && !this.mPlaylistID) {
+            return m('.song-list-view-screen-center', m('.song-list-view-error', 'ERROR: Could not load playlist, please try again.'));
+        } else if (!this.mPlaylist && this.mPlaylistID) {
             return m('.song-list-view-screen-center',
                 m('.song-list-view-loading', [
                     m(IOSSpinner, {
@@ -41,65 +40,60 @@ export class Album extends Layout {
             );
         }
 
-        const album = this.mAlbum;
-        const artworkURL = album.formatArtworkURL(400, 400);
+        const playlist = this.mPlaylist;
+        const artworkURL = playlist.formatArtworkURL(400, 400);
 
         return m(SongListView, {
-            mediaItem: album,
+            mediaItem: playlist,
             artworkURL: artworkURL,
             moreDialogOptions: {
                 showAlbumButton: false,
+                showArtistButton: false,
             },
             buttons: [
                 {
                     label: 'Play',
                     event: Buttons.MEDIA_ITEM_PLAY_NOW,
-                    eventData: album,
+                    eventData: playlist,
                 },
                 {
                     label: 'Shuffle',
                     event: Buttons.MEDIA_ITEM_SHUFFLE,
-                    eventData: album,
+                    eventData: playlist,
                 },
             ],
-            songDisplayThumbnail: false,
+            songDisplayThumbnail: true,
             songMoreDialogOptions: {
-                showAlbumButton: false,
+                showAlbumButton: true,
+                showArtistButton: true,
             },
         });
     }
 
-    _updateAlbum() {
+    _updatePlaylist() {
         const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
-        const albumID = parsedUrl.searchParams.get('a');
-        const songID = parsedUrl.searchParams.get('s');
+        const playlistID = parsedUrl.searchParams.get('p');
         const serviceName = parsedUrl.searchParams.get('x');
-        if (albumID !== this.mAlbumID || songID !== this.mSongID || serviceName !== this.mServiceName) {
-            this.mAlbumID = albumID || null;
-            this.mSongID = songID || null;
+        if (playlistID !== this.mPlaylistID || serviceName !== this.mServiceName) {
+            this.mPlaylistID = playlistID || null;
             this.mServiceName = serviceName || null;
             const service = Service.activeService(serviceName ? serviceName : null);
-            if (service && (albumID || songID)) {
-                this.mAlbum = null;
+            if (service && playlistID) {
+                this.mPlaylist = null;
                 let p;
-                if (albumID) {
-                    p = service.getAlbumInfo(albumID);
-                } else {
-                    p = service.getAlbumForSong(songID);
-                }
+                p = service.getPlaylistInfo(playlistID);
                 p.then(result => {
                     if (result) {
-                        this.mAlbum = result;
+                        this.mPlaylist = result;
                     } else {
-                        this.mAlbum = null;
+                        this.mPlaylist = null;
                     }
                     m.redraw();
                 });
             } else {
-                this.mAlbumID = null;
-                this.mSongID = null;
+                this.mPlaylist = null;
+                this.mPlaylistID = null;
                 this.mServiceName = null;
-                this.mAlbum = null;
                 m.redraw();
             }
         }

@@ -63,7 +63,7 @@ export class SongListView {
                     mediaItem.title ? m('.song-list-view-title', mediaItem.title) : null,
                     mediaItem.subtitle ? m('.song-list-view-subtitle', mediaItem.subtitle) : null,
                     date ? m('.song-list-view-date', date.toLocaleDateString('en-US', dateOptions)) : null,
-                        mediaItem.genres ? m('.song-list-view-genre', mediaItem.genres.join(', ')) : null,
+                    mediaItem.genres ? m('.song-list-view-genre', mediaItem.genres.join(', ')) : null,
                     mediaItem.formattedDuration ? m('.song-list-view-duration', mediaItem.formattedDuration) : null,
                     m('.song-list-view-buttons', headerButtons),
                 ]),
