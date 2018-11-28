@@ -1,6 +1,6 @@
 import IObject from '../core/IObject';
 
-import { Home, Import, Library, NowPlaying, Search, Splash, Album, Playlist } from './routes';
+import * as routes from './routes';
 import m from 'mithril';
 
 import { applyFontStyle } from './FontStyler';
@@ -10,15 +10,18 @@ export class Frontend extends IObject {
     constructor(root) {
         super();
         this.mRoot = root;
-        m.route(this.mRoot, '/Splash', {
-            '/Splash': Splash,
-            '/Home': Home,
-            '/Library': Library,
-            '/Import': Import,
-            '/NowPlaying': NowPlaying,
-            '/Search': Search,
-            '/Album': Album,
-            '/Playlist': Playlist,
+
+        const routesInfo = {};
+        let defaultRoute = null;
+        Object.keys(routes).forEach(key => {
+            if (key !== 'default') {
+                routesInfo[`/${key}`] = routes[key];
+                if (routes[key] === routes.default) {
+                    defaultRoute = `/${key}`;
+                }
+            }
         });
+
+        m.route(this.mRoot, defaultRoute, routesInfo);
     }
 }
