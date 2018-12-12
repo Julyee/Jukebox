@@ -7,6 +7,7 @@ import {EventCenter} from '../../core/EventCenter';
 import {AppleSong} from './media/AppleSong';
 import {AppleAlbum} from './media/AppleAlbum';
 import {ApplePlaylist} from './media/ApplePlaylist';
+import {JukeboxService} from '../jukebox/JukeboxService';
 
 const kPlaybackStateMap = {
     none: Events.SONG_IDLE,
@@ -140,6 +141,7 @@ export class AppleService extends Service {
 
         if (song) {
             await this.queueSong(song, true);
+            this._emitEvent(Events.PLAYBACK_EVENT, Events.SERVICE_PLAY_SONG, song);
         }
 
         return await this.mAPI.play();
@@ -213,6 +215,11 @@ export class AppleService extends Service {
         this.mAPI.player.addEventListener(event, (...varArgs) => this._handlePlayerEvent(event, ...varArgs));
     }
 
+    _emitEvent(...varArgs) {
+        EventCenter.emit(...varArgs);
+        JukeboxService.instance().forwardEvent(...varArgs);
+    }
+
     _handlePlayerEvent(event, info) {
         const MKEvents = MusicKit.Events;
         switch (event) {
@@ -223,7 +230,8 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.bufferedProgressDidChange:
-                EventCenter.emit(Events.PLAYBACK_EVENT, Events.PLAYER_BUFFER_CHANGE, info.progress);
+                this._emitEvent(Events.PLAYBACK_EVENT, Events.PLAYER_BUFFER_CHANGE, info.progress);
+
                 break;
 
             case MKEvents.eligibleForSubscribeView:
@@ -260,13 +268,13 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.playbackProgressDidChange:
-                // EventCenter.emit(Events.PLAYER_TIME_CHANGE, info.progress);
+                // this._emitEvent(Events.PLAYER_TIME_CHANGE, info.progress);
                 break;
 
             case MKEvents.playbackStateDidChange: {
                 const States = MusicKit.PlaybackStates;
                 if (States.hasOwnProperty(info.state) && kPlaybackStateMap[States[info.state]]) {
-                    EventCenter.emit(Events.PLAYBACK_EVENT, kPlaybackStateMap[States[info.state]], info);
+                    this._emitEvent(Events.PLAYBACK_EVENT, kPlaybackStateMap[States[info.state]], info);
                 }
                 break;
             }
@@ -278,7 +286,7 @@ export class AppleService extends Service {
                 break;
 
             case MKEvents.playbackTimeDidChange:
-                EventCenter.emit(Events.PLAYBACK_EVENT, Events.PLAYER_TIME_CHANGE, info.currentPlaybackDuration, info.currentPlaybackTime);
+                this._emitEvent(Events.PLAYBACK_EVENT, Events.PLAYER_TIME_CHANGE, info.currentPlaybackDuration, info.currentPlaybackTime);
                 break;
 
             case MKEvents.playbackVolumeDidChange:

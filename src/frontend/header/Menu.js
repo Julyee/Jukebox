@@ -1,13 +1,15 @@
 import { List, Drawer, ListTile } from 'polythene-mithril';
 import { Events, Buttons } from '../Events';
 import { EventCenter } from '../../core/EventCenter';
+import {JukeboxService} from '../../service/jukebox/JukeboxService';
 // import stream from 'mithril/stream';
 import m from 'mithril';
 
 const navigationList = (navItemClick, buttons) => {
+    const jukebox = JukeboxService.instance();
     const tiles = [
         m(ListTile, {
-            title: 'Jukebox ID',
+            title: 'Jukebox!',
             hoverable: false,
             navigation: false,
         }),
@@ -28,6 +30,17 @@ const navigationList = (navItemClick, buttons) => {
             }),
         );
     });
+
+    if (jukebox.connectQR || jukebox.connectAlias) {
+        tiles.push(m(ListTile, {
+            hoverable: false,
+            navigation: false,
+            content: m('.menu-connect-container', [
+                jukebox.connectQR ? m('.menu-qr-code' , m('img', { src: jukebox.connectQR })) : null,
+                jukebox.connectAlias ? m('.menu-connect-alias', jukebox.connectAlias) : null,
+            ]),
+        }));
+    }
 
     return m(List, {
         tiles,

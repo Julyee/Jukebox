@@ -1,4 +1,5 @@
 import './style/main.scss';
+import webRTCAdapter from 'webrtc-adapter';
 import {Frontend} from './frontend/Frontend';
 
 async function main() {
@@ -7,5 +8,6 @@ async function main() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log(webRTCAdapter); // eslint-disable-line
     await main();
 }, true);

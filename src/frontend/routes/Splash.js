@@ -1,5 +1,6 @@
 import {Icon, List, ListTile, Button, Dialog, IOSSpinner} from 'polythene-mithril';
 import {AppleService} from '../../service/apple/AppleService';
+import {JukeboxService} from '../../service/jukebox/JukeboxService';
 import {IconCSS} from 'polythene-css';
 import m from 'mithril';
 
@@ -88,6 +89,12 @@ export class Splash {
                 });
             });
         }
+
+        const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
+        const host = parsedUrl.searchParams.get('h');
+        if (host) {
+            this.connectToJukeboxServer(host);
+        }
     }
 
     view() {
@@ -170,16 +177,38 @@ export class Splash {
         ];
     }
 
-    loginWithAppleMusic() {
-        Dialog.show(loadingDialog('Waiting for login...'));
-        const service = AppleService.instance();
-        service.authorize().then(() => {
-            Dialog.hide().then(() => {
-                if (service.authorized) {
-                    AppleService.activeService(service);
+    registerJukeboxServer(service) {
+        const jukebox = JukeboxService.instance();
+        return jukebox.configureAsServer(service);
+    }
+
+    connectToJukeboxServer(host) {
+        Dialog.show(loadingDialog('Connecting to Jukebox...')).then(() => {
+            const jukebox = JukeboxService.instance();
+            jukebox.configureAsClient(host)
+                .then(() => Dialog.hide())
+                .then(() => {
+                    JukeboxService.activeService(jukebox);
                     setTimeout(() => {
                         window.location.href = '#!/Home';
                     }, 500);
+                });
+        });
+    }
+
+    loginWithAppleMusic() {
+        Dialog.show(loadingDialog('Waiting for login...')).then(() => {
+            const service = AppleService.instance();
+            service.authorize().then(() => {
+                if (service.authorized) {
+                    AppleService.activeService(service);
+                    this.registerJukeboxServer(service).then(() => {
+                        Dialog.hide().then(() => {
+                            setTimeout(() => {
+                                window.location.href = '#!/Home';
+                            }, 500);
+                        });
+                    });
                 }
             });
         });

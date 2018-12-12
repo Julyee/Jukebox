@@ -36,6 +36,8 @@ export const PlaybackEvents = {
     PLAYER_TIME_CHANGE: 'PLR::TimeChange',
     PLAYER_BUFFER_CHANGE: 'PLR::BufferChange',
     PLAYER_SEEK_TO: 'PLR::SeekTo',
+
+    SERVICE_PLAY_SONG: 'SRV::PlaySong',
 };
 
 export const PlaybackStateEvents = {
@@ -48,4 +50,11 @@ export const PlaybackStateEvents = {
     SONG_COMPLETE: 'PLR::SongComplete',
 };
 
-export const Events = Object.assign({}, GeneralEvents, PlaybackEvents, PlaybackStateEvents);
+export const JukeboxEvents = {
+    JUKEBOX_SOCKET_CONNECTED: 'JKB::Socket::Connected',
+    JUKEBOX_SOCKET_DISCONNECTED: 'JKB::Socket::Disconnected',
+    JUKEBOX_SOCKET_READY: 'JKB::Socket::Ready',
+    JUKEBOX_SOCKET_CLOSED: 'JKB::Socket::Closed',
+};
+
+export const Events = Object.assign({}, GeneralEvents, PlaybackEvents, PlaybackStateEvents, JukeboxEvents);

@@ -58,6 +58,10 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
+    get canServeJukebox() {
+        return true;
+    }
+
     async init() {
         throw 'Not implemented';
     }
@@ -120,5 +124,9 @@ export class Service extends IBindable {
 
     async getPlaylistInfo() {
         throw 'Not implemented';
+    }
+
+    async getCurrentSong() {
+        return this.currentSong;
     }
 }
