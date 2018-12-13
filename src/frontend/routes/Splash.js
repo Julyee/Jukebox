@@ -197,7 +197,9 @@ export class Splash {
                 Dialog.hide().then(() => nextTick(() => {
                     if (result) {
                         JukeboxService.activeService(jukebox);
-                        window.location.href = '#!/Home';
+                        nextTick(() => {
+                            window.location.href = '#!/Home';
+                        });
                     } else {
                         Dialog.show(WarningDialog.get(
                             'Error',
