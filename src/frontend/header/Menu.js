@@ -36,7 +36,7 @@ const navigationList = (navItemClick, buttons) => {
             hoverable: false,
             navigation: false,
             content: m('.menu-connect-container', [
-                jukebox.connectQR ? m('.menu-qr-code' , m('img', { src: jukebox.connectQR })) : null,
+                jukebox.connectQR ? m('.menu-qr-code', m('img', { src: jukebox.connectQR })) : null,
                 jukebox.connectAlias ? m('.menu-connect-alias', jukebox.connectAlias) : null,
             ]),
         }));

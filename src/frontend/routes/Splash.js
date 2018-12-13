@@ -2,43 +2,29 @@ import {Icon, List, ListTile, Button, Dialog, IOSSpinner} from 'polythene-mithri
 import {AppleService} from '../../service/apple/AppleService';
 import {JukeboxService} from '../../service/jukebox/JukeboxService';
 import {IconCSS} from 'polythene-css';
+import {makeSVG} from '../utils/makeSVG';
+import {WarningDialog} from '../dialogs/WarningDialog';
+import {TextInputDialog} from '../dialogs/TextInputDialog';
 import m from 'mithril';
 
-import {svgPathData as applePathData} from '@fortawesome/free-brands-svg-icons/faApple';
-import {svgPathData as paypalPathData} from '@fortawesome/free-brands-svg-icons/faPaypal';
-import {svgPathData as patreonPathData} from '@fortawesome/free-brands-svg-icons/faPatreon';
-import {svgPathData as jukeboxPathData} from '@fortawesome/free-solid-svg-icons/faPlayCircle';
-import {svgPathData as warningPathData} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import * as appleSVG from '@fortawesome/free-brands-svg-icons/faApple';
+import * as paypalSVG from '@fortawesome/free-brands-svg-icons/faPaypal';
+import * as patreonSVG from '@fortawesome/free-brands-svg-icons/faPatreon';
+import * as jukeboxSVG from '@fortawesome/free-solid-svg-icons/faPlayCircle';
+import * as speakerSVG from '@fortawesome/free-solid-svg-icons/faVolumeUp';
+import * as warningSVG from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import nextTick from '../../core/nextTick';
 
-const iconApple = m.trust(`<svg width="280" height="280" viewBox="-110 -40 600 600"><path d="${applePathData}"/></svg>`);
-const iconPayPal = m.trust(`<svg width="280" height="280" viewBox="-110 -40 600 600"><path d="${paypalPathData}"/></svg>`);
-const iconPatreon = m.trust(`<svg width="280" height="280" viewBox="-30 -40 600 600"><path d="${patreonPathData}"/></svg>`);
-const iconJukebox = m.trust(`<svg width="280" height="280" viewBox="-40 -40 600 600"><path d="${jukeboxPathData}"/></svg>`);
-const warningJukebox = m.trust(`<svg width="280" height="280" viewBox="-10 -40 600 600"><path d="${warningPathData}"/></svg>`);
+const iconApple = makeSVG(appleSVG, 280, 280);
+const iconPayPal = makeSVG(paypalSVG, 280, 280);
+const iconPatreon = makeSVG(patreonSVG, 280, 280);
+const iconJukebox = makeSVG(jukeboxSVG, 280, 280);
+const iconSpeaker = makeSVG(speakerSVG, 280, 280);
+const warningJukebox = makeSVG(warningSVG, 280, 280);
 
 IconCSS.addStyle('.splash-service-icon', {
     'size_medium': 25,
 });
-
-const warningDialog = {
-    title: [
-        m(Icon, {
-            svg: warningJukebox,
-            size: 'large',
-        }),
-        ' Coming Soon',
-    ],
-    body: m.trust('Remember those 90\'s "Under construction" GIFs?<br /> yeah... one of those goes here...'),
-    footerButtons: [
-        m(Button, {
-            label: 'Ugh, ok...',
-            events: {
-                onclick: () => Dialog.hide(),
-            },
-        }),
-    ],
-    backdrop: true,
-};
 
 const loadingDialog = text => ({
     body: [
@@ -132,10 +118,32 @@ export class Splash {
                                 hoverable: true,
                                 navigation: true,
                                 events: {
-                                    onclick: () => Dialog.show(warningDialog),
+                                    onclick: () => Dialog.show(TextInputDialog.get(
+                                        'Connect to a Jukebox!',
+                                        'Code',
+                                        'Enter the Jukebox code',
+                                        value => this.connectToJukeboxServer(value),
+                                    )),
                                 },
                                 front: m(Icon, {
                                     svg: iconJukebox,
+                                    size: 'large',
+                                }),
+                            }),
+                            m(ListTile, {
+                                title: 'Connect as Speaker',
+                                subtitle: 'Use this device as a wireless speaker!',
+                                hoverable: true,
+                                navigation: true,
+                                events: {
+                                    onclick: () => Dialog.show(WarningDialog.get(
+                                        'Coming Soon...',
+                                        'Remember those 90\'s "Under construction" GIFs?<br />yeah... one of those goes here...',
+                                        'Ugh, ok...'
+                                    )),
+                                },
+                                front: m(Icon, {
+                                    svg: iconSpeaker,
                                     size: 'large',
                                 }),
                             }),
@@ -183,17 +191,23 @@ export class Splash {
     }
 
     connectToJukeboxServer(host) {
-        Dialog.show(loadingDialog('Connecting to Jukebox...')).then(() => {
+        Dialog.show(loadingDialog('Connecting to Jukebox...')).then(() => nextTick(() => {
             const jukebox = JukeboxService.instance();
-            jukebox.configureAsClient(host)
-                .then(() => Dialog.hide())
-                .then(() => {
-                    JukeboxService.activeService(jukebox);
-                    setTimeout(() => {
+            jukebox.configureAsClient(host).then(result => {
+                Dialog.hide().then(() => nextTick(() => {
+                    if (result) {
+                        JukeboxService.activeService(jukebox);
                         window.location.href = '#!/Home';
-                    }, 500);
-                });
-        });
+                    } else {
+                        Dialog.show(WarningDialog.get(
+                            'Error',
+                            'Could not connect to the specified server.',
+                            'Got it'
+                        ));
+                    }
+                }));
+            });
+        }));
     }
 
     loginWithAppleMusic() {
@@ -204,9 +218,9 @@ export class Splash {
                     AppleService.activeService(service);
                     this.registerJukeboxServer(service).then(() => {
                         Dialog.hide().then(() => {
-                            setTimeout(() => {
+                            nextTick(() => {
                                 window.location.href = '#!/Home';
-                            }, 500);
+                            });
                         });
                     });
                 }

@@ -227,7 +227,7 @@ class TimeoutTaskQueue extends ITaskQueue {
  *
  * @export
  */
-export default (() => {
+export const nextTick = (() => {
     /* Node.js */
     if ((typeof process === 'object') && process && (typeof process.nextTick === 'function')) {
         return process.nextTick;
@@ -265,3 +265,7 @@ export default (() => {
         throw new Error('nextTick cannot be implemented on this system.');
     };
 })();
+
+export const waitOneTick = () => new Promise(resolve => nextTick(() => resolve()));
+
+export default nextTick;

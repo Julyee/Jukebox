@@ -72,7 +72,6 @@ export class Search extends Layout {
                 const service = Service.activeService();
                 this.mSearchResults = null;
                 service.search(searchTerm, 21).then(result => {
-                    console.log(result);
                     this.mSearchResults = result;
                     m.redraw();
                 });

@@ -2,11 +2,12 @@ import io from 'socket.io-client';
 import ServerCommands from '../../../server/ServerCommands';
 import {MediaItem} from '../media/MediaItem';
 import {Service} from '../Service';
-import * as AppleMedia from '../apple/media';
+import * as _AppleMedia from '../apple/media';
 import shortid from 'shortid';
 import {EventCenter} from '../../core/EventCenter';
-import {GeneralEvents, JukeboxEvents} from '../../frontend/Events';
-import nextTick from '../../core/nextTick';
+import {JukeboxEvents} from '../../frontend/Events';
+
+const AppleMedia = Object.assign({}, _AppleMedia); // fix build warning
 
 const kSignalingEvents = {
     SIGNAL_OFFER: 'Signal::Offer',
@@ -97,15 +98,35 @@ export class JukeboxConnection {
 
     _waitForSocketConnection(socket) {
         return new Promise(resolve => {
-            socket.once('connect', () => {
+            let cleanup;
+
+            const onError = () => {
+                this.mSocket.off();
+                this.mSocket.close();
+                this.mSocket = null;
+                this.mSocketReady = false;
+                cleanup();
+                resolve();
+            };
+
+            const onConnect = () => {
                 EventCenter.emit(JukeboxEvents.JUKEBOX_SOCKET_CONNECTED);
                 socket.once(ServerCommands.type.SOCKET_READY, alias => {
                     this.mSocketReady = true;
                     this.mAlias = alias;
                     EventCenter.emit(JukeboxEvents.JUKEBOX_SOCKET_READY);
+                    cleanup();
                     resolve();
                 });
-            });
+            };
+
+            cleanup = () => {
+                socket.off('error', onError);
+                socket.off('connect', onConnect);
+            };
+
+            socket.on('error', onError);
+            socket.on('connect', onConnect);
         });
     }
 
@@ -122,7 +143,7 @@ export class JukeboxConnection {
 
     _configureSocketEventHandling(socket) {
         socket.on('error', error => {
-            console.log(error);
+            console.log(error); // eslint-disable-line
             // this.mSocket.close();
             // if (this.mSocket) {
             //     this.mSocket.off();
@@ -130,7 +151,7 @@ export class JukeboxConnection {
             // }
         });
 
-        socket.on('disconnect', (reason) => {
+        socket.on('disconnect', reason => {
             this.mSocketReady = false;
             EventCenter.emit(JukeboxEvents.JUKEBOX_SOCKET_DISCONNECTED);
             if (reason === 'io server disconnect') {
@@ -220,14 +241,13 @@ export class JukeboxConnection {
 
     _handleDataChannelMessage(dataChannel, message) {
         const data = JSON.parse(message.data);
-        let p;
         switch (data.event) {
             case kServiceEvents.MESSAGE_CHUNK:
                 if (!this.mMessageQueue[data.id]) {
                     this.mMessageQueue[data.id] = {
                         message: '',
                         promise: null,
-                    }
+                    };
                 }
                 this.mMessageQueue[data.id].message += data.message;
                 break;
@@ -237,7 +257,7 @@ export class JukeboxConnection {
                     this.mMessageQueue[data.id] = {
                         message: '',
                         promise: null,
-                    }
+                    };
                 }
                 this.mMessageQueue[data.id].message += data.message;
                 this._handleMessage(dataChannel, data.id);
@@ -300,7 +320,6 @@ export class JukeboxConnection {
                     this.mDataChannels[serverID].onmessage = message => this._handleDataChannelMessage(this.mDataChannels[serverID], message);
                     this.mDataChannels[serverID].onopen = null;
                     this.mDataChannels[serverID].onclose = () => {
-                        console.log('Data channel closed!');
                         delete this.mDataChannels[serverID];
                         delete this.mConnections[serverID];
                     };

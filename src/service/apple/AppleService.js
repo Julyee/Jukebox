@@ -8,6 +8,7 @@ import {AppleSong} from './media/AppleSong';
 import {AppleAlbum} from './media/AppleAlbum';
 import {ApplePlaylist} from './media/ApplePlaylist';
 import {JukeboxService} from '../jukebox/JukeboxService';
+import {waitOneTick} from '../../core/nextTick';
 
 const kPlaybackStateMap = {
     none: Events.SONG_IDLE,
@@ -137,6 +138,7 @@ export class AppleService extends Service {
                 return true;
             }
             await this.stop();
+            await waitOneTick();
         }
 
         if (song) {

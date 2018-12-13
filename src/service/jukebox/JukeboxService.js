@@ -5,8 +5,6 @@ import {JukeboxConnection} from './JukeboxConnection';
 import {EventCenter} from '../../core/EventCenter';
 import {Events} from '../../frontend/Events';
 import {MediaManager} from '../MediaManager';
-import {AppleAlbum} from '../apple/media/AppleAlbum';
-import {ApplePlaylist} from '../apple/media/ApplePlaylist';
 
 export class JukeboxService extends Service {
     constructor() {
@@ -81,7 +79,6 @@ export class JukeboxService extends Service {
                 });
                 this.mConnectQR = qr.toDataURL();
                 this.mBaseService = service;
-                console.log(this.mConnectURL);
                 return true;
             }
         }

@@ -6,7 +6,7 @@ export class MusicQueue extends IBindable {
 
         this.mQueue = [];
         this.mHistory = [];
-        this.mStorageHandle = null; // todo
+        this.mStorageHandle = null; // eslint-disable-line // todo
     }
 
     destroy() {
@@ -71,10 +71,10 @@ export class MusicQueue extends IBindable {
     }
 
     saveToStorage(/* key */) {
-        // todo
+        // eslint-disable-line // todo
     }
 
     loadFromStorage(/* key */) {
-        // todo
+        // eslint-disable-line // todo
     }
 }

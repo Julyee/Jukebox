@@ -1,5 +1,6 @@
 import { IconButton, Icon } from 'polythene-mithril';
 import m from 'mithril';
+import {makeSVG} from '../utils/makeSVG';
 import * as playSVG from '@fortawesome/free-solid-svg-icons/faPlay';
 import * as pauseSVG from '@fortawesome/free-solid-svg-icons/faPause';
 import * as stepForwardSVG from '@fortawesome/free-solid-svg-icons/faStepForward';
@@ -26,8 +27,6 @@ IconCSS.addStyle('.player-step-icon', {
 IconCSS.addStyle('.player-more-icon', {
     'size_large': 15,
 });
-
-const makeSVG = (iconDesc, width, height) => m.trust(`<svg width="${width}" height="${height}" viewBox="0 0 ${iconDesc.width} ${iconDesc.height}"><path d="${iconDesc.svgPathData}"/></svg>`);
 
 const iconStepBack = makeSVG(stepBackSVG, 35, 35);
 const iconPlay = makeSVG(playSVG, 45, 45);

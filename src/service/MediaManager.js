@@ -7,6 +7,7 @@ import {MoreDialog} from '../frontend/dialogs/MoreDialog';
 import {MusicQueue} from './MusicQueue';
 import {Song} from './media';
 import {JukeboxService} from './jukebox/JukeboxService';
+import nextTick from '../core/nextTick';
 
 let kSharedInstance = null;
 
@@ -113,7 +114,7 @@ export class MediaManagerImp extends IBindable {
         switch (type) {
             case Buttons.MEDIA_ITEM_PLAY_NOW:
                 this.mQueue.clearQueue();
-            // break; // fall through
+                // break; // fall through
 
             case Buttons.MEDIA_ITEM_PLAY_KEEP_QUEUE:
                 mediaItems = varArgs[0] instanceof Song ? [varArgs[0]] : varArgs[0].songs;
@@ -229,7 +230,7 @@ export class MediaManagerImp extends IBindable {
         const service = Service.activeService();
         if (service) {
             if (type === Events.SONG_COMPLETE) {
-                setTimeout(() => this._playSong(this.mQueue.dequeueSong()), 100);
+                nextTick(() => this._playSong(this.mQueue.dequeueSong()));
             } else if (type === Events.PLAYER_SEEK_TO) {
                 if (this.mCurrentSong) {
                     this.mCurrentSong.service.seekTo(varArgs[0]);
