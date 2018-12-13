@@ -41,7 +41,7 @@ export class Playlist extends Layout {
         }
 
         const playlist = this.mPlaylist;
-        const artworkURL = playlist.formatArtworkURL(400, 400);
+        const artworkURL = playlist.formatArtworkURL(350, 350);
 
         return m(SongListView, {
             mediaItem: playlist,

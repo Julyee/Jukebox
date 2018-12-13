@@ -131,7 +131,7 @@ export class Splash {
                                 }),
                             }),
                             m(ListTile, {
-                                title: 'Connect as Speaker',
+                                title: 'Speaker',
                                 subtitle: 'Use this device as a wireless speaker!',
                                 hoverable: true,
                                 navigation: true,

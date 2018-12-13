@@ -50,6 +50,14 @@ export class MediaManagerImp extends IBindable {
         return this.mCurrentSong;
     }
 
+    get queue() {
+        return this.mQueue.queue;
+    }
+
+    get history() {
+        return this.mQueue.history;
+    }
+
     _registerEvent(event, handler) {
         if (!this.mBoundEvents.hasOwnProperty(event)) {
             this.mBoundEvents[event] = [];
@@ -83,7 +91,7 @@ export class MediaManagerImp extends IBindable {
                 break;
 
             case Buttons.SONG_MORE:
-                Dialog.show(MoreDialog.get(varArgs[0], varArgs[1]));
+                Dialog.show(MoreDialog.get(...varArgs));
                 break;
 
             case Buttons.SONG_GO_TO_ALBUM: {
@@ -165,7 +173,7 @@ export class MediaManagerImp extends IBindable {
                 break;
 
             case Buttons.SONG_MORE:
-                Dialog.show(MoreDialog.get(varArgs[0], varArgs[1]));
+                Dialog.show(MoreDialog.get(...varArgs));
                 break;
 
             case Buttons.PLAYER_PLAY_BUTTON:

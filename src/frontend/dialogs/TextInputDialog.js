@@ -1,6 +1,7 @@
 import {TextField, Button, Dialog} from 'polythene-mithril';
 import stream from 'mithril/stream';
 import m from 'mithril';
+import nextTick from '../../core/nextTick';
 
 export const TextInputDialog = {
     get: function getDialog(title, label, help = null, onSubmit = null) {
@@ -53,9 +54,11 @@ export const TextInputDialog = {
                 onsubmit: async e => {
                     e.preventDefault();
                     Dialog.hide().then(() => {
-                        if (onSubmit) {
-                            onSubmit(value());
-                        }
+                        nextTick(() => {
+                            if (onSubmit) {
+                                onSubmit(value());
+                            }
+                        });
                     });
                 },
             }, createForm())),

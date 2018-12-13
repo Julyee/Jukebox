@@ -42,7 +42,7 @@ export class Album extends Layout {
         }
 
         const album = this.mAlbum;
-        const artworkURL = album.formatArtworkURL(400, 400);
+        const artworkURL = album.formatArtworkURL(350, 350);
 
         return m(SongListView, {
             mediaItem: album,

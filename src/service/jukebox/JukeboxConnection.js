@@ -155,10 +155,10 @@ export class JukeboxConnection {
             this.mSocketReady = false;
             EventCenter.emit(JukeboxEvents.JUKEBOX_SOCKET_DISCONNECTED);
             if (reason === 'io server disconnect') {
-                // if (this.mSocket) {
-                //     this.mSocket.off();
-                //     this.mSocket = null;
-                // }
+                if (this.mSocket) {
+                    this.mSocket.off();
+                    this.mSocket = null;
+                }
                 EventCenter.emit(JukeboxEvents.JUKEBOX_SOCKET_CLOSED);
             } else {
                 this._waitForSocketConnection(socket).then(() => {
