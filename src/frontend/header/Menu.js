@@ -20,6 +20,7 @@ const navigationList = (navItemClick, buttons) => {
             m(ListTile, {
                 title: button.title,
                 hoverable: true,
+                disabled: button.disabled,
                 navigation: true,
                 events: {
                     onclick: () => {
@@ -86,10 +87,12 @@ export class Menu {
                     {
                         title: 'Library',
                         href: '#!/Library',
+                        disabled: true,
                     },
                     {
                         title: 'Import',
                         href: '#!/Import',
+                        disabled: true,
                     },
                     {
                         title: 'Now Playing',
