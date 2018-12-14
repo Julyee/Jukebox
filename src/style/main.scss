@@ -29,8 +29,8 @@ body {
     position: fixed;
     background: rgb(253,252,252) linear-gradient(-14deg, rgb(217,229,235), rgb(234,229,239), rgb(253,252,252));
     /* iOS 11 constants */
-    padding-top: env(safe-area-inset-top);
-    padding-top: const(safe-area-inset-top);
+    border-top: env(safe-area-inset-top) solid black;
+    border-top: const(safe-area-inset-top) solid black;
 }
 
 .main-container {
