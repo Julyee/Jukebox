@@ -26,7 +26,7 @@ export class NowPlaying extends Layout {
             date ? m('.song-list-view-date', date.toLocaleDateString('en-US', dateOptions)) : null,
             currentSong.genres ? m('.song-list-view-genre', currentSong.genres.join(', ')) : null,
             currentSong.formattedDuration ? m('.song-list-view-duration', currentSong.formattedDuration) : null,
-        ]) : m('.now-playing-song-info-container', m('.now-playing-list-title', 'Not Playing super long title that we can use to test everything yo'));
+        ]) : m('.now-playing-song-info-container', m('.now-playing-list-title', 'Not Playing'));
 
         const songs = [];
         songs.push(...MediaManager.queue);
