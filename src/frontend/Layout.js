@@ -10,10 +10,14 @@ export class Layout {
         // init
     }
 
-    oncreate() {
+    oninit() {
         if (!(Service.activeService() instanceof Service)) {
             m.route.set('/Splash');
         }
+    }
+
+    oncreate() {
+        // empty
     }
 
     view() {
