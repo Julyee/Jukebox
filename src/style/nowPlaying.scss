@@ -48,8 +48,9 @@
 
 .now-playing-song-info-container {
     min-width: 350px;
-    max-width: 35vw;
+    max-width: 30vw;
     flex-shrink: 1;
+    flex-grow: 1;
     padding: 3px;
     position: relative;
 }
