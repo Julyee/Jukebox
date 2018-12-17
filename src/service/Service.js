@@ -54,7 +54,7 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
-    get audioContextSource() {
+    get audioSource() {
         throw 'Not implemented';
     }
 

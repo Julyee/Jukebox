@@ -4,7 +4,7 @@ import {JukeboxService} from '../../service/jukebox/JukeboxService';
 import {IconCSS} from 'polythene-css';
 import {makeSVG} from '../utils/makeSVG';
 import {WarningDialog} from '../dialogs/WarningDialog';
-import {TextInputDialog} from '../dialogs/TextInputDialog';
+import {JukeboxConnectDialog} from '../dialogs/JukeboxConnectDialog';
 import m from 'mithril';
 
 import * as appleSVG from '@fortawesome/free-brands-svg-icons/faApple';
@@ -88,7 +88,10 @@ export class Splash {
 
     view() {
         if (Service.activeService()) {
-            nextTick(() => m.route.set('/Home', null, { replace: true }));
+            nextTick(() => {
+                const route = Service.activeService().isSpeaker ? '/Speaker' : '/Home';
+                m.route.set(route, null, { replace: true });
+            });
         }
 
         return [
@@ -125,7 +128,7 @@ export class Splash {
                                 hoverable: true,
                                 navigation: true,
                                 events: {
-                                    onclick: () => Dialog.show(TextInputDialog.get(
+                                    onclick: () => Dialog.show(JukeboxConnectDialog.get(
                                         'Connect to a Jukebox!',
                                         'Code',
                                         'Enter the Jukebox code',
@@ -143,10 +146,11 @@ export class Splash {
                                 hoverable: true,
                                 navigation: true,
                                 events: {
-                                    onclick: () => Dialog.show(WarningDialog.get(
-                                        'Coming Soon...',
-                                        'Remember those 90\'s "Under construction" GIFs?<br />yeah... one of those goes here...',
-                                        'Ugh, ok...'
+                                    onclick: () => Dialog.show(JukeboxConnectDialog.get(
+                                        'Connect as a Speaker!',
+                                        'Code',
+                                        'Enter the Jukebox code',
+                                        value => this.connectToJukeboxServerAsSpeaker(value),
                                     )),
                                 },
                                 front: m(Icon, {
@@ -203,6 +207,33 @@ export class Splash {
             didShow: () => {
                 const jukebox = JukeboxService.instance();
                 jukebox.configureAsClient(host).then(() => {
+                    Dialog.hide();
+                });
+            },
+            didHide: () => {
+                nextTick(() => {
+                    const service = JukeboxService.instance();
+                    if (service.authorized) {
+                        Service.activeService(service);
+                        m.redraw();
+                    } else {
+                        Dialog.show(WarningDialog.get(
+                            'Error',
+                            'Could not connect to the specified server.',
+                            'Got it'
+                        ));
+                    }
+                });
+            },
+        }));
+    }
+
+    connectToJukeboxServerAsSpeaker(host) {
+        Dialog.show(loadingDialog({
+            text: 'Connecting to Jukebox...',
+            didShow: () => {
+                const jukebox = JukeboxService.instance();
+                jukebox.configureAsSpeaker(host).then(() => {
                     Dialog.hide();
                 });
             },

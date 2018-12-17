@@ -1,0 +1,32 @@
+.speaker-message-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    box-shadow: silver 2px 2px 5px;
+    padding: 15px 20px;
+    max-width: 80vw;
+    max-height: 60vh;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.speaker-message-title {
+    font-size: 24px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 10px;
+}
+
+.speaker-message-content {
+    padding: 0 8px;
+}
+
+.speaker-start-button {
+    margin-top: 15px;
+    width: 100%;
+    text-align: right;
+}

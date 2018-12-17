@@ -13,6 +13,9 @@ export class JukeboxService extends Service {
         this.mConnectURL = null;
         this.mConnectQR = null;
         this.mBaseService = null;
+        this.mSpeakerStream = null;
+        this.mAudioContext = null;
+        this.mAudioSource = null;
 
         this.mBufferingProgress = 0;
         this.mPlaybackProgress = 0;
@@ -40,6 +43,15 @@ export class JukeboxService extends Service {
         return this.mConnection.connected;
     }
 
+    get isSpeaker() {
+        return this.mConnection.isSpeaker;
+    }
+
+    get isSpeakerPlaying() {
+        return (this.isSpeaker && this.mSpeakerStream && this.mAudioContext && this.mAudioSource);
+    }
+
+
     get bufferingProgress() {
         return this.mBufferingProgress;
     }
@@ -64,6 +76,14 @@ export class JukeboxService extends Service {
         return this.mCurrentSong;
     }
 
+    get audioContext() {
+        return this.mAudioContext;
+    }
+
+    get audioSource() {
+        return this.mAudioSource;
+    }
+
     async configureAsServer(service) {
         if (service.canServeJukebox) {
             if (await this.mConnection.initAsServer()) {
@@ -72,6 +92,7 @@ export class JukeboxService extends Service {
                 if (hostname === 'localhost') {
                     hostname = '10.0.1.44';
                 }
+                const protocol = 'http:';
                 this.mConnectURL = `${parsedUrl.protocol}//${hostname}${parsedUrl.port ? ':' + parsedUrl.port : ''}/#!/Splash?h=${this.mConnection.alias}`;
                 const qr = new QRious({
                     value: this.mConnectURL,
@@ -87,6 +108,10 @@ export class JukeboxService extends Service {
 
     async configureAsClient(hostAlias) {
         return await this.mConnection.initAsClient(hostAlias);
+    }
+
+    async configureAsSpeaker(hostAlias) {
+        return await this.mConnection.initAsSpeaker(hostAlias);
     }
 
     forwardEvent(...varArgs) {
@@ -170,6 +195,14 @@ export class JukeboxService extends Service {
         return await this.mConnection.performMethod('getPlaylistInfo', playlistID);
     }
 
+    setupSpeakerAudio() {
+        if (!this.isSpeakerPlaying && this.isSpeaker && this.mSpeakerStream) {
+            this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.mAudioSource = this.mAudioContext.createMediaStreamSource(this.mSpeakerStream);
+            this.mAudioSource.connect(this.mAudioContext.destination);
+        }
+    }
+
     _handleForwardedEvent(event, varArgs) {
         if (event === Events.PLAYBACK_EVENT) {
             switch (varArgs[0]) {
@@ -216,5 +249,18 @@ export class JukeboxService extends Service {
             }
         }
         EventCenter.emit(event, ...varArgs);
+    }
+
+    _getSpeakerStream() {
+        if (this.mConnection.isServer) {
+            if (!this.mSpeakerStream) {
+                const context = this.mBaseService.audioContext;
+                const source = this.mBaseService.audioSource;
+                this.mSpeakerStream = context.createMediaStreamDestination();
+                source.connect(this.mSpeakerStream);
+            }
+            return this.mSpeakerStream.stream;
+        }
+        return null;
     }
 }

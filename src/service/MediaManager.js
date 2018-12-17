@@ -101,6 +101,12 @@ export class MediaManagerImp extends IBindable {
                 this._handleButtonPressLocal(service, type, ...varArgs);
                 break;
 
+            case Buttons.SPEAKER_START_STREAMING:
+                if (service.isSpeaker) {
+                    service.setupSpeakerAudio();
+                }
+                break;
+
             default:
                 break;
         }

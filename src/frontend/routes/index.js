@@ -9,3 +9,4 @@ export {NowPlaying} from './NowPlaying';
 export {Search} from './Search';
 export {Album} from './Album';
 export {Playlist} from './Playlist';
+export {Speaker} from './Speaker';

@@ -20,7 +20,11 @@ const kServiceEvents = {
     MESSAGE_CHUNK: 'Service::Message::Chunk',
     MESSAGE_END: 'Service::Message::End',
     FORWARD_EVENT: 'Service::ForwardEvent',
+    SPEAKER_REQUEST_STREAM: 'Service::SpeakerRequestStream',
+    SPEAKER_STREAM_RESULT: 'Service::SpeakerStreamResult',
 };
+
+const kProtocol = 'http:'; // temporary!
 
 export class JukeboxConnection {
     constructor(service) {
@@ -29,6 +33,7 @@ export class JukeboxConnection {
         this.mSocketReady = false;
         this.mAlias = null;
         this.mIsServer = false;
+        this.mIsSpeaker = false;
 
         this.mConnections = {};
         this.mDataChannels = {};
@@ -46,6 +51,10 @@ export class JukeboxConnection {
         return this.mIsServer;
     }
 
+    get isSpeaker() {
+        return this.mIsSpeaker;
+    }
+
     get connected() {
         return this.mAlias &&
             this.mConnections[this.mAlias] &&
@@ -56,23 +65,29 @@ export class JukeboxConnection {
 
     async initAsClient(serverAlias) {
         const parsedUrl = new URL(window.location);
-        const host = `${parsedUrl.protocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
-        this.mSocket = io(host);
-        this._configureSocketEventHandling(this.mSocket);
-        await this._waitForSocketConnection(this.mSocket);
-        if (this.mSocketReady && await this._connectToServer(serverAlias)) {
-            return true;
+        const host = `${kProtocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
+        return await this._initSocket(host) && await this._connectToServer(serverAlias);
+    }
+
+    async initAsSpeaker(serverAlias) {
+        const parsedUrl = new URL(window.location);
+        const host = `${kProtocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
+        if (await this._initSocket(host) && await this._connectToServer(serverAlias)) {
+            if (await this._requestSpeakerStream()) {
+                return true;
+            }
+            Object.keys(this.mDataChannels).forEach(key => { this.mDataChannels[key].onclose = null; });
+            Object.keys(this.mConnections).forEach(key => this.mConnections[key].close());
+            this.mDataChannels = {};
+            this.mConnections = {};
         }
         return false;
     }
 
     async initAsServer() {
         const parsedUrl = new URL(window.location);
-        const host = `${parsedUrl.protocol}//${parsedUrl.hostname}:8090?role=server`;
-        this.mSocket = io(host);
-        this._configureSocketEventHandling(this.mSocket);
-        await this._waitForSocketConnection(this.mSocket);
-        this.mIsServer = this.mSocketReady;
+        const host = `${kProtocol}//${parsedUrl.hostname}:8090?role=server`;
+        this.mIsServer = await this._initSocket(host);
         return this.mSocketReady;
     }
 
@@ -94,6 +109,15 @@ export class JukeboxConnection {
 
     forwardEvent(event, ...varArgs) {
         Object.keys(this.mDataChannels).forEach(key => this._forwardEvent(this.mDataChannels[key], event, varArgs));
+    }
+
+    async _initSocket(host) {
+        if (!this.mSocket || !this.mSocketReady) {
+            this.mSocket = io(host);
+            this._configureSocketEventHandling(this.mSocket);
+            await this._waitForSocketConnection(this.mSocket);
+        }
+        return this.mSocketReady;
     }
 
     _forwardEvent(channel, event, varArgs) {
@@ -309,6 +333,31 @@ export class JukeboxConnection {
                 }
                 break;
 
+            case kServiceEvents.SPEAKER_REQUEST_STREAM: {
+                const stream = this.mService._getSpeakerStream();
+                const connection = this._getConnectionForDataChannel(dataChannel);
+
+                // let the sender know the result of the request
+                this._sendMessageThroughChannel(dataChannel, {
+                    event: kServiceEvents.SPEAKER_STREAM_RESULT,
+                    result: stream !== null && connection !== null,
+                }, messageID);
+
+                // add the stream to the connection
+                connection.addStream(stream);
+
+                if (resolve) {
+                    resolve(stream !== null && connection !== null);
+                }
+            }
+                break;
+
+            case kServiceEvents.SPEAKER_STREAM_RESULT:
+                if (resolve) {
+                    resolve(message.result);
+                }
+                break;
+
             default:
                 break;
         }
@@ -318,7 +367,9 @@ export class JukeboxConnection {
         return new Promise(resolve => {
             Object.keys(this.mDataChannels).forEach(key => { this.mDataChannels[key].onclose = null; });
             Object.keys(this.mConnections).forEach(key => this.mConnections[key].close());
+            this.mDataChannels = {};
             this.mConnections = {};
+
             const connection = new RTCPeerConnection(null);
             this.mConnections[serverID] = connection;
 
@@ -365,6 +416,59 @@ export class JukeboxConnection {
                 }));
             }
         }
+    }
+
+    _getConnectionForDataChannel(dataChannel) {
+        const keys = Object.keys(this.mDataChannels);
+        let id = null;
+        for (let i = 0, n = keys.length; i < n; ++i) {
+            if (this.mDataChannels[keys[i]] === dataChannel) {
+                id = keys[i];
+                break;
+            }
+        }
+
+        if (id && this.mConnections.hasOwnProperty(id)) {
+            return this.mConnections[id];
+        }
+
+        return null;
+    }
+
+    _requestSpeakerStream() {
+        if (!this.isServer && this.connected) {
+            const keys = Object.keys(this.mDataChannels);
+            if (keys.length) {
+                const dataChannel = this.mDataChannels[keys[0]];
+                const connection = this._getConnectionForDataChannel(dataChannel);
+
+                if (connection) {
+                    return new Promise(resolve => {
+                        connection.onaddstream = event => {
+                            console.log(event);
+                            connection.onaddstream = null;
+                            this.mIsSpeaker = true;
+                            this.mService.mSpeakerStream = event.stream;
+                            resolve(true);
+                        };
+
+                        const p = new Promise(r => {
+                            this._sendMessageThroughChannel(dataChannel, {
+                                event: kServiceEvents.SPEAKER_REQUEST_STREAM,
+                            }, null, r);
+                        });
+
+                        p.then(result => {
+                            if (!result) {
+                                connection.onaddstream = null;
+                                resolve(false);
+                            }
+                        });
+                    });
+                }
+            }
+        }
+        return Promise.resolve(false);
     }
 
     _replacer(key, value) {

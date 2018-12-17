@@ -68,7 +68,7 @@ export class AppleService extends Service {
         return this.mAudioContext;
     }
 
-    get audioContextSource() {
+    get audioSource() {
         return this.mAudioSource;
     }
 
@@ -90,12 +90,13 @@ export class AppleService extends Service {
 
         this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.mAudioSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
-        this.mAudioSource.connect(this.mAudioContext.destination);
+        // this.mAudioSource.connect(this.mAudioContext.destination);
 
-        // const delay = this.mAudioContext.createDelay(5.0);
-        // delay.delayTime.value = 0.03;
-        // this.mAudioSource.connect(delay);
-        // delay.connect(this.mAudioContext.destination);
+        // always delay the audio output by 0.2 seconds to account for speaker connections
+        const delay = this.mAudioContext.createDelay(5.0);
+        delay.delayTime.value = 0.2;
+        this.mAudioSource.connect(delay);
+        delay.connect(this.mAudioContext.destination);
     }
 
     async authorize() {

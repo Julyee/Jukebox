@@ -25,6 +25,8 @@ export const Buttons = {
     PLAYLIST_OPEN_VIEW: 'BTN::PLAYLIST::OpenView',
 
     ARTIST_OPEN_VIEW: 'BTN::ARTIST::OpenView',
+
+    SPEAKER_START_STREAMING: 'BTN::SPEAKER::StartStreaming',
 };
 
 export const GeneralEvents = {
