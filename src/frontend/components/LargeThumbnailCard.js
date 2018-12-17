@@ -27,9 +27,9 @@ export class LargeThumbnailCard {
                 {
                     any: {
                         content: [
-                            m('.large-thumbnail-card-name', title),
+                            m('.large-thumbnail-card-name', title || '　'),
                             isExplicit ? m('.large-thumbnail-card-explicit', '🅴') : null,
-                            m('.large-thumbnail-card-artist', subtitle),
+                            m('.large-thumbnail-card-artist', subtitle || '　'),
                         ],
                     },
                 },
