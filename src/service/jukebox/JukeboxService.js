@@ -142,6 +142,13 @@ export class JukeboxService extends Service {
         return await this.mConnection.performMethod('seekTo', time);
     }
 
+    async getHomeContent() {
+        if (this.mConnection.isServer) {
+            return await this.mBaseService.getHomeContent();
+        }
+        return await this.mConnection.performMethod('getHomeContent');
+    }
+
     async getAlbumInfo(albumID) {
         if (this.mConnection.isServer) {
             return await this.mBaseService.getAlbumInfo(albumID);

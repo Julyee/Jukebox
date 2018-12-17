@@ -1,13 +1,8 @@
 import {Service} from '../../service/Service';
 import {Layout} from '../Layout';
-import {IOSSpinner, List} from 'polythene-mithril';
-import {SongItem} from '../components/SongItem';
-import {VideoCard} from '../components/VideoCard';
+import {IOSSpinner} from 'polythene-mithril';
+import {ItemRows} from '../utils/ItemRows';
 import m from 'mithril';
-
-import {AlbumCard} from '../components/AlbumCard';
-import {PlaylistCard} from '../components/PlaylistCard';
-import {ArtistCard} from '../components/ArtistCard';
 
 export class Search extends Layout {
     constructor() {
@@ -55,11 +50,11 @@ export class Search extends Layout {
 
         return [
             m('.search-result-header', `Results for "${this.mSearchTerm}"`),
-            this._getSongsRow(this.mSearchResults),
-            this._getAlbumRow(this.mSearchResults),
-            this._getPlaylistsRow(this.mSearchResults),
-            this._getVideosRow(this.mSearchResults),
-            this._getArtistsRow(this.mSearchResults),
+            ItemRows.getSongsRow(this.mSearchResults),
+            ItemRows.getAlbumRow(this.mSearchResults),
+            ItemRows.getPlaylistsRow(this.mSearchResults),
+            ItemRows.getVideosRow(this.mSearchResults),
+            ItemRows.getArtistsRow(this.mSearchResults),
         ];
     }
 
@@ -77,89 +72,5 @@ export class Search extends Layout {
                 });
             }
         }
-    }
-
-    _getAlbumRow(results) {
-        if (!results.albums) {
-            return null;
-        }
-
-        return m('.search-result-container', [
-            m('.search-result-title', 'Albums'),
-            m('.search-result-row', results.albums.map(album => m(AlbumCard, { album: album, size: 180 }))),
-        ]);
-    }
-
-    _getPlaylistsRow(results) {
-        if (!results.playlists) {
-            return null;
-        }
-
-        return m('.search-result-container', [
-            m('.search-result-title', 'Playlists'),
-            m('.search-result-row', results.playlists.map(playlist => m(PlaylistCard, { playlist: playlist, size: 180 }))),
-        ]);
-    }
-
-    _makeSongColumn(tiles) {
-        return m('.search-result-song-column', m(List, {
-            border: true,
-            indentedBorder: false,
-            compact: false,
-            padding: 'none',
-            tiles: tiles,
-        }));
-    }
-
-    _getSongsRow(results) {
-        if (!results.songs) {
-            return null;
-        }
-
-        const cols = [];
-        let col = [];
-
-        results.songs.forEach(song => {
-            if (col.length >= 3) {
-                cols.push(this._makeSongColumn(col));
-                col = [];
-            }
-
-            col.push(m(SongItem, {
-                song: song,
-                size: 52,
-            }));
-        });
-
-        if (col.length) {
-            cols.push(this._makeSongColumn(col));
-        }
-
-        return m('.search-result-container', [
-            m('.search-result-title', 'Songs'),
-            m('.search-result-row', cols),
-        ]);
-    }
-
-    _getVideosRow(results) {
-        if (!results['music-videos']) {
-            return null;
-        }
-
-        return m('.search-result-container', [
-            m('.search-result-title', 'Music Videos'),
-            m('.search-result-row', results['music-videos'].map(video => m(VideoCard, { video: video, width: 360 }))),
-        ]);
-    }
-
-    _getArtistsRow(results) {
-        if (!results.artists) {
-            return null;
-        }
-
-        return m('.search-result-container', [
-            m('.search-result-title', 'Artists'),
-            m('.search-result-row', results.artists.map(artist => m(ArtistCard, { artist }))),
-        ]);
     }
 }

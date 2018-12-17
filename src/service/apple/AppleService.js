@@ -28,7 +28,7 @@ export class AppleService extends Service {
         super();
         this.mAPI = null;
         this.mAudioContext = null;
-        this.mAudioContextSource = null;
+        this.mAudioSource = null;
         this.mSearchHintCache = {};
     }
 
@@ -69,7 +69,7 @@ export class AppleService extends Service {
     }
 
     get audioContextSource() {
-        return this.mAudioContextSource;
+        return this.mAudioSource;
     }
 
     async init(devTokenPath, appName, build) {
@@ -89,8 +89,13 @@ export class AppleService extends Service {
         Object.keys(MusicKit.Events).forEach(key => this._registerPlayerEvent(MusicKit.Events[key]));
 
         this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-        this.mAudioContextSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
-        this.mAudioContextSource.connect(this.mAudioContext.destination);
+        this.mAudioSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
+        this.mAudioSource.connect(this.mAudioContext.destination);
+
+        // const delay = this.mAudioContext.createDelay(5.0);
+        // delay.delayTime.value = 0.03;
+        // this.mAudioSource.connect(delay);
+        // delay.connect(this.mAudioContext.destination);
     }
 
     async authorize() {
@@ -113,12 +118,14 @@ export class AppleService extends Service {
             limit: resultCount,
         });
 
+        console.log(result);
+
         return Object.assign({}, {
-            albums: result.albums ? result.albums.data.map(album => new AppleAlbum(album, this)) : null,
-            artists: result.artists ? result.artists.data : null,
-            'music-videos': result['music-videos'] ? result['music-videos'].data : null,
-            playlists: result.playlists ? result.playlists.data.map(playlist => new ApplePlaylist(playlist, this)) : null,
-            songs: result.songs ? result.songs.data.map(song => new AppleSong(song, this)) : null,
+            albums: result.albums ? result.albums.data.map(album => this._itemFromInfo(album)) : null,
+            artists: result.artists ? result.artists.data.map(artist => this._itemFromInfo(artist)) : null,
+            videos: result['music-videos'] ? result['music-videos'].data.map(video => this._itemFromInfo(video)) : null,
+            playlists: result.playlists ? result.playlists.data.map(playlist => this._itemFromInfo(playlist)) : null,
+            songs: result.songs ? result.songs.data.map(song => this._itemFromInfo(song)) : null,
         });
     }
 
@@ -146,6 +153,7 @@ export class AppleService extends Service {
             this._emitEvent(Events.PLAYBACK_EVENT, Events.SERVICE_PLAY_SONG, song);
         }
 
+        await waitOneTick();
         return await this.mAPI.play();
     }
 
@@ -168,19 +176,29 @@ export class AppleService extends Service {
     async queueSong(song, overwriteQueue) {
         await this.authorize();
         if (!this.mAPI.player.queue || overwriteQueue) {
-            return await this.mAPI.setQueue([
+            const result = await this.mAPI.setQueue([
                 song._descriptor,
             ]);
+            await waitOneTick();
+            return result;
         }
 
-        return await this.mAPI.player.queue.append([
+        const result = await this.mAPI.player.queue.append([
             song._descriptor,
         ]);
+        await waitOneTick();
+        return result;
     }
 
     async seekTo(time) {
         await this.authorize();
         return await this.mAPI.seekToTime(time);
+    }
+
+    async getHomeContent() {
+        await this.authorize();
+        const recommendations = await this.mAPI.api.recommendations();
+        return this._itemsFromRecommendations(recommendations);
     }
 
     async getAlbumInfo(albumID) {
@@ -209,6 +227,69 @@ export class AppleService extends Service {
         const playlist = await this.mAPI.api.playlist(playlistID);
         if (playlist) {
             return new ApplePlaylist(playlist, this);
+        }
+        return null;
+    }
+
+    _itemsFromRecommendations(recommendations, result = null) {
+        const items = result ? result : [];
+        recommendations.forEach(recommendation => {
+            if (recommendation.relationships.hasOwnProperty('recommendations')) {
+                this._itemsFromRecommendations(recommendation.relationships.recommendations.data, items);
+            } else {
+                const attributes = recommendation.attributes;
+                if (attributes.resourceTypes.length === 1) {
+                    const type = attributes.resourceTypes[0];
+                    const name = attributes.title ? attributes.title.stringForDisplay : attributes.reason.stringForDisplay;
+                    const typeName = this._typeNameForType(type);
+                    items.push({
+                        name,
+                        type,
+                        [typeName]: recommendation.relationships.contents.data.map(item => this._itemFromInfo(item)),
+                    });
+                }
+            }
+        });
+
+        return items;
+    }
+
+    _itemFromInfo(info) {
+        switch (info.type) {
+            case 'albums':
+                return new AppleAlbum(info, this);
+
+            case 'artists':
+                return info;
+
+            case 'music-videos':
+                return info;
+
+            case 'playlists':
+                return new ApplePlaylist(info, this);
+
+            case 'songs':
+                return new AppleSong(info, this);
+
+            default:
+                break;
+        }
+        return null;
+    }
+
+    _typeNameForType(type) {
+        switch (type) {
+            case 'albums':
+            case 'artists':
+            case 'playlists':
+            case 'songs':
+                return type;
+
+            case 'music-videos':
+                return 'videos';
+
+            default:
+                break;
         }
         return null;
     }

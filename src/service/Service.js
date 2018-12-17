@@ -114,6 +114,10 @@ export class Service extends IBindable {
         throw 'Not implemented';
     }
 
+    async getHomeContent() {
+        throw 'Not implemented';
+    }
+
     async getAlbumInfo() {
         throw 'Not implemented';
     }
