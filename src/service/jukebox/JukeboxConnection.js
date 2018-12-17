@@ -46,6 +46,14 @@ export class JukeboxConnection {
         return this.mIsServer;
     }
 
+    get connected() {
+        return this.mAlias &&
+            this.mConnections[this.mAlias] &&
+            this.mConnections[this.mAlias].connectionState === 'connected' &&
+            this.mDataChannels[this.mAlias] &&
+            this.mDataChannels[this.mAlias].readyState === 'open';
+    }
+
     async initAsClient(serverAlias) {
         const parsedUrl = new URL(window.location);
         const host = `${parsedUrl.protocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
