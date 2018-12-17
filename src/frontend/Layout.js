@@ -12,7 +12,7 @@ export class Layout {
 
     oncreate() {
         if (!(Service.activeService() instanceof Service)) {
-            window.location.href = '#!/Splash';
+            m.route.set('/Splash');
         }
     }
 

@@ -71,9 +71,8 @@ export class Playlist extends Layout {
     }
 
     _updatePlaylist() {
-        const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
-        const playlistID = parsedUrl.searchParams.get('p');
-        const serviceName = parsedUrl.searchParams.get('x');
+        const playlistID = m.route.param('p') || null;
+        const serviceName = m.route.param('x') || null;
         if (playlistID !== this.mPlaylistID || serviceName !== this.mServiceName) {
             this.mPlaylistID = playlistID || null;
             this.mServiceName = serviceName || null;

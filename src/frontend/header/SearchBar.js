@@ -58,7 +58,7 @@ export class SearchBar {
         const handleKeyUp = e => {
             if (e.keyCode === 13) {
                 if (value) {
-                    window.location.href = `#!/Search?q=${encodeURI(value())}`;
+                    m.route.set('/Search', { q: value() });
                     clear(false);
                 }
             } else if (value()) {
@@ -136,7 +136,7 @@ export class SearchBar {
                             events: {
                                 onmousedown: () => {
                                     state.clear(false);
-                                    window.location.href = `#!/Search?q=${encodeURI(match)}`;
+                                    m.route.set('/Search', { q: match });
                                 },
                             },
                         })),

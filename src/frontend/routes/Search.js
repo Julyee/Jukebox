@@ -59,8 +59,7 @@ export class Search extends Layout {
     }
 
     _updateSearch() {
-        const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
-        const searchTerm = parsedUrl.searchParams.get('q');
+        const searchTerm = m.route.param('q') || null;
         if (searchTerm !== this.mSearchTerm) {
             this.mSearchTerm = searchTerm;
             if (this.mSearchTerm) {

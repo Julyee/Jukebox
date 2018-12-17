@@ -70,10 +70,9 @@ export class Album extends Layout {
     }
 
     _updateAlbum() {
-        const parsedUrl = new URL(`about:blank${window.location.hash.substr(2)}`);
-        const albumID = parsedUrl.searchParams.get('a');
-        const songID = parsedUrl.searchParams.get('s');
-        const serviceName = parsedUrl.searchParams.get('x');
+        const albumID = m.route.param('a') || null;
+        const songID = m.route.param('s') || null;
+        const serviceName = m.route.param('x') || null;
         if (albumID !== this.mAlbumID || songID !== this.mSongID || serviceName !== this.mServiceName) {
             this.mAlbumID = albumID || null;
             this.mSongID = songID || null;

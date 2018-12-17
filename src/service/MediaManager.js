@@ -8,6 +8,7 @@ import {MusicQueue} from './MusicQueue';
 import {Song} from './media';
 import {JukeboxService} from './jukebox/JukeboxService';
 import nextTick from '../core/nextTick';
+import m from 'mithril';
 
 let kSharedInstance = null;
 
@@ -94,23 +95,11 @@ export class MediaManagerImp extends IBindable {
                 Dialog.show(MoreDialog.get(...varArgs));
                 break;
 
-            case Buttons.SONG_GO_TO_ALBUM: {
-                const song = varArgs[0];
-                window.location.href = `#!/Album?s=${encodeURI(song.id)}&x=${encodeURI(song.service.constructor.name)}`;
+            case Buttons.SONG_GO_TO_ALBUM:
+            case Buttons.ALBUM_OPEN_VIEW:
+            case Buttons.PLAYLIST_OPEN_VIEW:
+                this._handleButtonPressLocal(service, type, ...varArgs);
                 break;
-            }
-
-            case Buttons.ALBUM_OPEN_VIEW: {
-                const album = varArgs[0];
-                window.location.href = `#!/Album?a=${encodeURI(album.id)}&x=${encodeURI(album.service.constructor.name)}`;
-                break;
-            }
-
-            case Buttons.PLAYLIST_OPEN_VIEW: {
-                const playlist = varArgs[0];
-                window.location.href = `#!/Playlist?p=${encodeURI(playlist.id)}&x=${encodeURI(playlist.service.constructor.name)}`;
-                break;
-            }
 
             default:
                 break;
@@ -213,19 +202,19 @@ export class MediaManagerImp extends IBindable {
 
             case Buttons.SONG_GO_TO_ALBUM: {
                 const song = varArgs[0];
-                window.location.href = `#!/Album?s=${encodeURI(song.id)}&x=${encodeURI(song.service.constructor.name)}`;
+                m.route.set('/Album', { s: song.id, x: song.service.constructor.name});
                 break;
             }
 
             case Buttons.ALBUM_OPEN_VIEW: {
                 const album = varArgs[0];
-                window.location.href = `#!/Album?a=${encodeURI(album.id)}&x=${encodeURI(album.service.constructor.name)}`;
+                m.route.set('/Album', { a: album.id, x: album.service.constructor.name});
                 break;
             }
 
             case Buttons.PLAYLIST_OPEN_VIEW: {
                 const playlist = varArgs[0];
-                window.location.href = `#!/Playlist?p=${encodeURI(playlist.id)}&x=${encodeURI(playlist.service.constructor.name)}`;
+                m.route.set('/Playlist', {p: playlist.id, x: playlist.service.constructor.name});
                 break;
             }
 

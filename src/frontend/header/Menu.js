@@ -24,7 +24,7 @@ const navigationList = (navItemClick, buttons) => {
                 navigation: true,
                 events: {
                     onclick: () => {
-                        window.location.href = button.href;
+                        m.route.set(button.href);
                         navItemClick();
                     },
                 },
@@ -82,21 +82,21 @@ export class Menu {
                 content: navigationList(navItemClick, [
                     {
                         title: 'Home',
-                        href: '#!/Home',
+                        href: '/Home',
                     },
                     {
                         title: 'Library',
-                        href: '#!/Library',
+                        href: '/Library',
                         disabled: true,
                     },
                     {
                         title: 'Import',
-                        href: '#!/Import',
+                        href: '/Import',
                         disabled: true,
                     },
                     {
                         title: 'Now Playing',
-                        href: '#!/NowPlaying',
+                        href: '/NowPlaying',
                     },
                 ]),
                 fixed: false, // global drawer on top of everything
