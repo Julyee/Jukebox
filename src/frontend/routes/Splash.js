@@ -14,6 +14,7 @@ import * as jukeboxSVG from '@fortawesome/free-solid-svg-icons/faPlayCircle';
 import * as speakerSVG from '@fortawesome/free-solid-svg-icons/faVolumeUp';
 import * as warningSVG from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 import nextTick from '../../core/nextTick';
+import {Service} from '../../service/Service';
 
 const iconApple = makeSVG(appleSVG, 280, 280);
 const iconPayPal = makeSVG(paypalSVG, 280, 280);
@@ -26,7 +27,7 @@ IconCSS.addStyle('.splash-service-icon', {
     'size_medium': 25,
 });
 
-const loadingDialog = text => ({
+const loadingDialog = ({text, didShow, didHide}) => ({
     body: [
         m('.splash-loading-icon', [
             m(IOSSpinner, {
@@ -40,6 +41,8 @@ const loadingDialog = text => ({
     ],
     backdrop: true,
     modal: true,
+    didShow: didShow ? didShow : null,
+    didHide: didHide ? didHide : null,
 });
 
 function loadScript(url, errorCB = null) {
@@ -84,6 +87,10 @@ export class Splash {
     }
 
     view() {
+        if (Service.activeService()) {
+            nextTick(() => m.route.set('/Home', null, { replace: true }));
+        }
+
         return [
             m('.splash-background', [
                 m('.splash-title-container', [
@@ -191,15 +198,20 @@ export class Splash {
     }
 
     connectToJukeboxServer(host) {
-        Dialog.show(loadingDialog('Connecting to Jukebox...')).then(() => nextTick(() => {
-            const jukebox = JukeboxService.instance();
-            jukebox.configureAsClient(host).then(result => {
-                Dialog.hide().then(() => nextTick(() => {
-                    if (result) {
-                        JukeboxService.activeService(jukebox);
-                        nextTick(() => {
-                            window.location.href = '#!/Home';
-                        });
+        Dialog.show(loadingDialog({
+            text: 'Connecting to Jukebox...',
+            didShow: () => {
+                const jukebox = JukeboxService.instance();
+                jukebox.configureAsClient(host).then(() => {
+                    Dialog.hide();
+                });
+            },
+            didHide: () => {
+                nextTick(() => {
+                    const service = JukeboxService.instance();
+                    if (service.authorized) {
+                        Service.activeService(service);
+                        m.redraw();
                     } else {
                         Dialog.show(WarningDialog.get(
                             'Error',
@@ -207,27 +219,48 @@ export class Splash {
                             'Got it'
                         ));
                     }
-                }));
-            });
+                });
+            },
         }));
     }
 
     loginWithAppleMusic() {
-        Dialog.show(loadingDialog('Waiting for login...')).then(() => {
-            const service = AppleService.instance();
-            service.authorize().then(() => {
-                if (service.authorized) {
-                    AppleService.activeService(service);
-                    this.registerJukeboxServer(service).then(() => {
-                        Dialog.hide().then(() => {
-                            nextTick(() => {
-                                window.location.href = '#!/Home';
-                            });
-                        });
-                    });
-                }
-            });
-        });
+        Dialog.show(loadingDialog({
+            text: 'Waiting for login...',
+            didShow: () => {
+                const service = AppleService.instance();
+                service.authorize().then(() => {
+                    if (service.authorized) {
+                        this.registerJukeboxServer(service).then(() => Dialog.hide());
+                    } else {
+                        Dialog.hide();
+                    }
+                });
+            },
+            didHide: () => {
+                nextTick(() => {
+                    const service = AppleService.instance();
+                    if (service.authorized) {
+                        Service.activeService(service);
+                        m.redraw();
+                    } else {
+                        Dialog.show(WarningDialog.get(
+                            'Error',
+                            'Could not connect to the specified server.',
+                            'Got it'
+                        ));
+                    }
+                });
+            },
+        }));
+
+        // const service = AppleService.instance();
+        // service.authorize().then(() => {
+        //     if (service.authorized) {
+        //         AppleService.activeService(service);
+        //         m.route.set('/Home', null, { replace: true });
+        //     }
+        // });
     }
 
     _getServiceStateIcon(service) {
