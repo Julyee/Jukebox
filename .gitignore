@@ -4,3 +4,5 @@ dist
 
 www/devtoken\.jwt
 keys/*.p8
+server/*.pem
+server/*.crt
