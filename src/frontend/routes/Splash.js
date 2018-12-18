@@ -59,7 +59,6 @@ function loadScript(url, errorCB = null) {
     });
 }
 
-
 export class Splash {
     constructor(/* vnode */) {
         // init
@@ -87,8 +86,8 @@ export class Splash {
     }
 
     view() {
-        if (Service.activeService()) {
-            nextTick(() => {
+        if (Service.allConfigured()) {
+            setTimeout(() => {
                 const route = Service.activeService().isSpeaker ? '/Speaker' : '/Home';
                 m.route.set(route, null, { replace: true });
             });
@@ -206,7 +205,10 @@ export class Splash {
             text: 'Connecting to Jukebox...',
             didShow: () => {
                 const jukebox = JukeboxService.instance();
-                jukebox.configureAsClient(host).then(() => {
+                jukebox.configureAsClient(host).then(result => {
+                    if (result) {
+                        Service.activeService(jukebox);
+                    }
                     Dialog.hide();
                 });
             },
@@ -214,7 +216,7 @@ export class Splash {
                 nextTick(() => {
                     const service = JukeboxService.instance();
                     if (service.authorized) {
-                        Service.activeService(service);
+                        Service.allConfigured(true);
                         m.redraw();
                     } else {
                         Dialog.show(WarningDialog.get(
@@ -233,7 +235,10 @@ export class Splash {
             text: 'Connecting to Jukebox...',
             didShow: () => {
                 const jukebox = JukeboxService.instance();
-                jukebox.configureAsSpeaker(host).then(() => {
+                jukebox.configureAsSpeaker(host).then(result => {
+                    if (result) {
+                        Service.activeService(jukebox);
+                    }
                     Dialog.hide();
                 });
             },
@@ -241,7 +246,7 @@ export class Splash {
                 nextTick(() => {
                     const service = JukeboxService.instance();
                     if (service.authorized) {
-                        Service.activeService(service);
+                        Service.allConfigured(true);
                         m.redraw();
                     } else {
                         Dialog.show(WarningDialog.get(
@@ -262,7 +267,12 @@ export class Splash {
                 const service = AppleService.instance();
                 service.authorize().then(() => {
                     if (service.authorized) {
-                        this.registerJukeboxServer(service).then(() => Dialog.hide());
+                        this.registerJukeboxServer(service).then(result => {
+                            if (result) {
+                                Service.activeService(service);
+                            }
+                            Dialog.hide();
+                        });
                     } else {
                         Dialog.hide();
                     }
@@ -272,7 +282,7 @@ export class Splash {
                 nextTick(() => {
                     const service = AppleService.instance();
                     if (service.authorized) {
-                        Service.activeService(service);
+                        Service.allConfigured(true);
                         m.redraw();
                     } else {
                         Dialog.show(WarningDialog.get(

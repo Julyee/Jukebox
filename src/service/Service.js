@@ -2,6 +2,7 @@ import {IBindable} from '../core/IBindable';
 
 const kInstanceMap = {};
 let kActiveService = null;
+let kAllConfigured = false;
 
 export class Service extends IBindable {
     static instance(serviceName) {
@@ -24,6 +25,13 @@ export class Service extends IBindable {
             }
         }
         return kActiveService;
+    }
+
+    static allConfigured(flag) {
+        if (arguments.length === 1) {
+            kAllConfigured = flag;
+        }
+        return kAllConfigured;
     }
 
     constructor() {
