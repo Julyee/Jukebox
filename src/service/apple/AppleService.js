@@ -87,16 +87,6 @@ export class AppleService extends Service {
         });
 
         Object.keys(MusicKit.Events).forEach(key => this._registerPlayerEvent(MusicKit.Events[key]));
-
-        this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-        this.mAudioSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
-        // this.mAudioSource.connect(this.mAudioContext.destination);
-
-        // always delay the audio output by 0.2 seconds to account for speaker connections
-        const delay = this.mAudioContext.createDelay(5.0);
-        delay.delayTime.value = 0.2;
-        this.mAudioSource.connect(delay);
-        delay.connect(this.mAudioContext.destination);
     }
 
     async authorize() {
@@ -141,6 +131,11 @@ export class AppleService extends Service {
 
     async play(song = null) {
         await this.authorize();
+        if (!this.mAudioContext || !this.mAudioSource) {
+            this._setupWebAudio();
+            await waitOneTick();
+        }
+
         if (this.isPlaying) {
             if (!song) {
                 return true;
@@ -401,5 +396,17 @@ export class AppleService extends Service {
                 break;
         }
         // console.log([event, info]); // eslint-disable-line
+    }
+
+    _setupWebAudio() {
+        this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.mAudioSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
+        // this.mAudioSource.connect(this.mAudioContext.destination);
+
+        // always delay the audio output by 0.2 seconds to account for speaker connections
+        const delay = this.mAudioContext.createDelay(5.0);
+        delay.delayTime.value = 0.2;
+        this.mAudioSource.connect(delay);
+        delay.connect(this.mAudioContext.destination);
     }
 }
