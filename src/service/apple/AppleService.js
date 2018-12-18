@@ -29,6 +29,7 @@ export class AppleService extends Service {
         this.mAPI = null;
         this.mAudioContext = null;
         this.mAudioSource = null;
+        this.mAudioDelay = null;
         this.mSearchHintCache = {};
     }
 
@@ -70,6 +71,10 @@ export class AppleService extends Service {
 
     get audioSource() {
         return this.mAudioSource;
+    }
+
+    get audioDelay() {
+        return this.mAudioDelay;
     }
 
     async init(devTokenPath, appName, build) {
@@ -403,10 +408,10 @@ export class AppleService extends Service {
         this.mAudioSource = this.mAudioContext.createMediaElementSource(this.mAPI.player.audio);
         // this.mAudioSource.connect(this.mAudioContext.destination);
 
-        // always delay the audio output by 0.2 seconds to account for speaker connections
-        const delay = this.mAudioContext.createDelay(5.0);
-        delay.delayTime.value = 0.2;
-        this.mAudioSource.connect(delay);
-        delay.connect(this.mAudioContext.destination);
+        // always delay the audio output by 0.25 seconds to account for speaker connections
+        this.mAudioDelay = this.mAudioContext.createDelay(5.0);
+        this.mAudioDelay.delayTime.value = 0.25;
+        this.mAudioSource.connect(this.mAudioDelay);
+        this.mAudioDelay.connect(this.mAudioContext.destination);
     }
 }

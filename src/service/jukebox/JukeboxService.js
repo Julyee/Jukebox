@@ -16,6 +16,7 @@ export class JukeboxService extends Service {
         this.mSpeakerStream = null;
         this.mAudioContext = null;
         this.mAudioSource = null;
+        this.mAudioDelay = null;
 
         this.mBufferingProgress = 0;
         this.mPlaybackProgress = 0;
@@ -82,6 +83,10 @@ export class JukeboxService extends Service {
 
     get audioSource() {
         return this.mAudioSource;
+    }
+
+    get audioDelay() {
+        return this.mAudioDelay;
     }
 
     async configureAsServer(service) {
@@ -198,7 +203,12 @@ export class JukeboxService extends Service {
         if (!this.isSpeakerPlaying && this.isSpeaker && this.mSpeakerStream) {
             this.mAudioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.mAudioSource = this.mAudioContext.createMediaStreamSource(this.mSpeakerStream);
-            this.mAudioSource.connect(this.mAudioContext.destination);
+            // this.mAudioSource.connect(this.mAudioContext.destination);
+
+            this.mAudioDelay = this.mAudioContext.createDelay(5.0);
+            this.mAudioDelay.delayTime.value = 0.1; // just for giggles
+            this.mAudioSource.connect(this.mAudioDelay);
+            this.mAudioDelay.connect(this.mAudioContext.destination);
         }
     }
 
@@ -252,6 +262,10 @@ export class JukeboxService extends Service {
 
     _getSpeakerStream() {
         if (this.mConnection.isServer) {
+            if (!this.mBaseService.audioContext || !this.mBaseService.audioSource) {
+                this.mBaseService._setupWebAudio();
+            }
+
             if (!this.mSpeakerStream) {
                 const context = this.mBaseService.audioContext;
                 const source = this.mBaseService.audioSource;
