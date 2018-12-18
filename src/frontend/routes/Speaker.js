@@ -13,7 +13,7 @@ export class Speaker {
     }
 
     view() {
-        if (!Service.activeService().isSpeakerPlaying) {
+        if (!Service.activeService() || !Service.activeService().isSpeakerPlaying) {
             return m('.speaker-message-container', [
                 m('.speaker-message-title', 'Speaker'),
                 m('.speaker-message-content', 'This device is ready to be used as a speaker, please make sure to adjust the delay and that your device is not muted.'),
