@@ -1,13 +1,29 @@
 const ServerCommands = require('./ServerCommands');
 const shortid = require('shortid');
-const http = require('http');
+const https = require('https');
+const express = require('express');
 const socket = require('socket.io');
+const path = require('path');
+const fs = require('fs');
 
 const hostname = '0.0.0.0';
 const port = 8090;
 
-const app = http.createServer(() => {});
-const io = socket(app);
+const options = {
+    key: fs.readFileSync(path.resolve(__dirname, 'file.pem')),
+    cert: fs.readFileSync(path.resolve(__dirname, 'file.crt')),
+};
+
+const app = express();
+const server = https.createServer(options, app);
+const io = socket(server);
+
+app.get('/', function(req, res) {
+    res.sendFile(path.resolve(__dirname, '../www/index.html'));
+});
+
+app.use(express.static(path.resolve(__dirname, '../www')));
+app.use(express.static(path.resolve(__dirname, '../dist')));
 
 const enableLogging = true;
 const log = enableLogging ? console.log : () => {};
@@ -100,4 +116,4 @@ io.on('connection', socket => {
 
 console.log('Initializing server...');
 console.log(`Listening at ${hostname}:${port}`);
-app.listen(port, hostname);
+server.listen(port, hostname);

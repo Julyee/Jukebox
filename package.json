@@ -11,7 +11,9 @@
     "build:dev:browser": "cross-env TARGET='browser' webpack",
     "build:prod": "cross-env NODE_ENV='production' webpack -p",
     "build:prod:browser": "cross-env NODE_ENV='production' TARGET='browser' webpack -p",
-    "start": "cross-env TARGET='browser' webpack-dev-server --host 0.0.0.0 --port 8081 --content-base ./www --hot --disableHostCheck"
+    "start": "cross-env TARGET='browser' webpack-dev-server --host 0.0.0.0 --port 8081 --content-base ./www --hot --disableHostCheck",
+    "watch": "cross-env TARGET='browser' webpack --watch --progress",
+    "generateCerts": "openssl genrsa 1024 > server/file.pem && openssl req -new -key server/file.pem -out server/csr.pem && openssl x509 -req -days 365 -in server/csr.pem -signkey server/file.pem -out server/file.crt"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -35,6 +37,7 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^5.3.1",
     "@fortawesome/free-solid-svg-icons": "^5.3.1",
+    "express": "^4.16.4",
     "mithril": "^1.1.6",
     "polythene-css": "^1.3.2",
     "polythene-mithril": "^1.3.2",

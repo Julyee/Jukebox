@@ -24,8 +24,6 @@ const kServiceEvents = {
     SPEAKER_STREAM_RESULT: 'Service::SpeakerStreamResult',
 };
 
-const kProtocol = 'http:'; // temporary!
-
 export class JukeboxConnection {
     constructor(service) {
         this.mService = service;
@@ -65,13 +63,13 @@ export class JukeboxConnection {
 
     async initAsClient(serverAlias) {
         const parsedUrl = new URL(window.location);
-        const host = `${kProtocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
+        const host = `${parsedUrl.protocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
         return await this._initSocket(host) && await this._connectToServer(serverAlias);
     }
 
     async initAsSpeaker(serverAlias) {
         const parsedUrl = new URL(window.location);
-        const host = `${kProtocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
+        const host = `${parsedUrl.protocol}//${parsedUrl.hostname}:8090?role=client&server=${serverAlias}`;
         if (await this._initSocket(host) && await this._connectToServer(serverAlias)) {
             if (await this._requestSpeakerStream()) {
                 return true;
@@ -86,7 +84,7 @@ export class JukeboxConnection {
 
     async initAsServer() {
         const parsedUrl = new URL(window.location);
-        const host = `${kProtocol}//${parsedUrl.hostname}:8090?role=server`;
+        const host = `${parsedUrl.protocol}//${parsedUrl.hostname}:8090?role=server`;
         this.mIsServer = await this._initSocket(host);
         return this.mSocketReady;
     }
