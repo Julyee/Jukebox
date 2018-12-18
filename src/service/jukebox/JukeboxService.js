@@ -92,7 +92,6 @@ export class JukeboxService extends Service {
                 if (hostname === 'localhost') {
                     hostname = '10.0.1.44';
                 }
-                const protocol = 'http:';
                 this.mConnectURL = `${parsedUrl.protocol}//${hostname}${parsedUrl.port ? ':' + parsedUrl.port : ''}/#!/Splash?h=${this.mConnection.alias}`;
                 const qr = new QRious({
                     value: this.mConnectURL,
