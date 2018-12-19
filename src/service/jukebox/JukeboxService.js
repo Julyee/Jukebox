@@ -17,6 +17,7 @@ export class JukeboxService extends Service {
         this.mAudioContext = null;
         this.mAudioSource = null;
         this.mAudioDelay = null;
+        this.mAudioAnalyser = null;
 
         this.mBufferingProgress = 0;
         this.mPlaybackProgress = 0;
@@ -87,6 +88,10 @@ export class JukeboxService extends Service {
 
     get audioDelay() {
         return this.mAudioDelay;
+    }
+
+    get audioAnalyser() {
+        return this.mAudioAnalyser;
     }
 
     async configureAsServer(service) {
@@ -208,7 +213,11 @@ export class JukeboxService extends Service {
             this.mAudioDelay = this.mAudioContext.createDelay(5.0);
             this.mAudioDelay.delayTime.value = 0.1; // just for giggles
             this.mAudioSource.connect(this.mAudioDelay);
-            this.mAudioDelay.connect(this.mAudioContext.destination);
+            // this.mAudioDelay.connect(this.mAudioContext.destination);
+
+            this.mAudioAnalyser = this.mAudioContext.createAnalyser();
+            this.mAudioDelay.connect(this.mAudioAnalyser);
+            this.mAudioAnalyser.connect(this.mAudioContext.destination);
         }
     }
 
