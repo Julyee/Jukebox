@@ -4,6 +4,13 @@ import {Service} from '../../service/Service';
 import {EventCenter} from '../../core/EventCenter';
 import {Buttons, GeneralEvents} from '../Events';
 import {MediaManager} from '../../service/MediaManager';
+import * as tickUpSVG from '@fortawesome/free-solid-svg-icons/faCaretSquareUp';
+import * as tickDownSVG from '@fortawesome/free-solid-svg-icons/faCaretSquareDown';
+import {makeSVG} from '../utils/makeSVG';
+
+const tickUpIcon = makeSVG(tickUpSVG, 24, 24);
+const tickDownIcon = makeSVG(tickDownSVG, 24, 24);
+
 
 export class Speaker {
     oninit(vnode) {
@@ -46,6 +53,8 @@ export class Speaker {
 
             vnode.state.visualization.canvas = canvas;
             vnode.state.visualization.context = canvas.getContext('2d');
+            vnode.state.visualization.gain = Service.activeService().audioGain;
+            vnode.state.visualization.delay = Service.activeService().audioDelay;
             vnode.state.visualization.analyser = analyser;
             vnode.state.visualization.bufferLength = analyser.frequencyBinCount;
             vnode.state.visualization.buffer = new Uint8Array(vnode.state.visualization.bufferLength);
@@ -62,7 +71,7 @@ export class Speaker {
         vnode.state.visualization = null;
     }
 
-    view() {
+    view(vnode) {
         if (!Service.activeService() || !Service.activeService().isSpeakerPlaying) {
             return [
                 m('.speaker-message-container', [
@@ -96,12 +105,85 @@ export class Speaker {
         ]) : m('.now-playing-song-info-container', m('.now-playing-list-title', 'Not Playing'));
 
         return [
-            m('.now-playing-song-container', [
-                // artwork,
-                info,
+            m('.speaker-content-container', [
+                m('.speaker-visualization-controls-container', [
+                    m('.speaker-visualization-canvas-container', m('canvas', { class: 'speaker-visualization-canvas', id: 'speaker-visualization-canvas' })),
+                    m('.speaker-controls-container', [
+                        m('.speaker-control-container', vnode.state.visualization.gain ? this._volumeControl(vnode) : null),
+                        m('.speaker-control-container', vnode.state.visualization.delay ? this._delayControl(vnode) : null),
+                    ]),
+                ]),
+                m('.speaker-song-info-container', info),
             ]),
-            m('canvas', { class: 'speaker-visualization-canvas', id: 'speaker-visualization-canvas' }),
         ];
+    }
+
+    _volumeControl(vnode) {
+        const result = [];
+        const gain = vnode.state.visualization.gain.gain;
+
+        result.push(m('.speaker-control-button', {
+            onclick: e => {
+                e.preventDefault();
+                gain.value = Math.min(1.0, Math.fround(gain.value + 0.02));
+            },
+        }, tickUpIcon));
+
+        result.push(...this._tickBar(gain.value));
+
+        result.push(m('.speaker-control-button', {
+            onclick: e => {
+                e.preventDefault();
+                gain.value = Math.max(0, Math.fround(gain.value - 0.02));
+            },
+        }, tickDownIcon));
+
+        result.push(m('.speaker-control-label', 'VOLUME'));
+
+        return result;
+    }
+
+    _delayControl(vnode) {
+        const result = [];
+        const delay = vnode.state.visualization.delay.delayTime;
+
+        result.push(m('.speaker-control-button', {
+            onclick: e => {
+                e.preventDefault();
+                delay.value = Math.min(1.0, Math.fround(delay.value + 0.02));
+            },
+        }, tickUpIcon));
+
+        result.push(...this._tickBar(delay.value));
+
+        result.push(m('.speaker-control-button', {
+            onclick: e => {
+                e.preventDefault();
+                delay.value = Math.max(0, Math.fround(delay.value - 0.02));
+            },
+        }, tickDownIcon));
+
+        result.push(m('.speaker-control-label', 'DELAY'));
+
+        return result;
+    }
+
+    _tickBar(value) {
+        const result = [];
+        for (let i = 0; i < 20; i++) {
+            if (value >= 0.05 * (20 - i)) {
+                result.push(m('.speaker-control-tick', { style: 'background-color: rgba(0, 0, 0, 0.7);'}));
+            } else if (value > 0.05 * (19 - i)) {
+                const over = value - (0.05 * (19 - i));
+                const alpha = 0.7 * (over / 0.05);
+                result.push(m('.speaker-control-tick', {
+                    style: `border: 1px solid rgba(0, 0, 0, 0.7); background-color: rgba(0, 0, 0, ${alpha});`
+                }));
+            } else {
+                result.push(m('.speaker-control-tick'));
+            }
+        }
+        return result;
     }
 
     _renderLoop(vnode) {
