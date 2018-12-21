@@ -261,23 +261,22 @@ export class Splash {
     }
 
     loginWithAppleMusic() {
+        const service = AppleService.instance();
+        service.authorize().then(() => {
+            if (service.authorized) {
+                this.registerJukeboxServer(service).then(result => {
+                    if (result) {
+                        Service.activeService(service);
+                    }
+                    Dialog.hide();
+                });
+            } else {
+                Dialog.hide();
+            }
+        });
+
         Dialog.show(loadingDialog({
             text: 'Waiting for login...',
-            didShow: () => {
-                const service = AppleService.instance();
-                service.authorize().then(() => {
-                    if (service.authorized) {
-                        this.registerJukeboxServer(service).then(result => {
-                            if (result) {
-                                Service.activeService(service);
-                            }
-                            Dialog.hide();
-                        });
-                    } else {
-                        Dialog.hide();
-                    }
-                });
-            },
             didHide: () => {
                 nextTick(() => {
                     const service = AppleService.instance();
