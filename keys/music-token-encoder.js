@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 if (process.argv.length !== 6) {
     console.error('ERROR: Incorrect number of arguments.');
-    console.warn('USAGE: music-token-encoder [PRIVATE_KEY_FILE] [TEAM_ID] [KEY_ID] [OUTPUT_FILE]')
+    console.warn('USAGE: music-token-encoder [PRIVATE_KEY_FILE] [TEAM_ID] [KEY_ID] [OUTPUT_FILE]');
     return;
 }
 
