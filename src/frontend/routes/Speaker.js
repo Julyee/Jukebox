@@ -177,7 +177,7 @@ export class Speaker {
                 const over = value - (0.05 * (19 - i));
                 const alpha = 0.7 * (over / 0.05);
                 result.push(m('.speaker-control-tick', {
-                    style: `border: 1px solid rgba(0, 0, 0, 0.7); background-color: rgba(0, 0, 0, ${alpha});`
+                    style: `border: 1px solid rgba(0, 0, 0, 0.7); background-color: rgba(0, 0, 0, ${alpha});`,
                 }));
             } else {
                 result.push(m('.speaker-control-tick'));
