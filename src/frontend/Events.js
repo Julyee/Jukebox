@@ -40,6 +40,7 @@ export const PlaybackEvents = {
     PLAYER_SEEK_TO: 'PLR::SeekTo',
 
     SERVICE_PLAY_SONG: 'SRV::PlaySong',
+    SERVICE_LYRICS_LOADED: 'SRV::SongLyricsLoaded',
 };
 
 export const PlaybackStateEvents = {

@@ -173,7 +173,6 @@ export class Player {
             const x = event.clientX - rect.left;
             const percent = x / rect.width;
             EventCenter.emit(GeneralEvents.PLAYBACK_EVENT, PlaybackEvents.PLAYER_SEEK_TO, MediaManager.currentSong.duration * percent * 0.001);
-            console.log('Percent:' + percent); // eslint-disable-line
         }
     }
 }

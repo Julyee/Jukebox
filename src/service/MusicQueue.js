@@ -1,9 +1,12 @@
 import IBindable from '../core/IBindable';
+import {EventCenter} from '../core/EventCenter';
 
 export class MusicQueue extends IBindable {
     constructor() {
         super();
 
+        this.mLyricsQueue = Promise.resolve();
+        this.mLyricsCache = {};
         this.mQueue = [];
         this.mHistory = [];
         this.mStorageHandle = null; // eslint-disable-line // todo
@@ -36,11 +39,17 @@ export class MusicQueue extends IBindable {
     enqueueSong(song) {
         const toAdd = Array.isArray(song) ? song : [song];
         this.mQueue.push.apply(this.mQueue, toAdd);
+        // toAdd.forEach(s => {
+        //     this.mLyricsQueue = this.mLyricsQueue.then(() => this.lyricsForSong(s));
+        // });
     }
 
     unshiftSong(song) {
         const toAdd = Array.isArray(song) ? song : [song];
         this.mQueue.unshift.apply(this.mQueue, toAdd);
+        // toAdd.forEach(s => {
+        //     this.mLyricsQueue = this.mLyricsQueue.then(() => this.lyricsForSong(s));
+        // });
     }
 
     dequeueSong() {
@@ -48,6 +57,20 @@ export class MusicQueue extends IBindable {
             return this.mQueue.shift();
         }
         return null;
+    }
+
+    lyricsForSong(song) {
+        const key = `${song.name} by ${song.artist}`;
+        if (!this.mLyricsCache.hasOwnProperty(key)) {
+            this.mLyricsCache[key] = fetch(`Lyrics/${encodeURI(song.name)}/${encodeURI(song.artist)}/${encodeURI(song.duration)}`)
+                .then(response => response.json())
+                .then(lyrics => {
+                    this.mLyricsCache[key] = lyrics;
+                    return lyrics;
+                });
+        }
+
+        return Promise.resolve(this.mLyricsCache[key]);
     }
 
     peekSong(places = 1) {

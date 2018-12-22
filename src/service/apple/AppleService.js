@@ -48,6 +48,13 @@ export class AppleService extends Service {
         return 0;
     }
 
+    get playbackTime() {
+        if (!isNaN(this.mAPI.player.currentPlaybackDuration) && this.mAPI.player.currentPlaybackDuration > 0) {
+            return this.mAPI.player.audio.currentTime;
+        }
+        return 0;
+    }
+
     get isPlaying() {
         return this.mAPI.player.isPlaying;
     }

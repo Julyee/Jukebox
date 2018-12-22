@@ -5,7 +5,7 @@ import {Service} from '../Service';
 import * as _AppleMedia from '../apple/media';
 import shortid from 'shortid';
 import {EventCenter} from '../../core/EventCenter';
-import {JukeboxEvents} from '../../frontend/Events';
+import {Buttons, GeneralEvents, JukeboxEvents} from '../../frontend/Events';
 
 const AppleMedia = Object.assign({}, _AppleMedia); // fix build warning
 
@@ -68,9 +68,7 @@ export class JukeboxConnection {
     }
 
     async initAsSpeaker(serverAlias) {
-        const parsedUrl = new URL(window.location);
-        const host = `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.port ? ':' + parsedUrl.port : ''}?role=client&server=${serverAlias}`;
-        if (await this._initSocket(host) && await this._connectToServer(serverAlias)) {
+        if (await this.initAsClient(serverAlias)) {
             if (await this._requestSpeakerStream()) {
                 return true;
             }
@@ -193,7 +191,15 @@ export class JukeboxConnection {
             } else {
                 this._waitForSocketConnection(socket).then(() => {
                     if (this.mSocketReady && !this.isServer) {
-                        this._connectToServer(this.mAlias);
+                        this._connectToServer(this.mAlias).then(serverResult => {
+                            if (serverResult && this.isSpeaker) {
+                                this._requestSpeakerStream().then(speakerResult => {
+                                    if (speakerResult) {
+                                        EventCenter.emit(GeneralEvents.BUTTON_PRESS, Buttons.SPEAKER_START_STREAMING, this);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
@@ -448,6 +454,10 @@ export class JukeboxConnection {
                             this.mIsSpeaker = true;
                             this.mService.mSpeakerStream = event.stream;
                             resolve(true);
+                        };
+
+                        connection.onremovestream = () => {
+                            console.log('stream removed!');
                         };
 
                         const p = new Promise(r => {

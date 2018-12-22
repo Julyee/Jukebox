@@ -52,7 +52,7 @@ export class MediaManagerImp extends IBindable {
     }
 
     get queue() {
-        return this.mQueue.queue;
+        return this.mQueue;
     }
 
     get history() {
@@ -227,6 +227,7 @@ export class MediaManagerImp extends IBindable {
             default:
                 break;
         }
+        m.redraw();
     }
 
     _handlePlaybackEvent(type, ...varArgs) { // eslint-disable-line

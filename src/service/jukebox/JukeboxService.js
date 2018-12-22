@@ -22,6 +22,7 @@ export class JukeboxService extends Service {
 
         this.mBufferingProgress = 0;
         this.mPlaybackProgress = 0;
+        this.mPlaybackTime = 0;
         this.mIsPlaying = false;
         this.mCurrentSong = null;
     }
@@ -61,6 +62,10 @@ export class JukeboxService extends Service {
 
     get playbackProgress() {
         return this.mPlaybackProgress;
+    }
+
+    get playbackTime() {
+        return this.mPlaybackTime;
     }
 
     get isPlaying() {
@@ -250,6 +255,7 @@ export class JukeboxService extends Service {
 
                 case Events.PLAYER_TIME_CHANGE:
                     this.mPlaybackProgress = (varArgs[2] / varArgs[1]) * 100;
+                    this.mPlaybackTime = varArgs[2];
                     // fallthrough
 
                 case Events.SERVICE_PLAY_SONG:

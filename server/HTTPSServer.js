@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const log = require('./logging')('HTTPSServer');
+const {findLyrics} = require('./lyrics/Lyrics');
 
 class HTTPSServer {
     constructor(options) {
@@ -24,8 +25,13 @@ class HTTPSServer {
             next();
         });
 
-        this.mApp.get('/', function(req, res) {
+        this.mApp.get('/', (req, res) => {
             res.sendFile(path.resolve(__dirname, '../www/index.html'));
+        });
+
+        this.mApp.get('/Lyrics/:song/:artist/:duration', (req, res) => {
+            log(`Lyrics request: ${req.params.song}/${req.params.artist}/${req.params.duration}`);
+            findLyrics(req.params.song, req.params.artist, req.params.duration).then(result => res.json(result));
         });
 
         this.mApp.use(express.static(path.resolve(__dirname, '../www')));
