@@ -279,7 +279,6 @@ export class Splash {
             text: 'Waiting for login...',
             didHide: () => {
                 nextTick(() => {
-                    const service = AppleService.instance();
                     if (service.authorized) {
                         Service.allConfigured(true);
                         m.redraw();
