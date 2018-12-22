@@ -31,7 +31,7 @@ function main() {
     }
 
     if (argv.hasOwnProperty('key')) {
-        options.host = argv['key'];
+        options.key = argv['key'];
     }
 
     if (argv.hasOwnProperty('http')) {
