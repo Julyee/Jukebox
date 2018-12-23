@@ -16,7 +16,7 @@ function main() {
         console.log('--host [SERVER_HOST]');
         console.log('--cert [HTTPS_CERT]');
         console.log('--key [HTTPS_KEY]');
-        console.log('--http [HTTP_PORT');
+        console.log('--http [HTTP_PORT]');
         console.log('--https [HTTPS_PORT]');
 
         return;
