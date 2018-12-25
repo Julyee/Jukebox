@@ -9,5 +9,8 @@ async function main() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log(webRTCAdapter); // eslint-disable-line
-    await main();
+    await main().catch(reason => {
+        console.error('[JUKEBOX] Unhandled ERROR: %o', reason); // eslint-disable-line
+        return null;
+    });
 }, true);

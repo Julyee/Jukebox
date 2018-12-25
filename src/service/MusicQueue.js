@@ -1,5 +1,4 @@
 import IBindable from '../core/IBindable';
-import {EventCenter} from '../core/EventCenter';
 
 export class MusicQueue extends IBindable {
     constructor() {
@@ -67,6 +66,10 @@ export class MusicQueue extends IBindable {
                 .then(lyrics => {
                     this.mLyricsCache[key] = lyrics;
                     return lyrics;
+                }).catch(reason => {
+                    console.error(reason); // eslint-disable-line
+                    delete this.mLyricsCache[key];
+                    return null;
                 });
         }
 

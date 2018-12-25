@@ -79,9 +79,7 @@ export class Playlist extends Layout {
             const service = Service.activeService(serviceName ? serviceName : null);
             if (service && playlistID) {
                 this.mPlaylist = null;
-                let p;
-                p = service.getPlaylistInfo(playlistID);
-                p.then(result => {
+                service.getPlaylistInfo(playlistID).then(result => {
                     if (result) {
                         this.mPlaylist = result;
                     } else {

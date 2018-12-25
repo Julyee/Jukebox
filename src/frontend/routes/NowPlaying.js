@@ -3,8 +3,7 @@ import {Layout} from '../Layout';
 import {List} from 'polythene-mithril';
 import {SongItem} from '../components/SongItem';
 import {MediaManager} from '../../service/MediaManager';
-import {Buttons, GeneralEvents, PlaybackEvents} from '../Events';
-import {EventCenter} from '../../core/EventCenter';
+import {Buttons} from '../Events';
 
 export class NowPlaying extends Layout {
     constructor(/* vnode */) {

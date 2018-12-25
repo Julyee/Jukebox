@@ -39,6 +39,10 @@ export class Search extends Layout {
             ]);
         }
 
+        if (this.mSearchResults.hasOwnProperty('error')) {
+            return m('.search-result-header', this.mSearchResults.error);
+        }
+
         let hasContent = false;
         Object.keys(this.mSearchResults).forEach(key => {
             hasContent = this.mSearchResults[key] || hasContent;
@@ -66,7 +70,13 @@ export class Search extends Layout {
                 const service = Service.activeService();
                 this.mSearchResults = null;
                 service.search(searchTerm, 21).then(result => {
-                    this.mSearchResults = result;
+                    if (result) {
+                        this.mSearchResults = result;
+                    } else {
+                        this.mSearchResults = {
+                            error: 'An error occurred, please try again later',
+                        };
+                    }
                     m.redraw();
                 });
             }

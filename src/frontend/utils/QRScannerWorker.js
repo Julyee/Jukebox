@@ -39,8 +39,6 @@ const source =
     alignpat + '\n' +
     databr;
 
-
-
 const blob = new Blob([source], {type: 'application/javascript'});
 
 export const QRWorkerURL = URL.createObjectURL(blob);

@@ -103,39 +103,45 @@ export class AppleService extends Service {
 
     async authorize() {
         if (!this.authorized) {
-            await this.mAPI.authorize();
+            await this._wrapPromiseCall(this.mAPI.authorize());
         }
         return this.mAPI.musicUserToken;
     }
 
     async unauthorize() {
         if (this.authorized) {
-            return await this.mAPI.unauthorize();
+            return await this._wrapPromiseCall(this.mAPI.unauthorize());
         }
         return true;
     }
 
     async search(term, resultCount = 5) {
         await this.authorize();
-        const result = await this.mAPI.api.search(term, {
+        const result = await this._wrapPromiseCall(this.mAPI.api.search(term, {
             limit: resultCount,
-        });
+        }));
 
-        console.log(result);
+        if (result) {
+            return Object.assign({}, {
+                albums: result.albums ? result.albums.data.map(album => this._itemFromInfo(album)) : null,
+                artists: result.artists ? result.artists.data.map(artist => this._itemFromInfo(artist)) : null,
+                videos: result['music-videos'] ? result['music-videos'].data.map(video => this._itemFromInfo(video)) : null,
+                playlists: result.playlists ? result.playlists.data.map(playlist => this._itemFromInfo(playlist)) : null,
+                songs: result.songs ? result.songs.data.map(song => this._itemFromInfo(song)) : null,
+            });
+        }
 
-        return Object.assign({}, {
-            albums: result.albums ? result.albums.data.map(album => this._itemFromInfo(album)) : null,
-            artists: result.artists ? result.artists.data.map(artist => this._itemFromInfo(artist)) : null,
-            videos: result['music-videos'] ? result['music-videos'].data.map(video => this._itemFromInfo(video)) : null,
-            playlists: result.playlists ? result.playlists.data.map(playlist => this._itemFromInfo(playlist)) : null,
-            songs: result.songs ? result.songs.data.map(song => this._itemFromInfo(song)) : null,
-        });
+        return null;
     }
 
     async searchHints(term) {
         if (!this.mSearchHintCache.hasOwnProperty(term)) {
             await this.authorize();
-            this.mSearchHintCache[term] = await this.mAPI.api.searchHints(term);
+            const result = await this._wrapPromiseCall(this.mAPI.api.searchHints(term));
+            if (result === null) {
+                return null;
+            }
+            this.mSearchHintCache[term] = result;
         }
 
         return this.mSearchHintCache[term];
@@ -162,13 +168,13 @@ export class AppleService extends Service {
         }
 
         await waitOneTick();
-        return await this.mAPI.play();
+        return await this._wrapPromiseCall(this.mAPI.play());
     }
 
     async pause() {
         await this.authorize();
         if (this.isPlaying) {
-            return await this.mAPI.pause();
+            return await this._wrapPromiseCall(this.mAPI.pause());
         }
         return false;
     }
@@ -176,7 +182,7 @@ export class AppleService extends Service {
     async stop() {
         await this.authorize();
         if (this.isPlaying) {
-            return await this.mAPI.stop();
+            return await this._wrapPromiseCall(this.mAPI.stop());
         }
         return false;
     }
@@ -184,34 +190,37 @@ export class AppleService extends Service {
     async queueSong(song, overwriteQueue) {
         await this.authorize();
         if (!this.mAPI.player.queue || overwriteQueue) {
-            const result = await this.mAPI.setQueue([
+            const result = await this._wrapPromiseCall(this.mAPI.setQueue([
                 song._descriptor,
-            ]);
+            ]));
             await waitOneTick();
             return result;
         }
 
-        const result = await this.mAPI.player.queue.append([
+        const result = await this._wrapPromiseCall(this.mAPI.player.queue.append([
             song._descriptor,
-        ]);
+        ]));
         await waitOneTick();
         return result;
     }
 
     async seekTo(time) {
         await this.authorize();
-        return await this.mAPI.seekToTime(time);
+        return await this._wrapPromiseCall(this.mAPI.seekToTime(time));
     }
 
     async getHomeContent() {
         await this.authorize();
-        const recommendations = await this.mAPI.api.recommendations();
-        return this._itemsFromRecommendations(recommendations);
+        const recommendations = await this._wrapPromiseCall(this.mAPI.api.recommendations());
+        if (recommendations) {
+            return this._itemsFromRecommendations(recommendations);
+        }
+        return null;
     }
 
     async getAlbumInfo(albumID) {
         await this.authorize();
-        const album = await this.mAPI.api.album(albumID);
+        const album = await this._wrapPromiseCall(this.mAPI.api.album(albumID));
         if (album) {
             return new AppleAlbum(album, this);
         }
@@ -220,9 +229,9 @@ export class AppleService extends Service {
 
     async getAlbumForSong(songID) {
         await this.authorize();
-        const song = await this.mAPI.api.song(songID);
+        const song = await this._wrapPromiseCall(this.mAPI.api.song(songID));
         if (song) {
-            const album = await this.mAPI.api.album(song.relationships.albums.data[0].id);
+            const album = await this._wrapPromiseCall(this.mAPI.api.album(song.relationships.albums.data[0].id));
             if (album) {
                 return new AppleAlbum(album, this);
             }
@@ -232,7 +241,7 @@ export class AppleService extends Service {
 
     async getPlaylistInfo(playlistID) {
         await this.authorize();
-        const playlist = await this.mAPI.api.playlist(playlistID);
+        const playlist = await this._wrapPromiseCall(this.mAPI.api.playlist(playlistID));
         if (playlist) {
             return new ApplePlaylist(playlist, this);
         }
@@ -420,5 +429,12 @@ export class AppleService extends Service {
         this.mAudioDelay.delayTime.value = 0.25;
         this.mAudioSource.connect(this.mAudioDelay);
         this.mAudioDelay.connect(this.mAudioContext.destination);
+    }
+
+    _wrapPromiseCall(promise) {
+        return promise.catch(reason => {
+            console.error(reason); // eslint-disable-line
+            return null;
+        });
     }
 }

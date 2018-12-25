@@ -211,6 +211,11 @@ export class JukeboxConnection {
                     fn({
                         success: true,
                     });
+                }).catch(() => {
+                    fn({
+                        success: false,
+                        reason: 'Could not add ICE candidate',
+                    });
                 });
             }
         });
@@ -231,6 +236,12 @@ export class JukeboxConnection {
                         fn({
                             success: true,
                             answer: JSON.stringify(this.mConnections[info.source].localDescription),
+                        });
+                    }).catch(reason => {
+                        console.error(reason); // eslint-disable-line
+                        fn({
+                            success: false,
+                            reason: 'Could not complete the remote/local description sequence',
                         });
                     });
             }
@@ -262,6 +273,9 @@ export class JukeboxConnection {
                     if (response.success) {
                         connection.setRemoteDescription(JSON.parse(response.answer));
                     }
+                }).catch(reason => {
+                    console.error(reason); // eslint-disable-line
+                    return null;
                 });
         };
 
@@ -311,20 +325,58 @@ export class JukeboxConnection {
         switch (message.event) {
             case kServiceEvents.PERFORM_METHOD:
                 if (this.mService) {
-                    this.mService[message.method](...message.args).then(result => {
+                    try {
+                        this.mService[message.method](...message.args).then(result => {
+                            this._sendMessageThroughChannel(dataChannel, {
+                                event: kServiceEvents.METHOD_RESULT,
+                                result: result,
+                            }, messageID);
+
+                            if (resolve) {
+                                resolve(result);
+                            }
+                        }).catch(reason => {
+                            console.error(reason); // eslint-disable-line
+                            this._sendMessageThroughChannel(dataChannel, {
+                                event: kServiceEvents.METHOD_RESULT,
+                                error: reason,
+                                result: null,
+                            }, messageID);
+
+                            if (resolve) {
+                                resolve(null);
+                            }
+                        });
+                    } catch (e) {
+                        console.error(e); // eslint-disable-line
                         this._sendMessageThroughChannel(dataChannel, {
                             event: kServiceEvents.METHOD_RESULT,
-                            result: result,
+                            error: `Could no execute method ${message.method}`,
+                            result: null,
                         }, messageID);
 
                         if (resolve) {
-                            resolve(result);
+                            resolve(null);
                         }
-                    });
+                    }
+                } else {
+                    this._sendMessageThroughChannel(dataChannel, {
+                        event: kServiceEvents.METHOD_RESULT,
+                        error: 'Could not find an active service to execute the method',
+                        result: null,
+                    }, messageID);
+
+                    if (resolve) {
+                        resolve(null);
+                    }
                 }
                 break;
 
             case kServiceEvents.METHOD_RESULT:
+                if (message.hasOwnProperty('error')) {
+                    console.error(reason); //eslint-disable-line
+                }
+
                 if (resolve) {
                     resolve(message.result);
                 }
@@ -449,7 +501,6 @@ export class JukeboxConnection {
                 if (connection) {
                     return new Promise(resolve => {
                         connection.onaddstream = event => {
-                            console.log(event);
                             connection.onaddstream = null;
                             this.mIsSpeaker = true;
                             this.mService.mSpeakerStream = event.stream;
@@ -457,7 +508,7 @@ export class JukeboxConnection {
                         };
 
                         connection.onremovestream = () => {
-                            console.log('stream removed!');
+                            // console.log('stream removed!');
                         };
 
                         const p = new Promise(r => {

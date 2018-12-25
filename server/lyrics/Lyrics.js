@@ -17,6 +17,10 @@ function findLyrics(song, artist, duration) {
                 }
                 // cascade if needed
                 resolve(lyrics);
+            })
+            .catch(reason => {
+                log(reason);
+                return null;
             });
         // Xiami.search(song, artist, duration);
         // NetEase.search(song, artist, duration);

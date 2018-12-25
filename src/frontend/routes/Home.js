@@ -28,6 +28,10 @@ export class Home extends Layout {
                 ]),
                 m('.search-loading-text', 'Loading...'),
             ]);
+        } else if (this.mContent.hasOwnProperty('error')) {
+            return m('.search-full-centered', [
+                m('.search-loading-text', this.mContent.error),
+            ]);
         }
 
         return this.mContent.map(row => {
@@ -57,7 +61,13 @@ export class Home extends Layout {
     _loadContent() {
         if (!this.mContent && Service.activeService()) {
             Service.activeService().getHomeContent().then(content => {
-                this.mContent = content;
+                if (content) {
+                    this.mContent = content;
+                } else {
+                    this.mContent = {
+                        error: 'An error occurred loading the home content, please try again later.',
+                    };
+                }
                 m.redraw();
             });
         }

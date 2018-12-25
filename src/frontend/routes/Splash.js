@@ -74,6 +74,9 @@ export class Splash {
             document.addEventListener('musickitloaded', () => {
                 AppleService.instance().init('devtoken.jwt', 'Jukebox by Julyee', '1.0.0').then(() => {
                     m.redraw();
+                }).catch(reason => {
+                    console.error(reason); // eslint-disable-line
+                    window.MusicKit = null;
                 });
             });
         }
@@ -273,6 +276,9 @@ export class Splash {
             } else {
                 Dialog.hide();
             }
+        }).catch(reason => {
+            console.error(reason); // eslint-disable-line
+            Dialog.hide();
         });
 
         Dialog.show(loadingDialog({
@@ -285,7 +291,7 @@ export class Splash {
                     } else {
                         Dialog.show(WarningDialog.get(
                             'Error',
-                            'Could not connect to the specified server.',
+                            'Could not connect to Apple Music.',
                             'Got it'
                         ));
                     }

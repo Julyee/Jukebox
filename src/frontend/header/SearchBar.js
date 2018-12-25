@@ -63,8 +63,10 @@ export class SearchBar {
                 }
             } else if (value()) {
                 Service.activeService().searchHints(value()).then(result => {
-                    matches(result.terms);
-                    m.redraw();
+                    if (result) {
+                        matches(result.terms);
+                        m.redraw();
+                    }
                 });
             } else {
                 matches([]);
