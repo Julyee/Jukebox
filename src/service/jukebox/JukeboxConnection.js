@@ -56,7 +56,7 @@ export class JukeboxConnection {
     get connected() {
         return this.mAlias &&
             this.mConnections[this.mAlias] &&
-            this.mConnections[this.mAlias].connectionState === 'connected' &&
+            (this.mConnections[this.mAlias].iceConnectionState === 'connected' || this.mConnections[this.mAlias].iceConnectionState === 'completed') &&
             this.mDataChannels[this.mAlias] &&
             this.mDataChannels[this.mAlias].readyState === 'open';
     }
