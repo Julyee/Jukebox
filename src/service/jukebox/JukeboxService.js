@@ -11,7 +11,9 @@ export class JukeboxService extends Service {
         super();
         this.mConnection = new JukeboxConnection(this);
         this.mConnectURL = null;
+        this.mConnectURL_alias = null;
         this.mConnectQR = null;
+        this.mConnectQR_URL = null;
         this.mBaseService = null;
         this.mSpeakerStream = null;
         this.mAudioContext = null;
@@ -32,10 +34,35 @@ export class JukeboxService extends Service {
     }
 
     get connectQR() {
+        if (this.connectURL !== this.mConnectQR_URL) {
+            this.mConnectQR_URL = this.connectURL;
+            if (this.mConnectQR_URL) {
+                const qr = new QRious({
+                    value: this.mConnectQR_URL,
+                    size: 180,
+                });
+                this.mConnectQR = qr.toDataURL();
+            } else {
+                this.mConnectQR = null;
+            }
+        }
         return this.mConnectQR;
     }
 
     get connectURL() {
+        if (this.mConnectURL_alias !== this.connectAlias) {
+            this.mConnectURL_alias = this.connectAlias;
+            if (this.mConnectURL_alias) {
+                const parsedUrl = new URL(window.location);
+                let hostname = parsedUrl.hostname;
+                if (hostname === 'localhost') {
+                    hostname = '10.0.1.44';
+                }
+                this.mConnectURL = `${parsedUrl.protocol}//${hostname}${parsedUrl.port ? ':' + parsedUrl.port : ''}/#!/Splash?h=${this.mConnectURL_alias}`;
+            } else {
+                this.mConnectURL = null;
+            }
+        }
         return this.mConnectURL;
     }
 
@@ -107,17 +134,6 @@ export class JukeboxService extends Service {
     async configureAsServer(service) {
         if (service.canServeJukebox) {
             if (await this.mConnection.initAsServer()) {
-                const parsedUrl = new URL(window.location);
-                let hostname = parsedUrl.hostname;
-                if (hostname === 'localhost') {
-                    hostname = '10.0.1.44';
-                }
-                this.mConnectURL = `${parsedUrl.protocol}//${hostname}${parsedUrl.port ? ':' + parsedUrl.port : ''}/#!/Splash?h=${this.mConnection.alias}`;
-                const qr = new QRious({
-                    value: this.mConnectURL,
-                    size: 180,
-                });
-                this.mConnectQR = qr.toDataURL();
                 this.mBaseService = service;
                 return true;
             }
