@@ -8,10 +8,28 @@ import {EventCenter} from '../../core/EventCenter';
 import {Buttons, GeneralEvents, JukeboxEvents} from '../../frontend/Events';
 
 const AppleMedia = Object.assign({}, _AppleMedia); // fix build warning
+const kWebRTCConfig = {
+    'iceServers': [
+        {
+            'urls': 'stun:stun.l.google.com:19302',
+        },
+        {
+            'urls': 'stun:stun1.l.google.com:19302',
+        },
+        {
+            'urls': 'stun:stun.ekiga.net',
+        },
+        {
+            'urls': 'stun:stun.ideasip.com',
+        },
+    ],
+};
 
 const kSignalingEvents = {
     SIGNAL_OFFER: 'Signal::Offer',
+    SIGNAL_CREATE_OFFER: 'Signal::CreateOffer',
     SIGNAL_ICE_CANDIDATE: 'Signal::ICECandidate',
+    SIGNAL_CONNECT_TO_CLIENT: 'Signal::ConnectToClient',
 };
 
 const kServiceEvents = {
@@ -220,12 +238,53 @@ export class JukeboxConnection {
             }
         });
 
-        socket.on(kSignalingEvents.SIGNAL_OFFER, (info, fn) => {
-            if (this.isServer) {
-                const connection = new RTCPeerConnection(null);
+        socket.on(kSignalingEvents.SIGNAL_CONNECT_TO_CLIENT, (info, fn) => {
+            const ID = info.source;
+            if (!this.mConnections[ID]) {
+                const connection = new RTCPeerConnection(kWebRTCConfig);
+                this.mConnections[ID] = connection;
+
+                this._configureConnectionEvents(connection, ID, this.isServer ? 'server' : 'client');
+            }
+
+            const connection = this.mConnections[ID];
+            this.mDataChannels[ID] = connection.createDataChannel('Jukebox_by_Julyee');
+            this.mDataChannels[ID].onopen = () => {
+                if (this.mDataChannels[ID].readyState === 'open') {
+                    this.mDataChannels[ID].onmessage = message => this._handleDataChannelMessage(this.mDataChannels[ID], message);
+                    this.mDataChannels[ID].onopen = null;
+                    this.mDataChannels[ID].onclose = () => {
+                        delete this.mDataChannels[ID];
+                        delete this.mConnections[ID];
+                    };
+                }
+            };
+
+            fn({
+                success: true,
+            });
+        });
+
+        socket.on(kSignalingEvents.SIGNAL_CREATE_OFFER, (info, fn) => {
+            if (!this.mConnections[info.source]) {
+                const connection = new RTCPeerConnection(kWebRTCConfig);
                 this.mConnections[info.source] = connection;
 
-                this._configureConnectionEvents(connection, info.source, 'server');
+                this._configureConnectionEvents(connection, info.source, this.isServer ? 'server' : 'client');
+            }
+
+            this.mConnections[info.source].onnegotiationneeded();
+            fn({
+                success: true,
+            });
+        });
+
+        socket.on(kSignalingEvents.SIGNAL_OFFER, (info, fn) => {
+            if (!this.mConnections[info.source]) {
+                const connection = new RTCPeerConnection(kWebRTCConfig);
+                this.mConnections[info.source] = connection;
+
+                this._configureConnectionEvents(connection, info.source, this.isServer ? 'server' : 'client');
             }
 
             if (this.mConnections[info.source]) {
@@ -260,23 +319,32 @@ export class JukeboxConnection {
         };
 
         connection.onnegotiationneeded = () => {
-            connection.createOffer()
-                .then(offer => connection.setLocalDescription(offer))
-                .then(() => this._sendCommandThroughSocket(ServerCommands.type.SEND_MESSAGE_TO_TARGET, {
-                    event: kSignalingEvents.SIGNAL_OFFER,
+            if (!this.isServer) {
+                this._sendCommandThroughSocket(ServerCommands.type.SEND_MESSAGE_TO_TARGET, {
+                    event: kSignalingEvents.SIGNAL_CREATE_OFFER,
                     role: role,
                     source: this.isServer ? this.mAlias : this.mSocket.id,
                     target: targetID,
-                    offer: JSON.stringify(connection.localDescription),
-                }))
-                .then(response => {
-                    if (response.success) {
-                        connection.setRemoteDescription(JSON.parse(response.answer));
-                    }
-                }).catch(reason => {
-                    console.error(reason); // eslint-disable-line
-                    return null;
                 });
+            } else {
+                connection.createOffer()
+                    .then(offer => connection.setLocalDescription(offer))
+                    .then(() => this._sendCommandThroughSocket(ServerCommands.type.SEND_MESSAGE_TO_TARGET, {
+                        event: kSignalingEvents.SIGNAL_OFFER,
+                        role: role,
+                        source: this.isServer ? this.mAlias : this.mSocket.id,
+                        target: targetID,
+                        offer: JSON.stringify(connection.localDescription),
+                    }))
+                    .then(response => {
+                        if (response.success) {
+                            connection.setRemoteDescription(JSON.parse(response.answer));
+                        }
+                    }).catch(reason => {
+                        console.error(reason); // eslint-disable-line
+                        return null;
+                    });
+            }
         };
 
         connection.ondatachannel = event => {
@@ -426,22 +494,33 @@ export class JukeboxConnection {
             this.mDataChannels = {};
             this.mConnections = {};
 
-            const connection = new RTCPeerConnection(null);
+            const connection = new RTCPeerConnection(kWebRTCConfig);
             this.mConnections[serverID] = connection;
-
-            this.mDataChannels[serverID] = connection.createDataChannel('Jukebox_by_Julyee');
-            this.mDataChannels[serverID].onopen = () => {
-                if (this.mDataChannels[serverID].readyState === 'open') {
-                    this.mDataChannels[serverID].onmessage = message => this._handleDataChannelMessage(this.mDataChannels[serverID], message);
-                    this.mDataChannels[serverID].onopen = null;
-                    this.mDataChannels[serverID].onclose = () => {
-                        delete this.mDataChannels[serverID];
-                        delete this.mConnections[serverID];
-                    };
-                    resolve(true);
-                }
-            };
             this._configureConnectionEvents(connection, serverID, 'client');
+
+            const oldOnDataChannel = connection.ondatachannel;
+            connection.ondatachannel = event => {
+                connection.ondatachannel = oldOnDataChannel;
+                this.mDataChannels[serverID] = event.channel;
+                this.mDataChannels[serverID].onopen = () => {
+                    if (this.mDataChannels[serverID].readyState === 'open') {
+                        this.mDataChannels[serverID].onmessage = message => this._handleDataChannelMessage(this.mDataChannels[serverID], message);
+                        this.mDataChannels[serverID].onopen = null;
+                        this.mDataChannels[serverID].onclose = () => {
+                            delete this.mDataChannels[serverID];
+                            delete this.mConnections[serverID];
+                        };
+                        resolve(true);
+                    }
+                };
+            };
+
+            this._sendCommandThroughSocket(ServerCommands.type.SEND_MESSAGE_TO_TARGET, {
+                event: kSignalingEvents.SIGNAL_CONNECT_TO_CLIENT,
+                role: 'client',
+                source: this.isServer ? this.mAlias : this.mSocket.id,
+                target: serverID,
+            });
         });
     }
 
