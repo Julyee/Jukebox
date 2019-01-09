@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const log = require('./logging')('HTTPSServer');
-const {findLyrics} = require('./lyrics/Lyrics');
+const {findLyrics} = require('./lyrics/LyricsFinder');
 
 class HTTPSServer {
     constructor(options) {
