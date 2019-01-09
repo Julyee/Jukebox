@@ -65,6 +65,11 @@ class Lyrics {
                     const start = parseInt(components[0], 10);
                     const duration = parseInt(components[1], 10);
                     if (!isNaN(start) && !isNaN(duration)) {
+                        if (ret.length) { // temp hack - sorry future Dario :(
+                            ret[ret.length - 1].end = start -1;
+                            ret[ret.length - 1].duration = ret[ret.length - 1].end - ret[ret.length - 1].start;
+                        }
+
                         ret.push({
                             start: start,
                             end: start + duration,
