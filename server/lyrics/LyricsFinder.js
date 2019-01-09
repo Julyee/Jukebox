@@ -6,61 +6,57 @@ const NetEase = require('./ProviderNetEase');
 const Gecimi = require('./ProviderGecimi');
 const Kugou = require('./ProviderKugou');
 
+function fetchLyrics(songTitle, results, index, threshold, cb) {
+    if (index < results.length) {
+        const result = results[index];
+        if (result && result.score >= threshold) {
+            log(`Fetching lyrics ${songTitle} from ${results[index].provider}...`);
+            result.fetch().then(lyrics => {
+                if (lyrics) {
+                    log(`Lyrics found ${songTitle} by provider ${results[index].provider}`);
+                    cb(lyrics);
+                } else {
+                    log(`Failed to fetch lyrics ${songTitle} from provider ${results[index].provider}`);
+                    fetchLyrics(songTitle, results, index + 1, threshold, cb);
+                }
+            }).catch(reason => {
+                log(reason);
+                fetchLyrics(songTitle, results, index + 1, threshold, cb);
+            });
+        } else {
+            fetchLyrics(songTitle, results, index + 1, threshold, cb);
+        }
+    } else {
+        log(`Could not find lyrics ${songTitle}`);
+        cb(null);
+    }
+}
+
 function findLyrics(song, artist, duration) {
     return new Promise(resolve => {
-        // Kugou.search(song, artist, duration);
-        // resolve(null);
-        // return;
-        Kugou.search(song, artist, duration).then(result => {
-            if (result) {
-                result.fetch().then(lyrics => {
-                    resolve(lyrics);
-                }).catch(() => resolve(null));
-            } else {
-                resolve(null);
-            }
-        });
-    });
-
-    return new Promise(resolve => {
-        const songTitle = `(${song} by ${artist})`;
+        const songTitle = `[${song} by ${artist}]`;
         const promises = [
             Xiami.search(song, artist, duration),
             QQ.search(song, artist, duration),
             NetEase.search(song, artist, duration),
+            Kugou.search(song, artist, duration),
             Gecimi.search(song, artist, duration),
         ];
 
         Promise.all(promises).then(results => {
-            let bestScore = 0;
-            let index = -1;
-            results.forEach((result, i) => {
+            results.sort((a, b) => {
+                if (!a) return 1;
+                if (!b) return -1;
+                return b.score - a.score;
+            });
+
+            results.forEach(result => {
                 if (result) {
                     log(`${songTitle} ${result.provider} score: ${result.score}`);
-                    if (result.score > bestScore) {
-                        bestScore = result.score;
-                        index = i;
-                    }
                 }
             });
 
-            if (index >= 0 && bestScore > 0.75) {
-                log(`Fetching lyrics ${songTitle} from ${results[index].provider}...`);
-                results[index].fetch().then(lyrics => {
-                    if (lyrics) {
-                        log(`Lyrics found ${songTitle} by provider ${results[index].provider}`);
-                        resolve(lyrics);
-                    } else {
-                        log(`Failed to fetch lyrics ${songTitle} from provider ${results[index].provider}`);
-                    }
-                }).catch(reason => {
-                    log(reason);
-                    resolve(null);
-                });
-            } else {
-                log(`Could not find lyrics ${songTitle}`);
-                resolve(null);
-            }
+            fetchLyrics(songTitle, results, 0, 0.7, resolve);
         });
     });
 }
