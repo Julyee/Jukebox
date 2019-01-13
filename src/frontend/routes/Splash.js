@@ -72,7 +72,7 @@ export class Splash {
                 m.redraw();
             });
             document.addEventListener('musickitloaded', () => {
-                AppleService.instance().init('devtoken.jwt', 'Jukebox by Julyee', '1.0.0').then(() => {
+                AppleService.instance().init('keys/devtoken.jwt', 'Jukebox by Julyee', '1.0.0').then(() => {
                     m.redraw();
                 }).catch(reason => {
                     console.error(reason); // eslint-disable-line
