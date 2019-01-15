@@ -9,6 +9,8 @@ import {AppleAlbum} from './media/AppleAlbum';
 import {ApplePlaylist} from './media/ApplePlaylist';
 import {JukeboxService} from '../jukebox/JukeboxService';
 import {waitOneTick} from '../../core/nextTick';
+import {LastFM} from '../recommendations/last.fm';
+import similarity from 'string-similarity';
 
 const kPlaybackStateMap = {
     none: Events.SONG_IDLE,
@@ -31,6 +33,7 @@ export class AppleService extends Service {
         this.mAudioSource = null;
         this.mAudioDelay = null;
         this.mSearchHintCache = {};
+        this.mLastFM = new LastFM();
     }
 
     get authorized() {
@@ -99,6 +102,7 @@ export class AppleService extends Service {
         });
 
         Object.keys(MusicKit.Events).forEach(key => this._registerPlayerEvent(MusicKit.Events[key]));
+        await this.mLastFM.init('keys/last.fm.json');
     }
 
     async authorize() {
@@ -245,6 +249,31 @@ export class AppleService extends Service {
         if (playlist) {
             return new ApplePlaylist(playlist, this);
         }
+        return null;
+    }
+
+    async getRelatedSongs(song) {
+        await this.authorize();
+        const related = await this.mLastFM.getRecommendations(song);
+        if (related) {
+            const result = {
+                serviceName: 'Last.fm',
+                serviceURL: 'https://www.last.fm',
+                songs: [],
+            };
+
+            for (let i = 0, n = related.length; i < n; ++i) {
+                const s = await this._findSongByName(related[i].name, related[i].artist.name);
+                if (s) {
+                    result.songs.push(s);
+                }
+            }
+
+            if (result.songs.length) {
+                return result;
+            }
+        }
+
         return null;
     }
 
@@ -429,6 +458,49 @@ export class AppleService extends Service {
         this.mAudioDelay.delayTime.value = 0.25;
         this.mAudioSource.connect(this.mAudioDelay);
         this.mAudioDelay.connect(this.mAudioContext.destination);
+    }
+
+    async _findSongByName(name, artist) {
+        let results = await this.search(`${name} ${artist}`);
+        let songs = (results && results.songs) || null;
+        let secondSearch = false;
+        if (!songs) {
+            results = await this.search(name);
+            songs = (results && results.songs) || null;
+            secondSearch = true;
+        }
+
+        if (songs) {
+            let song = this._findSongBestMatch(songs, name, artist, 0.75);
+            if (!song && !secondSearch) {
+                results = await this.search(name);
+                songs = (results && results.songs) || null;
+                if (songs) {
+                    song = this._findSongBestMatch(songs, name, artist, 0.75);
+                }
+            }
+            return song;
+        }
+
+        return null;
+    }
+
+    _findSongBestMatch(songs, name, artist, threshold) {
+        let highScore = 0;
+        let bestMatch = null;
+
+        let score;
+        for (let i = 0, n = songs.length; i < n; ++i) {
+            score = similarity.compareTwoStrings(name, songs[i].name) * 0.5;
+            score += similarity.compareTwoStrings(artist, songs[i].artist) * 0.5;
+
+            if (score > highScore) {
+                highScore = score;
+                bestMatch = songs[i];
+            }
+        }
+
+        return highScore >= threshold ? bestMatch : null;
     }
 
     _wrapPromiseCall(promise) {

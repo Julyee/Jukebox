@@ -141,4 +141,8 @@ export class Service extends IBindable {
     async getCurrentSong() {
         return this.currentSong;
     }
+
+    async getRelatedSongs() {
+        throw 'Not implemented';
+    }
 }
