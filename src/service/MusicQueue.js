@@ -4,15 +4,17 @@ export class MusicQueue extends IBindable {
     constructor() {
         super();
 
-        this.mLyricsQueue = Promise.resolve();
         this.mLyricsCache = {};
         this.mQueue = [];
+        this.mRecommendationsQueue = [];
         this.mHistory = [];
         this.mStorageHandle = null; // eslint-disable-line // todo
     }
 
     destroy() {
+        delete this.mLyricsCache;
         delete this.mQueue;
+        delete this.mRecommendationsQueue;
         delete this.mHistory;
         delete this.mStorageHandle;
 
@@ -21,6 +23,10 @@ export class MusicQueue extends IBindable {
 
     get queue() {
         return this.mQueue;
+    }
+
+    get recommendationsQueue() {
+        return this.mRecommendationsQueue;
     }
 
     get history() {
@@ -38,17 +44,11 @@ export class MusicQueue extends IBindable {
     enqueueSong(song) {
         const toAdd = Array.isArray(song) ? song : [song];
         this.mQueue.push.apply(this.mQueue, toAdd);
-        // toAdd.forEach(s => {
-        //     this.mLyricsQueue = this.mLyricsQueue.then(() => this.lyricsForSong(s));
-        // });
     }
 
     unshiftSong(song) {
         const toAdd = Array.isArray(song) ? song : [song];
         this.mQueue.unshift.apply(this.mQueue, toAdd);
-        // toAdd.forEach(s => {
-        //     this.mLyricsQueue = this.mLyricsQueue.then(() => this.lyricsForSong(s));
-        // });
     }
 
     dequeueSong() {
@@ -56,6 +56,17 @@ export class MusicQueue extends IBindable {
             return this.mQueue.shift();
         }
         return null;
+    }
+
+    dequeueRecommendation() {
+        if (this.mRecommendationsQueue.length) {
+            return this.mRecommendationsQueue.shift();
+        }
+        return null;
+    }
+
+    updateRecommendations(items) {
+        this.mRecommendationsQueue.push.apply(this.mRecommendationsQueue, items);
     }
 
     lyricsForSong(song) {
@@ -85,6 +96,11 @@ export class MusicQueue extends IBindable {
 
     clearQueue() {
         this.mQueue.length = 0;
+        this.clearRecommendations();
+    }
+
+    clearRecommendations() {
+        this.mRecommendationsQueue.length = 0;
     }
 
     clearHistory() {
