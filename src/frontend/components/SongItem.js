@@ -34,6 +34,7 @@ export class SongItem {
                 m('.song-item-song-artist', song.artist),
                 m('.song-item-song-album', song.album),
             ]),
+            class: vnode.attrs.faded ? 'song-item-faded' : null,
             hoverable: isClickable,
             navigation: false,
             compact: true,

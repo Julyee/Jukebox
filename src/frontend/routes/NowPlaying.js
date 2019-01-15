@@ -1,6 +1,6 @@
 import m from 'mithril';
 import {Layout} from '../Layout';
-import {List} from 'polythene-mithril';
+import {List, ListTile} from 'polythene-mithril';
 import {SongItem} from '../components/SongItem';
 import {MediaManager} from '../../service/MediaManager';
 import {Buttons} from '../Events';
@@ -76,6 +76,12 @@ export class NowPlaying extends Layout {
 
         const songs = [];
         songs.push(...MediaManager.queue.queue);
+        if (MediaManager.queue.recommendationsQueue.length) {
+            songs.push({ separator: true, label: 'To keep going:'});
+            for (let i = 0; i < 2 && i < MediaManager.queue.recommendationsQueue.length; ++i) {
+                songs.push(MediaManager.queue.recommendationsQueue[i]);
+            }
+        }
 
         const lyricsLines = [];
         if (hasLyrics) {
@@ -103,16 +109,26 @@ export class NowPlaying extends Layout {
                     indentedBorder: false,
                     compact: false,
                     padding: 'none',
-                    tiles: songs.map(song => m(SongItem, {
-                        song: song,
-                        size: 52,
-                        clickable: false,
-                        displayThumbnail: true,
-                        songMenuItems: [
-                            { title: 'Add to a Playlist...', event: Buttons.SONG_ADD_TO_PLAYLIST },
-                            { title: 'Create Station', event: Buttons.SONG_CREATE_STATION },
-                        ],
-                    })),
+                    tiles: songs.map(item => {
+                        if (item.separator) {
+                            return m(ListTile, {
+                                class: 'now-playing-list-separator',
+                                content: item.label,
+                            });
+                        }
+
+                        return m(SongItem, {
+                            song: item.song,
+                            size: 52,
+                            clickable: false,
+                            faded: item.isRecommendation,
+                            displayThumbnail: true,
+                            songMenuItems: [
+                                { title: 'Add to a Playlist...', event: Buttons.SONG_ADD_TO_PLAYLIST },
+                                { title: 'Create Station', event: Buttons.SONG_CREATE_STATION },
+                            ],
+                        });
+                    }),
                 }) : null,
             ]),
         ]);
