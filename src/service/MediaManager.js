@@ -25,6 +25,7 @@ export class MediaManagerImp extends IBindable {
         this.mBoundEvents = {};
         this.mCurrenItem = null;
         this.mQueue = new MusicQueue();
+        this.mPlayRecommendations = false;
 
         this._registerEvent(Events.BUTTON_PRESS, (...varArgs) => this._handleButtonPress(...varArgs));
         this._registerEvent(Events.PLAYBACK_EVENT, (...varArgs) => this._handlePlaybackEvent(...varArgs));
@@ -60,6 +61,27 @@ export class MediaManagerImp extends IBindable {
 
     get history() {
         return this.mQueue.history;
+    }
+
+    get playRecommendations() {
+        return this.mPlayRecommendations;
+    }
+
+    get recommendations() {
+        return this.mQueue.recommendationsQueue;
+    }
+
+    set playRecommendations(value) {
+        if (value !== this.mPlayRecommendations) {
+            this.mPlayRecommendations = value;
+            if (this.mPlayRecommendations &&
+                !this.mQueue.queueSize &&
+                !this.currentSong &&
+                this.mQueue.recommendationsQueue.length
+                ) {
+                this._playSong(this.mQueue.dequeueRecommendation());
+            }
+        }
     }
 
     _registerEvent(event, handler) {
@@ -208,7 +230,7 @@ export class MediaManagerImp extends IBindable {
             case Buttons.PLAYER_NEXT_BUTTON:
                 if (this.mQueue.queueSize) {
                     this._playSong(this.mQueue.dequeueSong());
-                } else if (this.mQueue.recommendationsQueue.length) {
+                } else if (this.mQueue.recommendationsQueue.length && this.playRecommendations) {
                     this._playSong(this.mQueue.dequeueRecommendation());
                 }
                 break;
@@ -258,7 +280,13 @@ export class MediaManagerImp extends IBindable {
                 if (this.mCurrenItem) {
                     this.mCurrenItem.state = 'completed';
                 }
-                nextTick(() => this._playSong(this.mQueue.dequeueSong() || this.mQueue.dequeueRecommendation()));
+                nextTick(() => {
+                    let song = this.mQueue.dequeueSong();
+                    if (!song && this.playRecommendations) {
+                        song = this.mQueue.dequeueRecommendation();
+                    }
+                    this._playSong(song);
+                });
             } else if (type === Events.PLAYER_SEEK_TO) {
                 if (this.mCurrenItem) {
                     this.currentSong.service.seekTo(varArgs[0]);

@@ -5,6 +5,10 @@ import {SongItem} from '../components/SongItem';
 import {MediaManager} from '../../service/MediaManager';
 import {Buttons} from '../Events';
 
+import {makeSVG} from '../utils/makeSVG';
+import * as disabledCheckboxSVG from '@fortawesome/free-regular-svg-icons/faSquare';
+import * as enabledCheckboxSVG from '@fortawesome/free-regular-svg-icons/faCheckSquare';
+
 export class NowPlaying extends Layout {
     constructor(/* vnode */) {
         super();
@@ -76,10 +80,10 @@ export class NowPlaying extends Layout {
 
         const songs = [];
         songs.push(...MediaManager.queue.queue);
-        if (MediaManager.queue.recommendationsQueue.length) {
+        if (MediaManager.recommendations.length) {
             songs.push({ separator: true, label: 'To keep going:'});
-            for (let i = 0; i < 2 && i < MediaManager.queue.recommendationsQueue.length; ++i) {
-                songs.push(MediaManager.queue.recommendationsQueue[i]);
+            for (let i = 0; i < 2 && i < MediaManager.recommendations.length; ++i) {
+                songs.push(MediaManager.recommendations[i]);
             }
         }
 
@@ -113,7 +117,16 @@ export class NowPlaying extends Layout {
                         if (item.separator) {
                             return m(ListTile, {
                                 class: 'now-playing-list-separator',
-                                content: item.label,
+                                content: [
+                                    m('.now-playing-list-play-recommendations', {
+                                        onclick: () => {
+                                            MediaManager.playRecommendations = !MediaManager.playRecommendations;
+                                        },
+                                    }, MediaManager.playRecommendations ?
+                                        makeSVG(enabledCheckboxSVG, 15, 15) :
+                                        makeSVG(disabledCheckboxSVG, 15, 15)),
+                                    m('span', item.label),
+                                ],
                             });
                         }
 
@@ -121,7 +134,7 @@ export class NowPlaying extends Layout {
                             song: item.song,
                             size: 52,
                             clickable: false,
-                            faded: item.isRecommendation,
+                            faded: item.isRecommendation && !MediaManager.playRecommendations,
                             displayThumbnail: true,
                             songMenuItems: [
                                 { title: 'Add to a Playlist...', event: Buttons.SONG_ADD_TO_PLAYLIST },

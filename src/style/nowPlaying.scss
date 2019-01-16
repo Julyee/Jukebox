@@ -40,6 +40,20 @@
     padding: 20px 10px 2px;
     font-size: 15px;
     font-weight: 500;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.now-playing-list-play-recommendations {
+    padding-top: 2px;
+    padding-right: 6px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .now-playing-artwork {
