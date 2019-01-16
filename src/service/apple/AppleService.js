@@ -119,11 +119,18 @@ export class AppleService extends Service {
         return true;
     }
 
-    async search(term, resultCount = 5) {
+    async search(term, resultCount = 5, types = null) {
         await this.authorize();
-        const result = await this._wrapPromiseCall(this.mAPI.api.search(term, {
+        const options = {
+            term: term,
             limit: resultCount,
-        }));
+        };
+
+        if (types) {
+            options.types = types;
+        }
+
+        const result = await this._wrapPromiseCall(this.mAPI.api.collection('catalog', 'search', null, options));
 
         if (result) {
             return Object.assign({}, {
@@ -461,7 +468,7 @@ export class AppleService extends Service {
     }
 
     async _findSongByName(name, artist) {
-        let results = await this.search(`${name} ${artist}`);
+        let results = await this.search(`${name} ${artist}`, 3, ['songs']);
         let songs = (results && results.songs) || null;
         let secondSearch = false;
         if (!songs) {
